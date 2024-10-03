@@ -3,6 +3,7 @@ package vn.chubebanso.icecream.service;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.stereotype.Service;
 
 import vn.chubebanso.icecream.domain.User;
@@ -10,7 +11,7 @@ import vn.chubebanso.icecream.repository.UserRepository;
 
 @Service
 public class UserService {
-    final private UserRepository userRepository;
+    private final UserRepository userRepository;
 
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
@@ -32,5 +33,9 @@ public class UserService {
         } else {
             return null;
         }
+    }
+
+    public void DeleteUserById(Long user_id){
+        this.userRepository.deleteById(user_id);
     }
 }
