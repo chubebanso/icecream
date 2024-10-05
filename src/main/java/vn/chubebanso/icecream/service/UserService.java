@@ -3,7 +3,6 @@ package vn.chubebanso.icecream.service;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.stereotype.Service;
 
 import vn.chubebanso.icecream.domain.User;
@@ -30,6 +29,18 @@ public class UserService {
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
             return user;
+        } else {
+            return null;
+        }
+    }
+
+    public User UpdateUser(Long user_id, User user){
+        Optional<User> optionalUser = this.userRepository.findById(user_id);
+        if (optionalUser.isPresent()) {        
+            optionalUser.get().setName(user.getName()) ;
+            optionalUser.get().setUsername(user.getUsername()) ;
+            optionalUser.get().setPassword(user.getPassword());
+            return this.userRepository.save(optionalUser.get());
         } else {
             return null;
         }
