@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import vn.chubebanso.icecream.domain.User;
 import vn.chubebanso.icecream.service.UserService;
+import vn.chubebanso.icecream.util.IdInvalidException;
 
 @RestController
 public class UserController {
@@ -25,7 +26,7 @@ public class UserController {
     public ResponseEntity<User> createUserController(@RequestBody User user) {
         User newUser = this.userService.handleCreateUser(user);
         return ResponseEntity.ok(newUser);
-    }   
+    }
 
     @GetMapping("/user")
     public ResponseEntity<List<User>> getAllUser() {
@@ -38,8 +39,11 @@ public class UserController {
     }
 
     @DeleteMapping("/user/{user_id}")
-    public ResponseEntity<Void> DeleteUser(@PathVariable Long user_id){
+    public ResponseEntity<Void> DeleteUser(@PathVariable Long user_id) throws IdInvalidException {
+        if (user_id > 1500) {
+            throw new IdInvalidException("Khong tim thay user");
+        }
         this.userService.DeleteUserById(user_id);
         return ResponseEntity.noContent().build();
-   }
+    }
 }
