@@ -1,4 +1,4 @@
-package vn.chubebanso.icecream.util;
+package vn.chubebanso.icecream.util.error;
 
 public class IdInvalidException extends Exception {
     public IdInvalidException(String message) {

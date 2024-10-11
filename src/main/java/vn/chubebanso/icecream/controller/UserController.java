@@ -14,7 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 import vn.chubebanso.icecream.domain.User;
 import vn.chubebanso.icecream.repository.UserRepository;
 import vn.chubebanso.icecream.service.UserService;
-import vn.chubebanso.icecream.util.IdInvalidException;
+import vn.chubebanso.icecream.util.error.IdInvalidException;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
 public class UserController {
@@ -22,6 +23,19 @@ public class UserController {
 
     public UserController(UserService userService) {
         this.userService = userService;
+    }
+
+    @GetMapping("/")
+    public String helloWorld() throws IdInvalidException {
+
+        if (true) {
+            throw new IdInvalidException("login error");
+        }
+        return "Hello chubebanso";
+    }
+
+    public String getMethodName(@RequestParam String param) {
+        return new String();
     }
 
     @PostMapping("/create/user")
@@ -41,7 +55,7 @@ public class UserController {
     }
 
     @PutMapping("/update/user/{user_id}")
-    public ResponseEntity<User> UpdateUserInfo(@RequestBody User user, @PathVariable Long user_id ) {
+    public ResponseEntity<User> UpdateUserInfo(@RequestBody User user, @PathVariable Long user_id) {
         return ResponseEntity.ok(this.userService.UpdateUser(user_id, user));
     }
 

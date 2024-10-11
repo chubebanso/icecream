@@ -34,11 +34,11 @@ public class UserService {
         }
     }
 
-    public User UpdateUser(Long user_id, User user){
+    public User UpdateUser(Long user_id, User user) {
         Optional<User> optionalUser = this.userRepository.findById(user_id);
-        if (optionalUser.isPresent()) {        
-            optionalUser.get().setName(user.getName()) ;
-            optionalUser.get().setUsername(user.getUsername()) ;
+        if (optionalUser.isPresent()) {
+            optionalUser.get().setEmail(user.getEmail());
+            optionalUser.get().setUsername(user.getUsername());
             optionalUser.get().setPassword(user.getPassword());
             return this.userRepository.save(optionalUser.get());
         } else {
@@ -46,7 +46,11 @@ public class UserService {
         }
     }
 
-    public void DeleteUserById(Long user_id){
+    public void DeleteUserById(Long user_id) {
         this.userRepository.deleteById(user_id);
+    }
+
+    public User getUserByUserName(String email) {
+        return this.userRepository.findByEmail(email);
     }
 }
