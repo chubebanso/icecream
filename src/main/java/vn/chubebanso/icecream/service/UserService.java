@@ -34,7 +34,7 @@ public class UserService {
         }
     }
 
-    public User UpdateUser(Long user_id, User user) {
+    public User updateUser(Long user_id, User user) {
         Optional<User> optionalUser = this.userRepository.findById(user_id);
         if (optionalUser.isPresent()) {
             optionalUser.get().setEmail(user.getEmail());
@@ -46,7 +46,7 @@ public class UserService {
         }
     }
 
-    public void DeleteUserById(Long user_id) {
+    public void deleteUserById(Long user_id) {
         this.userRepository.deleteById(user_id);
     }
 
