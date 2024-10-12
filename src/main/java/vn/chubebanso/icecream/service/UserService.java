@@ -34,7 +34,7 @@ public class UserService {
         }
     }
 
-    public User UpdateUser(Long user_id, User user) {
+    public User updateUser(Long user_id, User user) {
         Optional<User> optionalUser = this.userRepository.findById(user_id);
         if (optionalUser.isPresent()) {
             optionalUser.get().setEmail(user.getEmail());

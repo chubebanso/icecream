@@ -9,12 +9,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import vn.chubebanso.icecream.domain.User;
 import vn.chubebanso.icecream.service.UserService;
 import vn.chubebanso.icecream.util.error.IdInvalidException;
-import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
 public class UserController {
@@ -55,7 +55,7 @@ public class UserController {
 
     @PutMapping("/update/user/{user_id}")
     public ResponseEntity<User> UpdateUserInfo(@RequestBody User user, @PathVariable Long user_id) {
-        return ResponseEntity.ok(this.userService.UpdateUser(user_id, user));
+        return ResponseEntity.ok(this.userService.updateUser(user_id, user));
     }
 
     @DeleteMapping("/delete/user/{user_id}")
