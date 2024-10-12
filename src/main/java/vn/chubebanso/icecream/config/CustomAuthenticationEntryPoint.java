@@ -15,6 +15,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import vn.chubebanso.icecream.domain.RestResponse;
 
 @Component
+
 public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint {
     private final AuthenticationEntryPoint deleate = new BearerTokenAuthenticationEntryPoint();
     private final ObjectMapper mapper;
