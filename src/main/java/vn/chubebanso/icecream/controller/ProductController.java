@@ -7,10 +7,10 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.validation.Valid;
 import vn.chubebanso.icecream.domain.Product;
 import vn.chubebanso.icecream.service.ProductService;
 import vn.chubebanso.icecream.util.error.IdInvalidException;
@@ -24,7 +24,7 @@ public class ProductController {
     }
 
     @PostMapping("/create/product")
-    public ResponseEntity<Product> createUserController(@RequestBody Product pr) {
+    public ResponseEntity<Product> createProductController(@Valid @RequestBody Product pr) {
         Product newProduct = this.productService.handleCreateProduct(pr);
         return ResponseEntity.ok(newProduct);
     }
@@ -39,10 +39,10 @@ public class ProductController {
         return ResponseEntity.ok(this.productService.getProductById(product_id));
     }
 
-    @PutMapping("/update/product/{product_id}")
-    public ResponseEntity<Product> updateProductInfo(@RequestBody Product pr, @PathVariable Long product_id) {
-        return ResponseEntity.ok(this.productService.updateProduct(product_id, pr));
-    }
+    // @PutMapping("/update/product/{product_id}")
+    // public ResponseEntity<Product> updateProductInfo(@RequestBody Product pr, @PathVariable Long product_id) {
+    //     return ResponseEntity.ok(this.productService.updateProduct(product_id, pr));
+    // }
 
     @DeleteMapping("/delete/product/{product_id}")
     public ResponseEntity<Void> deleteProduct(@PathVariable Long product_id)

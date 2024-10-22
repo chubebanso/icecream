@@ -34,18 +34,18 @@ public class ProductService{
         }
     }
 
-    public Product updateProduct(Long product_id, Product pr){
-        Optional<Product> optionalProduct = this.productRepository.findById(product_id);
-        if (optionalProduct.isPresent()) {        
-            optionalProduct.get().setCategory_id(pr.getCategory_id()) ;
-            optionalProduct.get().setName(pr.getName()) ;
-            optionalProduct.get().setPrice(pr.getPrice());
-            optionalProduct.get().setUnit(pr.getUnit());
-            return this.productRepository.save(optionalProduct.get());
-        } else {
-            return null;
-        }
-    }
+    // public Product updateProduct(Long product_id, Product pr){
+    //     Optional<Product> optionalProduct = this.productRepository.findById(product_id);
+    //     if (optionalProduct.isPresent()) {        
+    //         optionalProduct.get().setCategory_id(pr.get()) ;
+    //         optionalProduct.get().setName(pr.getName()) ;
+    //         optionalProduct.get().setPrice(pr.getPrice());
+    //         optionalProduct.get().setUnit(pr.getUnit());
+    //         return this.productRepository.save(optionalProduct.get());
+    //     } else {
+    //         return null;
+    //     }
+    // }
 
     public void deleteProductById(Long product_id){
         this.productRepository.deleteById(product_id);
