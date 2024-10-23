@@ -22,12 +22,11 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Id
     @ManyToOne
     @JoinColumn(name = "category_id")
-    private ProductCategory category;
+    private ProductCategory productCategory;
 
-    @OneToMany(mappedBy="product")
+    @OneToMany(mappedBy = "product")
     private List<CartItem> items;
 
     @NotEmpty(message = "Name cannot be empty")
@@ -94,20 +93,20 @@ public class Product {
         this.price = price;
     }
 
-    public ProductCategory getCategory() {
-        return category;
-    }
-
-    public void setCategory(ProductCategory category) {
-        this.category = category;
-    }
-
     public List<CartItem> getItems() {
         return items;
     }
 
     public void setItems(List<CartItem> items) {
         this.items = items;
+    }
+
+    public ProductCategory getProductCategory() {
+        return productCategory;
+    }
+
+    public void setProductCategory(ProductCategory productCategory) {
+        this.productCategory = productCategory;
     }
 
 }

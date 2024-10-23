@@ -1,4 +1,4 @@
-package vn.chubebanso.icecream.controller;
+package vn.chubebanso.icecream.controller.admin;
 
 import java.util.List;
 
@@ -48,7 +48,7 @@ public class ProductController {
     public ResponseEntity<Void> deleteProduct(@PathVariable Long product_id)
             throws IdInvalidException {
         if (product_id > 1500) {
-            throw new vn.chubebanso.icecream.util.error.IdInvalidException("Khong tim thay user");
+            throw new vn.chubebanso.icecream.util.error.IdInvalidException("Khong tim thay product");
         }
         this.productService.deleteProductById(product_id);
         return ResponseEntity.noContent().build();

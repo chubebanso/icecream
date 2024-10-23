@@ -1,4 +1,4 @@
-package vn.chubebanso.icecream.controller;
+package vn.chubebanso.icecream.controller.admin;
 
 import java.util.List;
 

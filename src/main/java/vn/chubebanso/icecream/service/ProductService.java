@@ -25,9 +25,9 @@ public class ProductService{
     }
 
     public Product getProductById(Long product_id) {
-        Optional<Product> optionalProductoduct = this.productRepository.findById(product_id);
-        if (optionalProductoduct.isPresent()) {
-            Product pr = optionalProductoduct.get();
+        Optional<Product> optionalProduct = this.productRepository.findById(product_id);
+        if (optionalProduct.isPresent()) {
+            Product pr = optionalProduct.get();
             return pr;
         } else {
             return null;
