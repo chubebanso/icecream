@@ -5,6 +5,6 @@ import org.springframework.stereotype.Repository;
 
 import vn.chubebanso.icecream.domain.CartItem;
 
-// @Repository
-// public interface CartItemRepository extends JpaRepository<CartItem, Long>{  
-// }
+@Repository
+public interface CartItemRepository extends JpaRepository<CartItem, Long>{  
+}
