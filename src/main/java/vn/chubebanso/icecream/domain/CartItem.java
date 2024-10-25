@@ -1,20 +1,18 @@
 package vn.chubebanso.icecream.domain;
 
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.IdClass;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 
 @Entity
-@Table(name = "cartitem")
+@IdClass(CartItemImp.class)
 public class CartItem {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+
+    // This class [class vn.chubebanso.icecream.domain.CartItem] does not define an
+    // IdClass
 
     @Id
     @ManyToOne
@@ -52,13 +50,4 @@ public class CartItem {
     public void setProduct_quanity(long product_quanity) {
         this.product_quanity = product_quanity;
     }
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
 }
