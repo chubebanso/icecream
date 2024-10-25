@@ -1,11 +1,15 @@
 package vn.chubebanso.icecream.domain;
 
+import java.util.List;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
@@ -13,41 +17,46 @@ import jakarta.validation.constraints.Size;
 @Table(name = "product")
 public class Product {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @NotEmpty(message = "Category ID cannot be empty")
-    @Pattern(regexp = "^[0-9]+$", message = "Category ID must be a number")
-    @Size(max = 10, message = "Category ID must have at most 10 digits")
-    private String category_id;
+    @OneToMany(mappedBy = "product")
+    private List<CartItem> items;
 
     @NotEmpty(message = "Name cannot be empty")
     @Pattern(regexp = "^[A-Za-z0-9_-]+$", message = "Invalid name format")
     @Size(min = 2, message = "Name must have at least 2 characters")
     private String name;
 
-    @NotEmpty(message = "Price cannot be empty")
-    @Pattern(regexp = "^(\\d{1,3}(,\\d{3})*|\\d+)(VNĐ)$", message = "Price must be in the format '11500VNĐ'")
-    private String price;
+    @NotNull
+    private float price;
 
     @NotEmpty(message = "Unit cannot be empty")
     @Pattern(regexp = "ly|chai|chiếc|que|hộp", message = "Unit must be one of {ly, chai, chiếc, que, hộp}")
     private String unit;
-    
+
+    private boolean IsAvailableForOrder = true;
+
+    private String image;
+
+    @NotEmpty(message = "Category cannot be empty")
+    @Pattern(regexp = "bánh trung thu|nước|kem", message = "Category must be one of {bánh trung thu, nước, kem}")
+    private String category;
+
+    public boolean isIsAvailableForOrder() {
+        return IsAvailableForOrder;
+    }
+
+    public void setIsAvailableForOrder(boolean isAvailableForOrder) {
+        IsAvailableForOrder = isAvailableForOrder;
+    }
+
     public long getId() {
         return id;
     }
 
     public void setId(long id) {
         this.id = id;
-    }
-
-    public String getCategory_id() {
-        return category_id;
-    }
-
-    public void setCategory_id(String category_id) {
-        this.category_id = category_id;
     }
 
     public String getName() {
@@ -58,19 +67,44 @@ public class Product {
         this.name = name;
     }
 
-    public String getPrice() {
-        return price;
-    }
-
-    public void setPrice(String price) {
-        this.price = price;
-    }
-
     public String getUnit() {
         return unit;
     }
 
     public void setUnit(String unit) {
         this.unit = unit;
-    }   
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public float getPrice() {
+        return price;
+    }
+
+    public void setPrice(float price) {
+        this.price = price;
+    }
+
+    public List<CartItem> getItems() {
+        return items;
+    }
+
+    public void setItems(List<CartItem> items) {
+        this.items = items;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
 }

@@ -1,4 +1,4 @@
-package vn.chubebanso.icecream.controller;
+package vn.chubebanso.icecream.controller.admin;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

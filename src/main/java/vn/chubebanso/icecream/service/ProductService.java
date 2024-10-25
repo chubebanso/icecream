@@ -25,9 +25,9 @@ public class ProductService{
     }
 
     public Product getProductById(Long product_id) {
-        Optional<Product> optionalProductoduct = this.productRepository.findById(product_id);
-        if (optionalProductoduct.isPresent()) {
-            Product pr = optionalProductoduct.get();
+        Optional<Product> optionalProduct = this.productRepository.findById(product_id);
+        if (optionalProduct.isPresent()) {
+            Product pr = optionalProduct.get();
             return pr;
         } else {
             return null;
@@ -37,10 +37,11 @@ public class ProductService{
     public Product updateProduct(Long product_id, Product pr){
         Optional<Product> optionalProduct = this.productRepository.findById(product_id);
         if (optionalProduct.isPresent()) {        
-            optionalProduct.get().setCategory_id(pr.getCategory_id()) ;
+            optionalProduct.get().setCategory(pr.getCategory()) ;
             optionalProduct.get().setName(pr.getName()) ;
             optionalProduct.get().setPrice(pr.getPrice());
             optionalProduct.get().setUnit(pr.getUnit());
+            optionalProduct.get().setImage(pr.getImage());
             return this.productRepository.save(optionalProduct.get());
         } else {
             return null;
