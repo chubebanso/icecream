@@ -25,6 +25,7 @@ public class FormatRestResponse implements ResponseBodyAdvice {
         HttpServletResponse servletResponse = ((ServletServerHttpResponse) response).getServletResponse();
         int status = servletResponse.getStatus();
         vn.chubebanso.icecream.domain.RestResponse<Object> restResponse = new RestResponse<Object>();
+        restResponse.setStatusCode(status);
         if (body instanceof String) {
             return body;
         }

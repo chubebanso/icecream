@@ -15,6 +15,7 @@ import jakarta.validation.Valid;
 import vn.chubebanso.icecream.domain.Product;
 import vn.chubebanso.icecream.service.ProductService;
 import vn.chubebanso.icecream.util.error.IdInvalidException;
+import jakarta.validation.Valid;
 
 @RestController
 public class ProductController {
@@ -25,15 +26,16 @@ public class ProductController {
     }
 
     @PostMapping("/create/product")
-    public ResponseEntity<Product> createProductController(@Valid @RequestBody Product pr) {
+
+    public ResponseEntity<Product> createUserController(@Valid @RequestBody Product pr) {
         Product newProduct = this.productService.handleCreateProduct(pr);
         return ResponseEntity.ok(newProduct);
     }
 
-    @GetMapping("/product")
     public ResponseEntity<List<Product>> getAllProduct() {
         return ResponseEntity.ok(this.productService.getAllProduct());
     }
+
 
     @GetMapping("/product/{product_id}")
     public ResponseEntity<Product> getProductById(@PathVariable Long product_id) {
