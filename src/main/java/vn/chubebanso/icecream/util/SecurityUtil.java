@@ -31,12 +31,12 @@ public class SecurityUtil {
         Instant now = Instant.now();
         Instant validity = now.plus(this.jwtExpiration, ChronoUnit.SECONDS);
 
-        // @formatter:off
+        // @formatter:off chua cac thong tin payload 
         JwtClaimsSet claims = JwtClaimsSet.builder()
-            .issuedAt(now)
-            .expiresAt(validity)
-            .subject(authentication.getName())
-            .claim("chubebanso", authentication)
+            .issuedAt(now) // thoi gian phat hanh token
+            .expiresAt(validity) // thoi gian het han token
+            .subject(authentication.getName()) // Ten nguoi dung 
+            .claim("chubebanso", authentication) //thong tin quyen han 
             .build();
 
         JwsHeader jwsHeader = JwsHeader.with(JWT_ALGORITHM).build();

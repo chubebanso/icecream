@@ -1,6 +1,7 @@
 package vn.chubebanso.icecream.config;
 
 import java.io.IOException;
+import java.util.Optional;
 
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.oauth2.server.resource.web.BearerTokenAuthenticationEntryPoint;
@@ -30,8 +31,12 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
         this.deleate.commence(request, response, authException);
         RestResponse<Object> res = new RestResponse<Object>();
         response.setContentType("application/json;charset=UTF-8");
-        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        response.getWriter().write("{\"message\": \"Token khong hop le (het han , khong dung dinh dang .....).\"}");
+        String errorMessage = Optional.ofNullable(authException.getCause()) // NULL
+                .map(Throwable::getMessage)
+                .orElse(authException.getMessage());
+        res.setErrCode(errorMessage);
+        res.setStatusCode(HttpServletResponse.SC_UNAUTHORIZED);
+        res.setMessage("Token không hợp lệ (hết hạn, không đúng định dạng, hoặc không truyền JWT ở header)...");
         mapper.writeValue(response.getWriter(), res);
     }
 }
