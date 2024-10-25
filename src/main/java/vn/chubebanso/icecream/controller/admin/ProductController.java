@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -35,14 +36,15 @@ public class ProductController {
     }
 
     @GetMapping("/product/{product_id}")
-    public ResponseEntity<Product> getProductById(@RequestBody @PathVariable Long product_id) {
+    public ResponseEntity<Product> getProductById(@PathVariable Long product_id) {
         return ResponseEntity.ok(this.productService.getProductById(product_id));
     }
 
-    // @PutMapping("/update/product/{product_id}")
-    // public ResponseEntity<Product> updateProductInfo(@RequestBody Product pr, @PathVariable Long product_id) {
-    //     return ResponseEntity.ok(this.productService.updateProduct(product_id, pr));
-    // }
+    @PutMapping("/update/product/{product_id}")
+    public ResponseEntity<Product> updateProductInfo(@RequestBody Product pr,
+            @PathVariable("product_id") Long productId) {
+        return ResponseEntity.ok(this.productService.updateProduct(productId, pr));
+    }
 
     @DeleteMapping("/delete/product/{product_id}")
     public ResponseEntity<Void> deleteProduct(@PathVariable Long product_id)

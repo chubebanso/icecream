@@ -6,8 +6,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotEmpty;
@@ -21,10 +19,6 @@ public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-
-    @ManyToOne
-    @JoinColumn(name = "category_id")
-    private ProductCategory productCategory;
 
     @OneToMany(mappedBy = "product")
     private List<CartItem> items;
@@ -44,6 +38,10 @@ public class Product {
     private boolean IsAvailableForOrder = true;
 
     private String image;
+
+    @NotEmpty(message = "Category cannot be empty")
+    @Pattern(regexp = "bánh trung thu|nước|kem", message = "Category must be one of {bánh trung thu, nước, kem}")
+    private String category;
 
     public boolean isIsAvailableForOrder() {
         return IsAvailableForOrder;
@@ -101,12 +99,12 @@ public class Product {
         this.items = items;
     }
 
-    public ProductCategory getProductCategory() {
-        return productCategory;
+    public String getCategory() {
+        return category;
     }
 
-    public void setProductCategory(ProductCategory productCategory) {
-        this.productCategory = productCategory;
+    public void setCategory(String category) {
+        this.category = category;
     }
 
 }
