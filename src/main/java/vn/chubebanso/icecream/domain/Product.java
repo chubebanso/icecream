@@ -39,8 +39,13 @@ public class Product {
 
     private String image;
 
+<<<<<<< HEAD
     @NotEmpty(message = "Unit cannot be empty")
     @Pattern(regexp = "bánh trung thu|nước|kem", message = "Unit must be one of {bánh trung thu, nước, kem}")
+=======
+    @NotEmpty(message = "Category cannot be empty")
+    @Pattern(regexp = "bánh trung thu|nước|kem", message = "Category must be one of {bánh trung thu, nước, kem}")
+>>>>>>> 1b6cb097be25beaa7bfc6ea0766ebb3851424802
     private String category;
 
     public boolean isIsAvailableForOrder() {

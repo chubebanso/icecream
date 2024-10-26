@@ -16,6 +16,7 @@ import vn.chubebanso.icecream.domain.Product;
 import vn.chubebanso.icecream.service.ProductService;
 import vn.chubebanso.icecream.util.error.IdInvalidException;
 
+
 @RestController
 public class ProductController {
     private final ProductService productService;
@@ -25,15 +26,16 @@ public class ProductController {
     }
 
     @PostMapping("/create/product")
+
     public ResponseEntity<Product> createProductController(@Valid @RequestBody Product pr) {
         Product newProduct = this.productService.handleCreateProduct(pr);
         return ResponseEntity.ok(newProduct);
     }
 
-    @GetMapping("/product")
     public ResponseEntity<List<Product>> getAllProduct() {
         return ResponseEntity.ok(this.productService.getAllProduct());
     }
+
 
     @GetMapping("/product/{product_id}")
     public ResponseEntity<Product> getProductById(@PathVariable Long product_id) {
@@ -41,8 +43,9 @@ public class ProductController {
     }
 
     @PutMapping("/update/product/{product_id}")
-    public ResponseEntity<Product> updateProductInfo(@RequestBody Product pr, @PathVariable Long product_id) {
-        return ResponseEntity.ok(this.productService.updateProduct(product_id, pr));
+    public ResponseEntity<Product> updateProductInfo(@RequestBody Product pr,
+            @PathVariable("product_id") Long productId) {
+        return ResponseEntity.ok(this.productService.updateProduct(productId, pr));
     }
 
     @DeleteMapping("/delete/product/{product_id}")

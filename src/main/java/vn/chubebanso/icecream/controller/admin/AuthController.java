@@ -30,11 +30,12 @@ public class AuthController {
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
                 loginDto.getUsername(), loginDto.getPassword());
 
-        // xác thực người dùng => cần viết hàm loadUserByUsername
+        // xác thực người dùng => cần viết hàm loadUserByUsername , neu doi tuong hop le
+        // tra ve authentication chua thong tin nguoi dung
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
-
+        // Nó sử dụng thông tin từ Authentication để tạo một JWT Token.
         String access_token = this.securityUtil.createToken(authentication);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+        SecurityContextHolder.getContext().setAuthentication(authentication); // chua thong tin dang nhap cua nguoi dung
         ResLoginDTO res = new ResLoginDTO();
         res.setAccessToken(access_token);
         return ResponseEntity.ok().body(res);

@@ -8,6 +8,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.NotNull;
 
 @Entity
+<<<<<<< HEAD
 @IdClass(CartItemImp.class)
 public class CartItem {
 
@@ -15,11 +16,15 @@ public class CartItem {
     // IdClass
 
     @Id
+=======
+@Table(name = "cart_item")
+public class CartItem {
+    @Id
+    private long id;
+>>>>>>> 1b6cb097be25beaa7bfc6ea0766ebb3851424802
     @ManyToOne
     @JoinColumn(name = "cart_id")
     private Cart cart;
-
-    @Id
     @ManyToOne
     @JoinColumn(name = "product_id")
     private Product product;
