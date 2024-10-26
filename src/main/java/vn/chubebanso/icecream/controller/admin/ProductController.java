@@ -27,7 +27,7 @@ public class ProductController {
 
     @PostMapping("/create/product")
 
-    public ResponseEntity<Product> createUserController(@Valid @RequestBody Product pr) {
+    public ResponseEntity<Product> createProductController(@Valid @RequestBody Product pr) {
         Product newProduct = this.productService.handleCreateProduct(pr);
         return ResponseEntity.ok(newProduct);
     }
