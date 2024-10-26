@@ -39,13 +39,8 @@ public class Product {
 
     private String image;
 
-<<<<<<< HEAD
-    @NotEmpty(message = "Unit cannot be empty")
-    @Pattern(regexp = "bánh trung thu|nước|kem", message = "Unit must be one of {bánh trung thu, nước, kem}")
-=======
     @NotEmpty(message = "Category cannot be empty")
     @Pattern(regexp = "bánh trung thu|nước|kem", message = "Category must be one of {bánh trung thu, nước, kem}")
->>>>>>> 1b6cb097be25beaa7bfc6ea0766ebb3851424802
     private String category;
 
     public boolean isIsAvailableForOrder() {
@@ -88,14 +83,6 @@ public class Product {
         this.image = image;
     }
 
-    public float getPrice() {
-        return price;
-    }
-
-    public void setPrice(float price) {
-        this.price = price;
-    }
-
     public List<CartItem> getItems() {
         return items;
     }
@@ -110,6 +97,14 @@ public class Product {
 
     public void setCategory(String category) {
         this.category = category;
+    }
+
+    public float getPrice() {
+        return price;
+    }
+
+    public void setPrice(float price) {
+        this.price = price;
     }
 
 }

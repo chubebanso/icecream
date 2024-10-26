@@ -20,42 +20,37 @@
 // import vn.chubebanso.icecream.util.error.IdInvalidException;
 
 
-// // @RestController
-// // public class CartItemController {
-// //     private final CartItemService cartItemService;
+// @RestController
+// public class CartItemController {
+//     private final CartItemService cartItemService;
 
-// //     public CartItemController(CartItemService cartItemService) {
-// //         this.cartItemService = cartItemService;
-// //     }
+//     public CartItemController(CartItemService cartItemService) {
+//         this.cartItemService = cartItemService;
+//     }
 
-// //     @GetMapping("/cart-item")
-// //     public ResponseEntity<List<CartItem>> getAllCartItem() {
-// //         return ResponseEntity.ok(this.cartItemService.getAllCartItem());
-// //     }
-
-// //     @GetMapping("/cart-item/{cart_id}/product/{product_id}")
-// //     public ResponseEntity<CartItem> getCartItemById(@Valid @RequestBody @PathVariable Long cart_id, @PathVariable Long product_id) {
-// //         return ResponseEntity.ok(this.cartItemService.getCartItemById(cart_id, product_id));
-// //     }
+//     @GetMapping("/cart-item/{cart_id}/product/{product_id}")
+//     public ResponseEntity<CartItem> getCartItemById(@Valid @RequestBody @PathVariable Long cart_id, @PathVariable Long product_id) {
+//         return ResponseEntity.ok(this.cartItemService.getCartItemById(cart_id, product_id));
+//     }
     
-// //     @PostMapping("/create/cart-item")
-// //     public ResponseEntity<CartItem> createCartController(@Valid @RequestBody CartItem cartItem) {
-// //         CartItem newCartItem = this.cartItemService.handleCreateCartItem(cartItem);
-// //         return ResponseEntity.ok(newCartItem);
-// //     }
+//     @PostMapping("/create/cart-item")
+//     public ResponseEntity<CartItem> createCartController(@Valid @RequestBody CartItem cartItem) {
+//         CartItem newCartItem = this.cartItemService.handleCreateCartItem(cartItem);
+//         return ResponseEntity.ok(newCartItem);
+//     }
     
-// //     @PutMapping("/update/cart-item/{cart_id}")
-// //     public ResponseEntity<Cart> updateCartInfo(@Valid @RequestBody Cart cart, @PathVariable Long cart_id) {
-// //         return ResponseEntity.ok(this.cartItemService.updateCartItem(cart_id, cart));
-// //     }
+//     @PutMapping("/update/cart-item/{cart_id}")
+//     public ResponseEntity<Cart> updateCartInfo(@Valid @RequestBody Cart cart, @PathVariable Long cart_id) {
+//         return ResponseEntity.ok(this.cartItemService.updateCartItem(cart_id, cart));
+//     }
 
-// //     @DeleteMapping("/delete/cart-item/{cart_id}")
-// //     public ResponseEntity<Void> deleteCartItem(@Valid @PathVariable Long cart_id)
-// //             throws IdInvalidException {
-// //         if (cart_id > 1500) {
-// //             throw new vn.chubebanso.icecream.util.error.IdInvalidException("Khong tim thay product");
-// //         }
-// //         this.cartItemService.deleteCartItemById(cart_id);
-// //         return ResponseEntity.noContent().build();
-// //     }
-// // }
+//     @DeleteMapping("/delete/cart-item/{cart_id}")
+//     public ResponseEntity<Void> deleteCartItem(@Valid @PathVariable Long cart_id)
+//             throws IdInvalidException {
+//         if (cart_id > 1500) {
+//             throw new vn.chubebanso.icecream.util.error.IdInvalidException("Khong tim thay product");
+//         }
+//         this.cartItemService.deleteCartItemById(cart_id);
+//         return ResponseEntity.noContent().build();
+//     }
+// }
