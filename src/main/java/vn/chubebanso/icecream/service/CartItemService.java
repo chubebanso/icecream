@@ -1,4 +1,4 @@
-// package vn.chubebanso.icecream.service;
+package vn.chubebanso.icecream.service;
 
 // import org.springframework.stereotype.Service;
 
