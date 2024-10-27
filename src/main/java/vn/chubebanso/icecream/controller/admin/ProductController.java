@@ -16,7 +16,6 @@ import vn.chubebanso.icecream.domain.Product;
 import vn.chubebanso.icecream.service.ProductService;
 import vn.chubebanso.icecream.util.error.IdInvalidException;
 
-
 @RestController
 public class ProductController {
     private final ProductService productService;
@@ -36,19 +35,19 @@ public class ProductController {
         return ResponseEntity.ok(this.productService.getAllProduct());
     }
 
-
     @GetMapping("/product/{product_id}")
     public ResponseEntity<Product> getProductById(@PathVariable Long product_id) {
         return ResponseEntity.ok(this.productService.getProductById(product_id));
     }
 
     @PutMapping("/update/product/{product_id}")
-    public ResponseEntity<Product> updateProductInfo(@RequestBody Product pr, @PathVariable("product_id") Long productId) {
+    public ResponseEntity<Product> updateProductInfo(@RequestBody Product pr,
+            @PathVariable("product_id") Long productId) {
         return ResponseEntity.ok(this.productService.updateProduct(productId, pr));
     }
 
     @DeleteMapping("/delete/product/{product_id}")
-    public ResponseEntity<Void> deleteProduct(@PathVariable Long product_id)
+    public ResponseEntity<Void> deleteProduct(@PathVariable("product_id") Long product_id)
             throws IdInvalidException {
         if (product_id > 1500) {
             throw new vn.chubebanso.icecream.util.error.IdInvalidException("Khong tim thay product");

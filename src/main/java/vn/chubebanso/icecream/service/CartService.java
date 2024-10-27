@@ -11,7 +11,7 @@ import vn.chubebanso.icecream.repository.CartRepository;
 public class CartService {
     private final CartRepository cartRepo;
 
-    public CartService (CartRepository cartRepo){
+    public CartService(CartRepository cartRepo) {
         this.cartRepo = cartRepo;
     }
 
@@ -33,9 +33,9 @@ public class CartService {
         }
     }
 
-    public Cart updateCart(Long cart_id, Cart cart){
+    public Cart updateCart(Long cart_id, Cart cart) {
         Optional<Cart> optionalCart = this.cartRepo.findById(cart_id);
-        if (optionalCart.isPresent()) {        
+        if (optionalCart.isPresent()) {
             optionalCart.get().setDescription(cart.getDescription());
             return this.cartRepo.save(optionalCart.get());
         } else {
@@ -43,7 +43,18 @@ public class CartService {
         }
     }
 
-    public void deleteCartById(Long cart_id){
+    public void deleteCartById(Long cart_id) {
         this.cartRepo.deleteById(cart_id);
+    }
+
+    public Cart createCart(String phone) {
+        Cart newCart = new Cart();
+        newCart.setSum(0);
+        newCart.setPhonenum(phone);
+        return this.cartRepo.save(newCart);
+    }
+
+    public Cart saveCart(Cart cart) {
+        return this.cartRepo.save(cart);
     }
 }
