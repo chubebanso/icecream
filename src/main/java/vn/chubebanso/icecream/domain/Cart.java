@@ -8,6 +8,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotEmpty;
 
 // shift+alt+F for align
 
@@ -21,6 +22,7 @@ public class Cart {
     @OneToMany(mappedBy = "cart")
     private List<CartItem> items;
 
+    @NotEmpty(message = "Không để trống phần mô tả")
     private String description;
 
     public long getId() {
