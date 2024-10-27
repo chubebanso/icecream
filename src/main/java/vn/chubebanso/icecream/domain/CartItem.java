@@ -23,9 +23,9 @@ public class CartItem {
     @ManyToOne
     @JoinColumn(name = "product_id")
     private Product product;
-
     @NotNull
     private long product_quanity;
+    private float price;
 
     public Cart getCart() {
         return cart;
@@ -57,5 +57,13 @@ public class CartItem {
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    public float getPrice() {
+        return price;
+    }
+
+    public void setPrice(float price) {
+        this.price = price;
     }
 }

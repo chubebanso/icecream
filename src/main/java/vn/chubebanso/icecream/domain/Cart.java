@@ -8,7 +8,9 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 
 // shift+alt+F for align
 
@@ -24,6 +26,18 @@ public class Cart {
 
     @NotEmpty(message = "Không để trống phần mô tả")
     private String description;
+    @Min(value = 0)
+    private long sum;
+    @NotNull
+    private String phonenum;
+
+    public long getSum() {
+        return sum;
+    }
+
+    public void setSum(long sum) {
+        this.sum = sum;
+    }
 
     public long getId() {
         return id;
@@ -47,5 +61,13 @@ public class Cart {
 
     public void setItems(List<CartItem> items) {
         this.items = items;
+    }
+
+    public String getPhonenum() {
+        return phonenum;
+    }
+
+    public void setPhonenum(String phonenum) {
+        this.phonenum = phonenum;
     }
 }
