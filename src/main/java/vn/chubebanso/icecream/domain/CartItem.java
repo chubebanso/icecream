@@ -26,7 +26,6 @@ public class CartItem {
     @JoinColumn(name = "product_id")
     @JsonBackReference
     private Product product;
-
     @NotNull
     private long productQuantity;
 
