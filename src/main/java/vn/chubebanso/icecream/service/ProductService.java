@@ -50,6 +50,7 @@ public class ProductService {
             optionalProduct.get().setPrice(pr.getPrice());
             optionalProduct.get().setUnit(pr.getUnit());
             optionalProduct.get().setImage(pr.getImage());
+            optionalProduct.get().setAvailableForOrder(pr.isAvailableForOrder());
             return this.productRepository.save(optionalProduct.get());
         } else {
             return null;
@@ -69,13 +70,13 @@ public class ProductService {
                 cartItem.setCart(cart);
                 cartItem.setProduct(optionalProduct.get());
                 cartItem.setPrice(optionalProduct.get().getPrice());
-                cartItem.setProduct_quanity(1);
+                cartItem.setProductQuantity(1);
                 this.cartItemRepository.save(cartItem);
                 long sum = cart.getSum() + 1;
                 cart.setSum(sum);
                 cart = this.cartService.saveCart(cart);
             } else {
-                oldCartiItem.setProduct_quanity(oldCartiItem.getProduct_quanity() + 1);
+                oldCartiItem.setProductQuantity(oldCartiItem.getProductQuantity() + 1);
                 this.cartItemRepository.save(oldCartiItem);
             }
         }

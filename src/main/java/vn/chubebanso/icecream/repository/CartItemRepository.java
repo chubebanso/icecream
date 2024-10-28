@@ -5,7 +5,6 @@ import org.springframework.stereotype.Repository;
 
 import vn.chubebanso.icecream.domain.CartItem;
 import vn.chubebanso.icecream.domain.Cart;
-import java.util.List;
 import vn.chubebanso.icecream.domain.Product;
 
 @Repository
