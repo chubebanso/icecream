@@ -17,8 +17,7 @@ public class ProductService {
     private final CartItemRepository cartItemRepository;
     private final CartService cartService;
 
-    public ProductService(ProductRepository productRepository, CartItemRepository cartItemRepository,
-            CartService cartService) {
+    public ProductService(ProductRepository productRepository, CartItemRepository cartItemRepository, CartService cartService) {
         this.productRepository = productRepository;
         this.cartItemRepository = cartItemRepository;
         this.cartService = cartService;
