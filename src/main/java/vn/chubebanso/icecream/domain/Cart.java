@@ -9,7 +9,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
 // shift+alt+F for align
@@ -24,8 +23,8 @@ public class Cart {
     @OneToMany(mappedBy = "cart")
     private List<CartItem> items;
 
-    @NotEmpty(message = "Không để trống phần mô tả")
     private String description;
+
     @Min(value = 0)
     private long sum;
     @NotNull
