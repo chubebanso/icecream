@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.validation.Valid;
 import vn.chubebanso.icecream.domain.User;
 import vn.chubebanso.icecream.service.UserService;
 import vn.chubebanso.icecream.util.error.IdInvalidException;
@@ -41,7 +42,7 @@ public class UserController {
     }
 
     @PostMapping("/create/user")
-    public ResponseEntity<User> createUserController(@RequestBody User user) {
+    public ResponseEntity<User> createUserController(@Valid @RequestBody User user) {
         String hashPassword = this.passwordEncoder.encode(user.getPassword());
         user.setPassword(hashPassword);
         User newUser = this.userService.handleCreateUser(user);
@@ -54,12 +55,12 @@ public class UserController {
     }
 
     @GetMapping("/user/{user_id}")
-    public ResponseEntity<User> getUserById(@RequestBody @PathVariable Long user_id) {
+    public ResponseEntity<User> getUserById(@Valid @RequestBody @PathVariable Long user_id) {
         return ResponseEntity.ok(this.userService.getUserById(user_id));
     }
 
     @PutMapping("/update/user/{user_id}")
-    public ResponseEntity<User> UpdateUserInfo(@RequestBody User user, @PathVariable Long user_id) {
+    public ResponseEntity<User> UpdateUserInfo(@Valid @RequestBody User user, @PathVariable Long user_id) {
         return ResponseEntity.ok(this.userService.updateUser(user_id, user));
     }
 
