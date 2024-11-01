@@ -51,7 +51,7 @@ public class CartService {
 
                 dto.setProductPrice(cartItem.getProduct().getPrice());
                 float productPrice = cartItem.getProduct().getPrice();
-
+                
                 dto.setProductQuantity(cartItem.getProductQuantity());
                 long productQuantity = cartItem.getProductQuantity();
 
