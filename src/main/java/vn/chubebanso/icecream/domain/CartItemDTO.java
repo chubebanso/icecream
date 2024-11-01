@@ -1,4 +1,4 @@
-package vn.chubebanso.icecream.dto;
+package vn.chubebanso.icecream.domain;
 
 // lấy cart item thì t muốn lấy cả thông tin sản phẩm nào... nên là làm 1 cái dto để đẩy dữ liệu ra
 public class CartItemDTO {
@@ -91,5 +91,4 @@ public class CartItemDTO {
     public void setSubTotal(float subTotal) {
         this.subTotal = subTotal;
     }
-
 }

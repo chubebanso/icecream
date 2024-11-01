@@ -1,7 +1,8 @@
-package vn.chubebanso.icecream.dto;
+package vn.chubebanso.icecream.domain;
 
 import java.util.List;
 
+// tương tự với cartitem DTO
 public class CartDTO {
 
     private List<CartItemDTO> cartItemDTOs;

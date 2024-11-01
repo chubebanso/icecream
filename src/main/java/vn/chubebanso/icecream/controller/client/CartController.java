@@ -14,6 +14,8 @@ import vn.chubebanso.icecream.service.CartService;
 
 import org.springframework.web.bind.annotation.GetMapping;
 
+import vn.chubebanso.icecream.domain.CartDTO;
+
 
 @RestController
 public class CartController {
@@ -31,7 +33,7 @@ public class CartController {
 
     // show tất cả các carts của khách => khách biết mình đã từng ăn gì đặt lại cho dễ
     @GetMapping("/show-all-carts")
-    public ResponseEntity<List<Cart>> showAllCarts(@RequestParam("phone") String phone) {
+    public ResponseEntity<List<CartDTO>> showAllCarts(@RequestParam("phone") String phone) {
         return ResponseEntity.ok(this.cartService.showAllCarts(phone));
     }
     

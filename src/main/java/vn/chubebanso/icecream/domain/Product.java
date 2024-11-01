@@ -43,7 +43,7 @@ public class Product {
     private String image;
 
     @NotEmpty(message = "Category cannot be empty")
-    @Pattern(regexp = "bánh trung thu|nước|kem", message = "Unit must be one of {bánh trung thu, nước, kem}")
+    @Pattern(regexp = "bánh trung thu|nước|kem", message = "Category must be one of {bánh trung thu, nước, kem}")
     private String category;
 
     public long getId() {
