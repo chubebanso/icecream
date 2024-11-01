@@ -2,6 +2,8 @@ package vn.chubebanso.icecream.domain;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -21,6 +23,7 @@ public class Product {
     private long id;
 
     @OneToMany(mappedBy = "product")
+    @JsonManagedReference
     private List<CartItem> items;
 
     @NotEmpty(message = "Name cannot be empty")
@@ -35,21 +38,13 @@ public class Product {
     @Pattern(regexp = "ly|chai|chiếc|que|hộp", message = "Unit must be one of {ly, chai, chiếc, que, hộp}")
     private String unit;
 
-    private boolean IsAvailableForOrder = true;
+    private boolean isAvailableForOrder;
 
     private String image;
 
     @NotEmpty(message = "Category cannot be empty")
     @Pattern(regexp = "bánh trung thu|nước|kem", message = "Unit must be one of {bánh trung thu, nước, kem}")
     private String category;
-
-    public boolean isIsAvailableForOrder() {
-        return IsAvailableForOrder;
-    }
-
-    public void setIsAvailableForOrder(boolean isAvailableForOrder) {
-        IsAvailableForOrder = isAvailableForOrder;
-    }
 
     public long getId() {
         return id;
@@ -105,5 +100,13 @@ public class Product {
 
     public void setCategory(String category) {
         this.category = category;
+    }
+
+    public boolean isAvailableForOrder() {
+        return isAvailableForOrder;
+    }
+
+    public void setAvailableForOrder(boolean isAvailableForOrder) {
+        this.isAvailableForOrder = isAvailableForOrder;
     }
 }

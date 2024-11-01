@@ -1,5 +1,6 @@
 package vn.chubebanso.icecream.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -8,21 +9,29 @@ import org.springframework.stereotype.Service;
 import vn.chubebanso.icecream.domain.Cart;
 import vn.chubebanso.icecream.domain.CartItem;
 import vn.chubebanso.icecream.domain.Product;
+import vn.chubebanso.icecream.dto.CartItemDTO;
 import vn.chubebanso.icecream.repository.CartItemRepository;
+import vn.chubebanso.icecream.repository.CartRepository;
 import vn.chubebanso.icecream.repository.ProductRepository;
 
 @Service
 public class ProductService {
+
     private final ProductRepository productRepository;
     private final CartItemRepository cartItemRepository;
     private final CartService cartService;
+    private final CartRepository cartRepo;
 
-    public ProductService(ProductRepository productRepository, CartItemRepository cartItemRepository, CartService cartService) {
+    public ProductService(ProductRepository productRepository, CartItemRepository cartItemRepository,
+            CartService cartService, CartRepository cartRepo) {
         this.productRepository = productRepository;
         this.cartItemRepository = cartItemRepository;
         this.cartService = cartService;
+        this.cartRepo = cartRepo;
+
     }
 
+    // Admin
     public Product handleCreateProduct(Product pr) {
         return this.productRepository.save(pr);
     }
@@ -31,6 +40,7 @@ public class ProductService {
         return this.productRepository.findAll();
     }
 
+    // system
     public Product getProductById(Long product_id) {
         Optional<Product> optionalProduct = this.productRepository.findById(product_id);
         if (optionalProduct.isPresent()) {
@@ -49,6 +59,7 @@ public class ProductService {
             optionalProduct.get().setPrice(pr.getPrice());
             optionalProduct.get().setUnit(pr.getUnit());
             optionalProduct.get().setImage(pr.getImage());
+            optionalProduct.get().setAvailableForOrder(pr.isAvailableForOrder());
             return this.productRepository.save(optionalProduct.get());
         } else {
             return null;
@@ -59,23 +70,74 @@ public class ProductService {
         this.productRepository.deleteById(product_id);
     }
 
+    // customer
     public void handleAddProductToCart(Cart cart, Long product_id) {
         Optional<Product> optionalProduct = this.productRepository.findById(product_id);
         if (optionalProduct.isPresent()) {
-            CartItem oldCartiItem = this.cartItemRepository.findByCartAndProduct(cart, optionalProduct.get());
-            if (oldCartiItem == null) {
+            CartItem oldCartItem = this.cartItemRepository.findByCartAndProduct(cart, optionalProduct.get());
+            if (oldCartItem == null) {
                 CartItem cartItem = new CartItem();
                 cartItem.setCart(cart);
                 cartItem.setProduct(optionalProduct.get());
-                cartItem.setPrice(optionalProduct.get().getPrice());
-                cartItem.setProduct_quanity(1);
+                cartItem.setSubTotal(optionalProduct.get().getPrice());
+                cartItem.setProductQuantity(1);
                 this.cartItemRepository.save(cartItem);
                 long sum = cart.getSum() + 1;
                 cart.setSum(sum);
-                cart = this.cartService.saveCart(cart);
             } else {
-                oldCartiItem.setProduct_quanity(oldCartiItem.getProduct_quanity() + 1);
-                this.cartItemRepository.save(oldCartiItem);
+                oldCartItem.setProductQuantity(oldCartItem.getProductQuantity() + 1);
+                this.cartItemRepository.save(oldCartItem);
+            }
+
+            this.cartService.saveCart(cart);
+        }
+    }
+
+    public List<CartItemDTO> getCartItembyCart(Long cart_id) {
+        Optional<Cart> optionalCart = this.cartRepo.findById(cart_id);
+        if (optionalCart.isPresent()) {
+            List<CartItem> cartItems = this.cartItemRepository.findByCart(optionalCart.get());
+            List<CartItemDTO> cartItemDTOs = new ArrayList<>();
+
+            for (CartItem cartItem : cartItems) {
+                CartItemDTO dto = new CartItemDTO();
+                dto.setProductName(cartItem.getProduct().getName());
+
+                dto.setProductPrice(cartItem.getProduct().getPrice());
+                float productPrice = cartItem.getProduct().getPrice();
+
+                dto.setProductQuantity(cartItem.getProductQuantity());
+                long productQuantity = cartItem.getProductQuantity();
+
+                float subtotal = productPrice * productQuantity;
+
+                dto.setSubTotal(subtotal);
+
+                dto.setUnit(cartItem.getProduct().getUnit());
+                dto.setImage(cartItem.getProduct().getImage());
+
+                cartItemDTOs.add(dto);
+            }
+
+            return cartItemDTOs;
+        } else {
+            return null;
+        }
+    }
+
+    public void handleDeleteItemFromCart(Cart cart, Product product) {
+        CartItem cartItem = this.cartItemRepository.findByCartAndProduct(cart, product);
+
+        if (cartItem != null) {
+            long newQuantity = cartItem.getProductQuantity() - 1;
+
+            if (newQuantity <= 0) {
+                // Xóa sản phẩm khỏi giỏ hàng nếu số lượng là 0
+                this.cartItemRepository.delete(cartItem);
+            } else {
+                // Cập nhật số lượng sản phẩm còn lại nếu số lượng lớn hơn 0
+                cartItem.setProductQuantity(newQuantity);
+                this.cartItemRepository.save(cartItem);
             }
         }
     }

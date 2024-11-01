@@ -1,31 +1,35 @@
 package vn.chubebanso.icecream.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.IdClass;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 
 @Entity
+@IdClass(CartItemID.class)
 @Table(name = "cart_item")
 public class CartItem {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
 
+    @Id
     @ManyToOne
     @JoinColumn(name = "cart_id")
+    @JsonBackReference
     private Cart cart;
 
+    @Id
     @ManyToOne
     @JoinColumn(name = "product_id")
+    @JsonBackReference
     private Product product;
     @NotNull
-    private long product_quanity;
-    private float price;
+    private long productQuantity;
+
+    private float subTotal;
 
     public Cart getCart() {
         return cart;
@@ -43,27 +47,19 @@ public class CartItem {
         this.product = product;
     }
 
-    public long getProduct_quanity() {
-        return product_quanity;
+    public long getProductQuantity() {
+        return productQuantity;
     }
 
-    public void setProduct_quanity(long product_quanity) {
-        this.product_quanity = product_quanity;
+    public void setProductQuantity(long productQuantity) {
+        this.productQuantity = productQuantity;
     }
 
-    public long getId() {
-        return id;
+    public float getSubTotal() {
+        return subTotal;
     }
 
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public float getPrice() {
-        return price;
-    }
-
-    public void setPrice(float price) {
-        this.price = price;
+    public void setSubTotal(float subTotal) {
+        this.subTotal = subTotal;
     }
 }
