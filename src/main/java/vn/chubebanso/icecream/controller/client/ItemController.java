@@ -11,13 +11,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
 import vn.chubebanso.icecream.domain.Cart;
+import vn.chubebanso.icecream.domain.CartItemDTO;
 import vn.chubebanso.icecream.domain.Product;
-import vn.chubebanso.icecream.dto.CartItemDTO;
 import vn.chubebanso.icecream.service.CartService;
 import vn.chubebanso.icecream.service.ProductService;
 
 @RestController
 public class ItemController {
+
     private final CartService cartService;
     private final ProductService productService;
 
@@ -36,6 +37,8 @@ public class ItemController {
         Product product = productService.getProductById(product_id);
         if (product == null) {
             return ResponseEntity.badRequest().body("Sản phẩm không tồn tại");
+        } else if (product.isAvailableForOrder() == false) {
+            return ResponseEntity.badRequest().body("Đã hết sản phẩm!");
         }
         String productName = product.getName();
         this.productService.handleAddProductToCart(cart, product_id);

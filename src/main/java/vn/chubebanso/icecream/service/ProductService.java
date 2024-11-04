@@ -8,8 +8,8 @@ import org.springframework.stereotype.Service;
 
 import vn.chubebanso.icecream.domain.Cart;
 import vn.chubebanso.icecream.domain.CartItem;
+import vn.chubebanso.icecream.domain.CartItemDTO;
 import vn.chubebanso.icecream.domain.Product;
-import vn.chubebanso.icecream.dto.CartItemDTO;
 import vn.chubebanso.icecream.repository.CartItemRepository;
 import vn.chubebanso.icecream.repository.CartRepository;
 import vn.chubebanso.icecream.repository.ProductRepository;
@@ -30,16 +30,17 @@ public class ProductService {
         this.cartRepo = cartRepo;
     }
 
-    // Admin
+    // Admin's order to create a product
     public Product handleCreateProduct(Product pr) {
         return this.productRepository.save(pr);
     }
 
+    // Admin's order to show all products
     public List<Product> getAllProduct() {
         return this.productRepository.findAll();
     }
 
-    // system
+    // Admin's order to show product by ID  
     public Product getProductById(Long product_id) {
         Optional<Product> optionalProduct = this.productRepository.findById(product_id);
         if (optionalProduct.isPresent()) {
@@ -50,6 +51,7 @@ public class ProductService {
         }
     }
 
+    // Admin updates Product
     public Product updateProduct(Long product_id, Product pr) {
         Optional<Product> optionalProduct = this.productRepository.findById(product_id);
         if (optionalProduct.isPresent()) {
@@ -65,11 +67,12 @@ public class ProductService {
         }
     }
 
+    // Admin deletes product
     public void deleteProductById(Long product_id) {
         this.productRepository.deleteById(product_id);
     }
 
-    // customer
+    // Customer's product-adding handler
     public void handleAddProductToCart(Cart cart, Long product_id) {
         Optional<Product> optionalProduct = this.productRepository.findById(product_id);
         if (optionalProduct.isPresent()) {
@@ -92,6 +95,7 @@ public class ProductService {
         }
     }
 
+    // returning cart item via cart
     public List<CartItemDTO> getCartItembyCart(Long cart_id) {
         Optional<Cart> optionalCart = this.cartRepo.findById(cart_id);
         if (optionalCart.isPresent()) {
