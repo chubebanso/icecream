@@ -27,7 +27,7 @@ public class Product {
     private List<CartItem> items;
 
     @NotEmpty(message = "Name cannot be empty")
-    @Pattern(regexp = "^[A-Za-z0-9_-]+$", message = "Invalid name format")
+    @Pattern(regexp = "^[A-Za-zÀ-ỹ\\s]+$", message = "Invalid name format")
     @Size(min = 2, message = "Name must have at least 2 characters")
     private String name;
 

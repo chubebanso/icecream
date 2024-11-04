@@ -4,16 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import vn.chubebanso.icecream.domain.Cart;
 import vn.chubebanso.icecream.domain.CartItem;
 import vn.chubebanso.icecream.domain.CartItemDTO;
-import vn.chubebanso.icecream.domain.Meta;
 import vn.chubebanso.icecream.domain.Product;
-import vn.chubebanso.icecream.domain.ResultPaginationDTO;
 import vn.chubebanso.icecream.repository.CartItemRepository;
 import vn.chubebanso.icecream.repository.CartRepository;
 import vn.chubebanso.icecream.repository.ProductRepository;
@@ -40,17 +36,8 @@ public class ProductService {
     }
 
     // Admin's order to show all products
-    public ResultPaginationDTO getAllProduct(Pageable pageable) {
-        Page<Product> pageProducts = this.productRepository.findAll(pageable);
-        Meta meta = new Meta();
-        ResultPaginationDTO resultPaginationDTO = new ResultPaginationDTO();
-        meta.setPage(pageProducts.getNumber());
-        meta.setPageSize(pageProducts.getSize());
-        meta.setPages(pageProducts.getTotalPages());
-        meta.setTotalPage(pageProducts.getNumberOfElements());
-        resultPaginationDTO.setMeta(meta);
-        resultPaginationDTO.setResult(pageProducts.getContent());
-        return resultPaginationDTO;
+    public List<Product> getAllProduct() {
+        return this.productRepository.findAll();
     }
 
     // Admin's order to show product by ID  
