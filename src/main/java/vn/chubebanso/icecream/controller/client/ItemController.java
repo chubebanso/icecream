@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
 import vn.chubebanso.icecream.domain.Cart;
-import vn.chubebanso.icecream.domain.CartItemDTO;
+import vn.chubebanso.icecream.domain.CartItem;
 import vn.chubebanso.icecream.domain.Product;
 import vn.chubebanso.icecream.service.CartService;
 import vn.chubebanso.icecream.service.ProductService;
@@ -47,7 +47,7 @@ public class ItemController {
 
     // lấy tất cả cart item từ 1 cart
     @GetMapping("/get-all-cart-item")
-    public ResponseEntity<List<CartItemDTO>> getCartItembyCart(@Valid @RequestParam("cart_id") Long cart_id) {
+    public ResponseEntity<List<CartItem>> getCartItembyCart(@Valid @RequestParam("cart_id") Long cart_id) {
         return ResponseEntity.ok(this.productService.getCartItembyCart(cart_id));
     }
 

@@ -2,7 +2,7 @@ package vn.chubebanso.icecream.domain;
 
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -21,9 +21,8 @@ public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-
+    @JsonIgnore
     @OneToMany(mappedBy = "product")
-    @JsonManagedReference
     private List<CartItem> items;
 
     @NotEmpty(message = "Name cannot be empty")

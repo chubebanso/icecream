@@ -2,8 +2,6 @@ package vn.chubebanso.icecream.domain;
 
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -21,8 +19,6 @@ public class Cart {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-
-    @JsonManagedReference
     @OneToMany(mappedBy = "cart")
     private List<CartItem> items;
 
@@ -30,7 +26,7 @@ public class Cart {
 
     @Min(value = 0)
     private long sum;
-    
+
     @NotNull
     private String phonenum;
 

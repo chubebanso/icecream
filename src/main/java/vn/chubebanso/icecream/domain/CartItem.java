@@ -1,35 +1,46 @@
 package vn.chubebanso.icecream.domain;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.IdClass;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 
 @Entity
-@IdClass(CartItemID.class)
 @Table(name = "cart_item")
 public class CartItem {
 
     @Id
-    @ManyToOne
-    @JoinColumn(name = "cart_id")
-    @JsonBackReference
-    private Cart cart;
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // Tạo khóa chính duy nhất
+    private Long id;
 
-    @Id
     @ManyToOne
     @JoinColumn(name = "product_id")
-    @JsonBackReference
     private Product product;
+
     @NotNull
     private long productQuantity;
 
     private float subTotal;
+
+    // Getters và Setters cho tất cả các thuộc tính
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "cart_id")
+    private Cart cart;
 
     public Cart getCart() {
         return cart;

@@ -1,19 +1,10 @@
 package vn.chubebanso.icecream.service;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import vn.chubebanso.icecream.domain.Cart;
-import vn.chubebanso.icecream.domain.CartDTO;
-import vn.chubebanso.icecream.domain.CartItem;
-import vn.chubebanso.icecream.domain.CartItemDTO;
-import vn.chubebanso.icecream.domain.Meta;
-import vn.chubebanso.icecream.domain.ResultPaginationDTO;
 import vn.chubebanso.icecream.repository.CartItemRepository;
 import vn.chubebanso.icecream.repository.CartRepository;
 
@@ -39,62 +30,85 @@ public class CartService {
         }
     }
 
-    // Admin shows all carts
-    public ResultPaginationDTO findAllCart(Pageable pageable) {
-        Page<Cart> pageCart = this.cartRepo.findAll(pageable);
+    // // Admin shows all carts
+    // public List<CartDTO> findAllCart() {
+    // List<Cart> cartList = this.cartRepo.findAll();
+    // List<CartDTO> cartDTOs = new ArrayList<>();
 
-        Meta meta = new Meta();
-        ResultPaginationDTO resultPaginationDTO = new ResultPaginationDTO();
+    // for (Cart cart : cartList) {
+    // List<CartItem> cartItems = this.cartItemRepository.findByCart(cart);
+    // List<CartItemDTO> cartItemDTOs = new ArrayList<>();
+    // float total = 0;
 
-        meta.setPage(pageCart.getNumber());
-        meta.setPageSize(pageCart.getSize());
-        meta.setPages(pageCart.getTotalPages());
-        meta.setTotalPage(pageCart.getNumberOfElements());
-        resultPaginationDTO.setMeta(meta);
-        resultPaginationDTO.setResult(pageCart.getContent());
+    // for (CartItem cartItem : cartItems) {
+    // CartItemDTO dto = new CartItemDTO();
+    // dto.setProductName(cartItem.getProduct().getName());
 
-        return resultPaginationDTO;
-    }
+    // dto.setProductPrice(cartItem.getProduct().getPrice());
+    // float productPrice = cartItem.getProduct().getPrice();
 
-    // Customers show all previous orders
-    public List<CartDTO> showAllCarts(String phone) {
-        List<Cart> cartList = this.cartRepo.findAllByPhonenum(phone);
-        List<CartDTO> cartDTOs = new ArrayList<>();
+    // dto.setProductQuantity(cartItem.getProductQuantity());
+    // long productQuantity = cartItem.getProductQuantity();
 
-        for (Cart cart : cartList) {
-            List<CartItem> cartItems = this.cartItemRepository.findByCart(cart);
-            List<CartItemDTO> cartItemDTOs = new ArrayList<>();
-            float total = 0;
+    // float subtotal = productPrice * productQuantity;
+    // total += subtotal;
 
-            for (CartItem cartItem : cartItems) {
-                CartItemDTO dto = new CartItemDTO();
-                dto.setProductName(cartItem.getProduct().getName());
+    // dto.setUnit(cartItem.getProduct().getUnit());
+    // dto.setImage(cartItem.getProduct().getImage());
+    // dto.setSubTotal(subtotal);
 
-                dto.setProductPrice(cartItem.getProduct().getPrice());
-                float productPrice = cartItem.getProduct().getPrice();
+    // dto.setPhoneNum(cartItem.getCart().getPhonenum());
+    // dto.setDescription(cartItem.getCart().getDescription());
 
-                dto.setProductQuantity(cartItem.getProductQuantity());
-                long productQuantity = cartItem.getProductQuantity();
+    // cartItemDTOs.add(dto);
+    // }
 
-                float subtotal = productPrice * productQuantity;
-                total += subtotal;
+    // CartDTO cartDTO = new CartDTO(cartItemDTOs, total);
+    // cartDTOs.add(cartDTO);
+    // }
 
-                dto.setUnit(cartItem.getProduct().getUnit());
-                dto.setImage(cartItem.getProduct().getImage());
-                dto.setSubTotal(subtotal);
+    // return cartDTOs;
+    // }
 
-                dto.setPhoneNum(cartItem.getCart().getPhonenum());
-                dto.setDescription(cartItem.getCart().getDescription());
+    // // Customers show all previous orders
+    // public List<CartDTO> showAllCarts(String phone) {
+    // List<Cart> cartList = this.cartRepo.findAllByPhonenum(phone);
+    // List<CartDTO> cartDTOs = new ArrayList<>();
 
-                cartItemDTOs.add(dto);
-            }
+    // for (Cart cart : cartList) {
+    // List<CartItem> cartItems = this.cartItemRepository.findByCart(cart);
+    // List<CartItemDTO> cartItemDTOs = new ArrayList<>();
+    // float total = 0;
 
-            CartDTO cartDTO = new CartDTO(cartItemDTOs, total);
-            cartDTOs.add(cartDTO);
-        }
-        
-        return cartDTOs;
-    }
+    // for (CartItem cartItem : cartItems) {
+    // CartItemDTO dto = new CartItemDTO();
+    // dto.setProductName(cartItem.getProduct().getName());
+
+    // dto.setProductPrice(cartItem.getProduct().getPrice());
+    // float productPrice = cartItem.getProduct().getPrice();
+
+    // dto.setProductQuantity(cartItem.getProductQuantity());
+    // long productQuantity = cartItem.getProductQuantity();
+
+    // float subtotal = productPrice * productQuantity;
+    // total += subtotal;
+
+    // dto.setUnit(cartItem.getProduct().getUnit());
+    // dto.setImage(cartItem.getProduct().getImage());
+    // dto.setSubTotal(subtotal);
+
+    // dto.setPhoneNum(cartItem.getCart().getPhonenum());
+    // dto.setDescription(cartItem.getCart().getDescription());
+
+    // cartItemDTOs.add(dto);
+    // }
+
+    // CartDTO cartDTO = new CartDTO(cartItemDTOs, total);
+    // cartDTOs.add(cartDTO);
+    // }
+
+    // return cartDTOs;
+    // }
 
     // Customers create cart
     public Cart createCart(String phone) {
