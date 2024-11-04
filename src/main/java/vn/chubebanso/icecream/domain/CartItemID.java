@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Objects;
 
 public class CartItemID implements Serializable {
+
     private Long cart;
     private Long product;
 

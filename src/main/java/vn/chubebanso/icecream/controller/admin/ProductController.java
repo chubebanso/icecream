@@ -1,7 +1,9 @@
 package vn.chubebanso.icecream.controller.admin;
 
-import java.util.List;
+import java.util.Optional;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -9,10 +11,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
 import vn.chubebanso.icecream.domain.Product;
+import vn.chubebanso.icecream.domain.ResultPaginationDTO;
 import vn.chubebanso.icecream.service.ProductService;
 import vn.chubebanso.icecream.util.error.IdInvalidException;
 
@@ -31,8 +35,14 @@ public class ProductController {
     }
 
     @GetMapping("/product")
-    public ResponseEntity<List<Product>> getAllProduct() {
-        return ResponseEntity.ok(this.productService.getAllProduct());
+    public ResponseEntity<ResultPaginationDTO> getAllProduct(@RequestParam("current") Optional<String> currentOptional,
+            @RequestParam("pageSize") Optional<String> pasizeOptional) {
+        String sCurrentPage = currentOptional.isPresent() ? currentOptional.get() : "";
+        String sPagesize = pasizeOptional.isPresent() ? pasizeOptional.get() : "";
+        int currentPage = Integer.parseInt(sCurrentPage);
+        int pageSize = Integer.parseInt(sPagesize);
+        Pageable pageable = PageRequest.of(currentPage - 1, pageSize);
+        return ResponseEntity.ok(this.productService.getAllProduct(pageable));
     }
 
     @GetMapping("/product/{product_id}")
