@@ -50,6 +50,29 @@ public class SecurityConfiguration {
     }
 
     @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http, CustomAuthenticationEntryPoint cAuthenticationEntryPoint)
+            throws Exception {
+        http
+                .csrf(c -> c.disable())
+                .cors(Customizer.withDefaults())
+                .authorizeHttpRequests(
+                        authz -> authz
+                                .requestMatchers("/", "login", "/storage/**").permitAll()
+                                .anyRequest().authenticated())
+                .oauth2ResourceServer(
+                        (oauth2) -> oauth2.jwt(Customizer.withDefaults())
+                                .authenticationEntryPoint(cAuthenticationEntryPoint))
+                // .exceptionHandling(
+                // exceptions -> exceptions
+                // .authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint()) // 401
+                // .accessDeniedHandler(new BearerTokenAccessDeniedHandler())) // 403
+
+                .formLogin(f -> f.disable())
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+        return http.build();
+    }
+
+    @Bean
     public JwtDecoder jwtDecoder() {
         NimbusJwtDecoder jwtDecoder = NimbusJwtDecoder.withSecretKey(
                 getSecretKey()).macAlgorithm(SecurityUtil.JWT_ALGORITHM).build();
@@ -61,29 +84,6 @@ public class SecurityConfiguration {
                 throw e;
             }
         };
-    }
-
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http, CustomAuthenticationEntryPoint cAuthenticationEntryPoint)
-            throws Exception {
-        http
-                .csrf(c -> c.disable())
-                .cors(Customizer.withDefaults())
-                .authorizeHttpRequests(
-                        authz -> authz
-                                .requestMatchers("/", "login").permitAll()
-                                .anyRequest().permitAll())
-                .oauth2ResourceServer(
-                        (oauth2) -> oauth2.jwt(Customizer.withDefaults())
-                                .authenticationEntryPoint(cAuthenticationEntryPoint))
-                .exceptionHandling(
-                        exceptions -> exceptions
-                                .authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint()) // 401
-                                .accessDeniedHandler(new BearerTokenAccessDeniedHandler())) // 403
-
-                .formLogin(f -> f.disable())
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-        return http.build();
     }
 
     @Bean
