@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 
 import vn.chubebanso.icecream.domain.Cart;
 import vn.chubebanso.icecream.domain.CartItem;
-import vn.chubebanso.icecream.domain.CartItemDTO;
 import vn.chubebanso.icecream.domain.Product;
 import vn.chubebanso.icecream.repository.CartItemRepository;
 import vn.chubebanso.icecream.repository.CartRepository;
@@ -40,7 +39,7 @@ public class ProductService {
         return this.productRepository.findAll();
     }
 
-    // Admin's order to show product by ID  
+    // Admin's order to show product by ID
     public Product getProductById(Long product_id) {
         Optional<Product> optionalProduct = this.productRepository.findById(product_id);
         if (optionalProduct.isPresent()) {
@@ -96,33 +95,22 @@ public class ProductService {
     }
 
     // returning cart item via cart
-    public List<CartItemDTO> getCartItembyCart(Long cart_id) {
+    public List<CartItem> getCartItembyCart(Long cart_id) {
         Optional<Cart> optionalCart = this.cartRepo.findById(cart_id);
         if (optionalCart.isPresent()) {
             List<CartItem> cartItems = this.cartItemRepository.findByCart(optionalCart.get());
-            List<CartItemDTO> cartItemDTOs = new ArrayList<>();
 
             for (CartItem cartItem : cartItems) {
-                CartItemDTO dto = new CartItemDTO();
-                dto.setProductName(cartItem.getProduct().getName());
-
-                dto.setProductPrice(cartItem.getProduct().getPrice());
                 float productPrice = cartItem.getProduct().getPrice();
-
-                dto.setProductQuantity(cartItem.getProductQuantity());
                 long productQuantity = cartItem.getProductQuantity();
 
                 float subtotal = productPrice * productQuantity;
 
-                dto.setSubTotal(subtotal);
+                cartItem.setSubTotal(subtotal);
 
-                dto.setUnit(cartItem.getProduct().getUnit());
-                dto.setImage(cartItem.getProduct().getImage());
-
-                cartItemDTOs.add(dto);
             }
 
-            return cartItemDTOs;
+            return cartItems;
         } else {
             return null;
         }
