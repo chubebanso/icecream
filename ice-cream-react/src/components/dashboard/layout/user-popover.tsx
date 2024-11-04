@@ -33,7 +33,7 @@ export function UserPopover({ anchorEl, onClose, open }: UserPopoverProps): Reac
       const { error } = await authClient.signOut();
 
       if (error) {
-        logger.error('Sign out error', error);
+        logger.error('Lỗi đăng xuất', error);
         return;
       }
 
@@ -44,7 +44,7 @@ export function UserPopover({ anchorEl, onClose, open }: UserPopoverProps): Reac
       router.refresh();
       // After refresh, AuthGuard will handle the redirect
     } catch (err) {
-      logger.error('Sign out error', err);
+      logger.error('Lỗi đăng xuất', err);
     }
   }, [checkSession, router]);
 
@@ -57,9 +57,9 @@ export function UserPopover({ anchorEl, onClose, open }: UserPopoverProps): Reac
       slotProps={{ paper: { sx: { width: '240px' } } }}
     >
       <Box sx={{ p: '16px 20px ' }}>
-        <Typography variant="subtitle1">Sofia Rivers</Typography>
+        <Typography variant="subtitle1">Chó Long Biên</Typography>
         <Typography color="text.secondary" variant="body2">
-          sofia.rivers@devias.io
+        cholongbien99zzvippro@gmail.com
         </Typography>
       </Box>
       <Divider />
@@ -68,19 +68,19 @@ export function UserPopover({ anchorEl, onClose, open }: UserPopoverProps): Reac
           <ListItemIcon>
             <GearSixIcon fontSize="var(--icon-fontSize-md)" />
           </ListItemIcon>
-          Settings
+          Cài đặt
         </MenuItem>
         <MenuItem component={RouterLink} href={paths.dashboard.account} onClick={onClose}>
           <ListItemIcon>
             <UserIcon fontSize="var(--icon-fontSize-md)" />
           </ListItemIcon>
-          Profile
+          Hồ sơ
         </MenuItem>
         <MenuItem onClick={handleSignOut}>
           <ListItemIcon>
             <SignOutIcon fontSize="var(--icon-fontSize-md)" />
           </ListItemIcon>
-          Sign out
+          Đăng xuất
         </MenuItem>
       </MenuList>
     </Popover>

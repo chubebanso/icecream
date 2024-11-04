@@ -24,7 +24,7 @@ export function UserProvider({ children }: UserProviderProps): React.JSX.Element
     user: null,
     error: null,
     isLoading: true,
-  });
+  }); 
 
   const checkSession = React.useCallback(async (): Promise<void> => {
     try {
@@ -32,7 +32,7 @@ export function UserProvider({ children }: UserProviderProps): React.JSX.Element
 
       if (error) {
         logger.error(error);
-        setState((prev) => ({ ...prev, user: null, error: 'Something went wrong', isLoading: false }));
+        setState((prev) => ({ ...prev, user: null, error: 'Xong rồi bạn đi lương 1 tháng rồi, có lỗi gì đang xảy ra á', isLoading: false }));
         return;
       }
 
