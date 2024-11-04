@@ -21,8 +21,6 @@ public class Cart {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-
-    @JsonManagedReference
     @OneToMany(mappedBy = "cart")
     private List<CartItem> items;
 
@@ -30,7 +28,7 @@ public class Cart {
 
     @Min(value = 0)
     private long sum;
-    
+
     @NotNull
     private String phonenum;
 
