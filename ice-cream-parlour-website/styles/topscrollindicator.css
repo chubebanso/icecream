@@ -5,7 +5,7 @@
     left: 0;
     width: 0%; 
     height: 8px; 
-    background-color: rgb(226,79,127);
+    background-color: rgb(77,77,77);
     z-index:9999; 
     transition: width 0.25s ease-out; 
 }

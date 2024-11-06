@@ -10,7 +10,7 @@ import { Clock as ClockIcon } from '@phosphor-icons/react/dist/ssr/Clock';
 import { Download as DownloadIcon } from '@phosphor-icons/react/dist/ssr/Download';
 import dayjs from 'dayjs';
 
-export interface Integration {
+export interface Vouchers {
   id: string;
   title: string;
   description: string;
@@ -20,23 +20,23 @@ export interface Integration {
 }
 
 export interface IntegrationCardProps {
-  integration: Integration;
+  voucher: Vouchers;
 }
 
-export function IntegrationCard({ integration }: IntegrationCardProps): React.JSX.Element {
+export function IntegrationCard({ voucher }: IntegrationCardProps): React.JSX.Element {
   return (
     <Card sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
       <CardContent sx={{ flex: '1 1 auto' }}>
         <Stack spacing={2}>
           <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-            <Avatar src={integration.logo} variant="square" />
+            <Avatar src={voucher.logo} variant="square" />
           </Box>
           <Stack spacing={1}>
             <Typography align="center" variant="h5">
-              {integration.title}
+              {voucher.title}
             </Typography>
             <Typography align="center" variant="body1">
-              {integration.description}
+              {voucher.description}
             </Typography>
           </Stack>
         </Stack>
@@ -46,13 +46,13 @@ export function IntegrationCard({ integration }: IntegrationCardProps): React.JS
         <Stack sx={{ alignItems: 'center' }} direction="row" spacing={1}>
           <ClockIcon fontSize="var(--icon-fontSize-sm)" />
           <Typography color="text.secondary" display="inline" variant="body2">
-            Updated {dayjs(integration.updatedAt).format('MMM D, YYYY')}
+            Updated {dayjs(voucher.updatedAt).format('MMM D, YYYY')}
           </Typography>
         </Stack>
         <Stack sx={{ alignItems: 'center' }} direction="row" spacing={1}>
           <DownloadIcon fontSize="var(--icon-fontSize-sm)" />
           <Typography color="text.secondary" display="inline" variant="body2">
-            {integration.installs} installs
+            {voucher.installs} installs
           </Typography>
         </Stack>
       </Stack>

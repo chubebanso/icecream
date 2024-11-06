@@ -21,6 +21,7 @@ public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
+    
     @JsonIgnore
     @OneToMany(mappedBy = "product")
     private List<CartItem> items;
