@@ -22,25 +22,25 @@ export function Notifications(): React.JSX.Element {
       }}
     >
       <Card>
-        <CardHeader subheader="Manage the notifications" title="Notifications" />
+        <CardHeader title="Thông báo" />
         <Divider />
         <CardContent>
           <Grid container spacing={6} wrap="wrap">
             <Grid md={4} sm={6} xs={12}>
               <Stack spacing={1}>
-                <Typography variant="h6">Email</Typography>
+                <Typography variant="h6">Nhận qua Email thông báo về: </Typography>
                 <FormGroup>
-                  <FormControlLabel control={<Checkbox defaultChecked />} label="Product updates" />
-                  <FormControlLabel control={<Checkbox />} label="Security updates" />
+                  <FormControlLabel control={<Checkbox defaultChecked />} label="Sản phẩm cập nhật" />
+                  <FormControlLabel control={<Checkbox />} label="Thông tin đăng nhập cập nhật" />
                 </FormGroup>
               </Stack>
             </Grid>
             <Grid md={4} sm={6} xs={12}>
               <Stack spacing={1}>
-                <Typography variant="h6">Phone</Typography>
+                <Typography variant="h6">Nhận qua SĐT thông báo về: </Typography>
                 <FormGroup>
-                  <FormControlLabel control={<Checkbox defaultChecked />} label="Email" />
-                  <FormControlLabel control={<Checkbox />} label="Security updates" />
+                  <FormControlLabel control={<Checkbox defaultChecked />} label="Email cập nhật" />
+                  <FormControlLabel control={<Checkbox />} label="Thay đổi mật khẩu" />
                 </FormGroup>
               </Stack>
             </Grid>
@@ -48,7 +48,7 @@ export function Notifications(): React.JSX.Element {
         </CardContent>
         <Divider />
         <CardActions sx={{ justifyContent: 'flex-end' }}>
-          <Button variant="contained">Save changes</Button>
+          <Button variant="contained">Lưu thay đổi</Button>
         </CardActions>
       </Card>
     </form>

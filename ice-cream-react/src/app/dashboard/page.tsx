@@ -40,7 +40,7 @@ export default function Page(): React.JSX.Element {
         />
       </Grid>
       <Grid lg={4} md={6} xs={12}>
-        <Traffic chartSeries={[63, 15, 22]} labels={['Desktop', 'Tablet', 'Phone']} sx={{ height: '100%' }} />
+        <Traffic chartSeries={[63, 15, 22]} labels={['Kem', 'Nước', 'Bánh']} sx={{ height: '100%' }} />
       </Grid>
       <Grid lg={4} md={6} xs={12}>
         <LatestProducts
@@ -84,42 +84,42 @@ export default function Page(): React.JSX.Element {
           orders={[
             {
               id: 'ORD-007',
-              customer: { name: 'Donald Trump' },
+              customer: { name: 'Đỗ Nam Trung' },
               amount: 30.5,
               status: 'pending',
               createdAt: dayjs().subtract(10, 'minutes').toDate(),
             },
             {
               id: 'ORD-006',
-              customer: { name: 'Cao Yu' },
+              customer: { name: 'Hoa Thịnh Đốn' },
               amount: 25.1,
               status: 'delivered',
               createdAt: dayjs().subtract(10, 'minutes').toDate(),
             },
             {
               id: 'ORD-004',
-              customer: { name: 'Alexa Richardson' },
+              customer: { name: 'Mạc Tư Khoa' },
               amount: 10.99,
               status: 'refunded',
               createdAt: dayjs().subtract(10, 'minutes').toDate(),
             },
             {
               id: 'ORD-003',
-              customer: { name: 'Anje Keizer' },
+              customer: { name: 'Tập Cận Bình' },
               amount: 96.43,
               status: 'pending',
               createdAt: dayjs().subtract(10, 'minutes').toDate(),
             },
             {
               id: 'ORD-002',
-              customer: { name: 'Clarke Gillebert' },
+              customer: { name: 'Lê Văn Ba' },
               amount: 32.54,
               status: 'delivered',
               createdAt: dayjs().subtract(10, 'minutes').toDate(),
             },
             {
               id: 'ORD-001',
-              customer: { name: 'Adam Denisov' },
+              customer: { name: 'Tèo' },
               amount: 16.76,
               status: 'delivered',
               createdAt: dayjs().subtract(10, 'minutes').toDate(),
