@@ -67,10 +67,10 @@ export function SideNav(): React.JSX.Element {
         >
           <Box sx={{ flex: '1 1 auto' }}>
             <Typography color="var(--mui-palette-neutral-400)" variant="body2">
-              Workspace
+              Chào mừng
             </Typography>
             <Typography color="inherit" variant="subtitle1">
-              Devias
+              Chó Long Biên
             </Typography>
           </Box>
           <CaretUpDownIcon />
@@ -84,31 +84,12 @@ export function SideNav(): React.JSX.Element {
       <Stack spacing={2} sx={{ p: '12px' }}>
         <div>
           <Typography color="var(--mui-palette-neutral-100)" variant="subtitle2">
-            Need more features?
+            Vì tổ quốc xã hội chủ nghĩa
           </Typography>
           <Typography color="var(--mui-palette-neutral-400)" variant="body2">
-            Check out our Pro solution template.
+            Hãy làm việc cống hiến cho nước nhà
           </Typography>
         </div>
-        <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-          <Box
-            component="img"
-            alt="Pro version"
-            src="/assets/devias-kit-pro.png"
-            sx={{ height: 'auto', width: '160px' }}
-          />
-        </Box>
-        <Button
-          component="a"
-          endIcon={<ArrowSquareUpRightIcon fontSize="var(--icon-fontSize-md)" />}
-          fullWidth
-          href="https://material-kit-pro-react.devias.io/"
-          sx={{ mt: 2 }}
-          target="_blank"
-          variant="contained"
-        >
-          Pro version
-        </Button>
       </Stack>
     </Box>
   );

@@ -88,7 +88,6 @@ public class ProductService {
                 oldCartItem.setProductQuantity(oldCartItem.getProductQuantity() + 1);
                 this.cartItemRepository.save(oldCartItem);
             }
-
             this.cartService.saveCart(cart);
         }
     }
@@ -106,7 +105,6 @@ public class ProductService {
                 float subtotal = productPrice * productQuantity;
 
                 cartItem.setSubTotal(subtotal);
-
             }
 
             return cartItems;

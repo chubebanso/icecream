@@ -73,12 +73,12 @@ export function ProductsTable({
                   }}
                 />
               </TableCell>
-              <TableCell>Image</TableCell>
-              <TableCell>Name</TableCell>
-              <TableCell>Price</TableCell>
-              <TableCell>Unit</TableCell>
-              <TableCell>Category</TableCell>
-              <TableCell>Available</TableCell>
+              <TableCell>Hình ảnh</TableCell>
+              <TableCell>Tên sản phẩm</TableCell>
+              <TableCell>Giá</TableCell>
+              <TableCell>Đơn vị</TableCell>
+              <TableCell>Danh mục</TableCell>
+              <TableCell>Còn hàng?</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -106,7 +106,7 @@ export function ProductsTable({
                   <TableCell>{row.price.toLocaleString()} VND</TableCell>
                   <TableCell>{row.unit}</TableCell>
                   <TableCell>{row.category}</TableCell>
-                  <TableCell>{row.availableForOrder ? 'Yes' : 'No'}</TableCell>
+                  <TableCell>{row.availableForOrder ? 'Còn' : 'Đã hết'}</TableCell>
                 </TableRow>
               );
             })}
