@@ -41,9 +41,15 @@ public class CartController {
         return ResponseEntity.noContent().build();
     }
 
-    // show tất cả các carts của khách => khách biết mình đã từng ăn gì đặt lại cho dễ
+    // show tất cả các carts của khách => khách biết mình đã từng ăn gì đặt lại cho
+    // dễ
     @GetMapping("/show-all-carts")
     public ResponseEntity<List<Cart>> showAllCarts(@Valid @RequestParam("phone") String phone) {
         return ResponseEntity.ok(this.cartService.showAllCarts(phone));
+    }
+
+    @GetMapping("/get-cart-by-id")
+    public ResponseEntity<Cart> getCartByid(@Valid @RequestParam("id") Long id) {
+        return ResponseEntity.ok(this.cartService.showCartsById(id));
     }
 }

@@ -71,7 +71,7 @@ public class ProductService {
     }
 
     // Customer's product-adding handler
-    public void handleAddProductToCart(Cart cart, Long product_id) {
+    public void handleAddProductToCart(Cart cart, Long product_id, Long quantity) {
         Optional<Product> optionalProduct = this.productRepository.findById(product_id);
         if (optionalProduct.isPresent()) {
             CartItem oldCartItem = this.cartItemRepository.findByCartAndProduct(cart, optionalProduct.get());
@@ -80,12 +80,12 @@ public class ProductService {
                 cartItem.setCart(cart);
                 cartItem.setProduct(optionalProduct.get());
                 cartItem.setSubTotal(optionalProduct.get().getPrice());
-                cartItem.setProductQuantity(1);
+                cartItem.setProductQuantity(quantity);
                 this.cartItemRepository.save(cartItem);
                 long sum = cart.getSum() + 1;
                 cart.setSum(sum);
             } else {
-                oldCartItem.setProductQuantity(oldCartItem.getProductQuantity() + 1);
+                oldCartItem.setProductQuantity(oldCartItem.getProductQuantity() + quantity);
                 this.cartItemRepository.save(oldCartItem);
             }
             this.cartService.saveCart(cart);
