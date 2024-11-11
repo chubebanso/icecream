@@ -1,22 +1,28 @@
 package vn.chubebanso.icecream.service;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
 import vn.chubebanso.icecream.domain.Cart;
+import vn.chubebanso.icecream.domain.CartItem;
+import vn.chubebanso.icecream.domain.Voucher;
 import vn.chubebanso.icecream.repository.CartItemRepository;
 import vn.chubebanso.icecream.repository.CartRepository;
+import vn.chubebanso.icecream.repository.VoucherRepository;
 
 @Service
 public class CartService {
 
     private final CartRepository cartRepo;
     private final CartItemRepository cartItemRepository;
+    private final VoucherRepository voucherRepository;
 
-    public CartService(CartRepository cartRepo, CartItemRepository cartItemRepository) {
+    public CartService(CartRepository cartRepo, CartItemRepository cartItemRepository, VoucherRepository voucherRepository) {
         this.cartRepo = cartRepo;
         this.cartItemRepository = cartItemRepository;
+        this.voucherRepository = voucherRepository;
     }
 
     // System returning a cart by ID => no need for body, just id and cart
@@ -30,85 +36,54 @@ public class CartService {
         }
     }
 
-    // // Admin shows all carts
-    // public List<CartDTO> findAllCart() {
-    // List<Cart> cartList = this.cartRepo.findAll();
-    // List<CartDTO> cartDTOs = new ArrayList<>();
+    // Admin shows all carts
+    public List<Cart> findAllCart() {
+        List<Cart> cartList = this.cartRepo.findAll();
 
-    // for (Cart cart : cartList) {
-    // List<CartItem> cartItems = this.cartItemRepository.findByCart(cart);
-    // List<CartItemDTO> cartItemDTOs = new ArrayList<>();
-    // float total = 0;
+        for (Cart cart : cartList) {
+            List<CartItem> cartItems = this.cartItemRepository.findByCart(cart);
+            float total = 0;
 
-    // for (CartItem cartItem : cartItems) {
-    // CartItemDTO dto = new CartItemDTO();
-    // dto.setProductName(cartItem.getProduct().getName());
+            for (CartItem cartItem : cartItems) {
+                float productPrice = cartItem.getProduct().getPrice();
+                long productQuantity = cartItem.getProductQuantity();
 
-    // dto.setProductPrice(cartItem.getProduct().getPrice());
-    // float productPrice = cartItem.getProduct().getPrice();
+                float subtotal = productPrice * productQuantity;
+                cartItem.setSubTotal(subtotal);
 
-    // dto.setProductQuantity(cartItem.getProductQuantity());
-    // long productQuantity = cartItem.getProductQuantity();
+                total += subtotal;
+            }
+            cart.setTotal(total);
+        }
+        return cartList;
+    }
 
-    // float subtotal = productPrice * productQuantity;
-    // total += subtotal;
+    // Customers show all previous orders
+    public List<Cart> showAllCarts(String phone) {
+        List<Cart> cartList = this.cartRepo.findAllByPhonenum(phone);
 
-    // dto.setUnit(cartItem.getProduct().getUnit());
-    // dto.setImage(cartItem.getProduct().getImage());
-    // dto.setSubTotal(subtotal);
+        for (Cart cart : cartList) {
+            List<CartItem> cartItems = this.cartItemRepository.findByCart(cart);
+            float total = 0;
 
-    // dto.setPhoneNum(cartItem.getCart().getPhonenum());
-    // dto.setDescription(cartItem.getCart().getDescription());
+            for (CartItem cartItem : cartItems) {
+                float productPrice = cartItem.getProduct().getPrice();
+                long productQuantity = cartItem.getProductQuantity();
 
-    // cartItemDTOs.add(dto);
-    // }
+                float subtotal = productPrice * productQuantity;
+                cartItem.setSubTotal(subtotal);
 
-    // CartDTO cartDTO = new CartDTO(cartItemDTOs, total);
-    // cartDTOs.add(cartDTO);
-    // }
+                total += subtotal;
+            }
+            cart.setTotal(total);
+        }
+        return cartList;
+    }
 
-    // return cartDTOs;
-    // }
-
-    // // Customers show all previous orders
-    // public List<CartDTO> showAllCarts(String phone) {
-    // List<Cart> cartList = this.cartRepo.findAllByPhonenum(phone);
-    // List<CartDTO> cartDTOs = new ArrayList<>();
-
-    // for (Cart cart : cartList) {
-    // List<CartItem> cartItems = this.cartItemRepository.findByCart(cart);
-    // List<CartItemDTO> cartItemDTOs = new ArrayList<>();
-    // float total = 0;
-
-    // for (CartItem cartItem : cartItems) {
-    // CartItemDTO dto = new CartItemDTO();
-    // dto.setProductName(cartItem.getProduct().getName());
-
-    // dto.setProductPrice(cartItem.getProduct().getPrice());
-    // float productPrice = cartItem.getProduct().getPrice();
-
-    // dto.setProductQuantity(cartItem.getProductQuantity());
-    // long productQuantity = cartItem.getProductQuantity();
-
-    // float subtotal = productPrice * productQuantity;
-    // total += subtotal;
-
-    // dto.setUnit(cartItem.getProduct().getUnit());
-    // dto.setImage(cartItem.getProduct().getImage());
-    // dto.setSubTotal(subtotal);
-
-    // dto.setPhoneNum(cartItem.getCart().getPhonenum());
-    // dto.setDescription(cartItem.getCart().getDescription());
-
-    // cartItemDTOs.add(dto);
-    // }
-
-    // CartDTO cartDTO = new CartDTO(cartItemDTOs, total);
-    // cartDTOs.add(cartDTO);
-    // }
-
-    // return cartDTOs;
-    // }
+    // Customers delete cart
+    public void deleteProductById(Long cart_id) {
+        this.cartRepo.deleteById(cart_id);
+    }
 
     // Customers create cart
     public Cart createCart(String phone) {
@@ -122,5 +97,29 @@ public class CartService {
     // System saves cart
     public Cart saveCart(Cart cart) {
         return this.cartRepo.save(cart);
+    }
+
+    // thêm Voucher vào giỏ hàng 
+    public void handleApplyVoucherToCart(Cart cart, Long voucher_id) {
+        Optional<Voucher> optionalVoucher = this.voucherRepository.findById(voucher_id);
+        if (optionalVoucher.isPresent()) {
+            Voucher oldVoucher = this.voucherRepository.findByCartAndVoucher(cart, optionalVoucher.get());
+            if (oldVoucher == null) {
+                Voucher voucher = new Voucher();
+                voucher.setVoucherName(optionalVoucher.get().getVoucherName());
+                voucher.setVoucherType(optionalVoucher.get().getVoucherType());
+                voucher.setDiscountAmount(optionalVoucher.get().getDiscountAmount());
+                voucher.setMinActivationValue(optionalVoucher.get().getMinActivationValue());
+
+                cart.setVoucher(voucher); 
+            } else {
+                oldVoucher.setVoucherName(optionalVoucher.get().getVoucherName());
+                oldVoucher.setVoucherType(optionalVoucher.get().getVoucherType());
+                oldVoucher.setDiscountAmount(optionalVoucher.get().getDiscountAmount());
+                oldVoucher.setMinActivationValue(optionalVoucher.get().getMinActivationValue());
+
+                cart.setVoucher(oldVoucher); 
+            }
+        }
     }
 }

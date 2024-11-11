@@ -37,7 +37,7 @@ public class FileController {
         List<String> alowwExtension = Arrays.asList("doc", "pdf", "png", "jpeg", "jpg");
         boolean isValid = alowwExtension.stream().anyMatch(item -> fileName.toLowerCase().endsWith(item));
         if (!isValid) {
-            throw new StorageException("File chỉ được chứa định dạng doc,pdf,png,jpeg,jpg");
+            throw new StorageException("File chỉ được chứa định dạng doc, pdf, png, jpeg, jpg");
         }
         this.fileService.createDirectory(baseURI + folder);
         String uploadFile = this.fileService.store(file, folder);
