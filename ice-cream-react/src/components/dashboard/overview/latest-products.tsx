@@ -52,7 +52,7 @@ export function LatestProducts({ products = [], sx }: LatestProductsProps): Reac
             <ListItemText
               primary={product.name}
               primaryTypographyProps={{ variant: 'subtitle1' }}
-              secondary={`Updated ${dayjs(product.updatedAt).format('MMM D, YYYY')}`}
+              secondary={`Thêm mới vào ${dayjs(product.updatedAt).format('MMM D, YYYY')}`}
               secondaryTypographyProps={{ variant: 'body2' }}
             />
             <IconButton edge="end">

@@ -28,7 +28,6 @@ public class CartItem {
 
     private float subTotal;
 
-    // Getters và Setters cho tất cả các thuộc tính
     public Long getId() {
         return id;
     }
