@@ -1,4 +1,3 @@
-// Fetch product list and initialize cart functionality on page load
 document.addEventListener("DOMContentLoaded", async () => {
   await fetchProductsFromAPI();
 
@@ -9,17 +8,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     displayProducts(products_list);
   }
 
-  // Update cart display on page load
   const cartId = sessionStorage.getItem("cartId");
   if (cartId) {
     updateCartDisplay(cartId);
   }
 });
 
-// Global variables
 let products_list = [];
-
-// Fetch products from API
 async function fetchProductsFromAPI() {
   try {
     const response = await fetch("http://localhost:8080/product");
@@ -34,10 +29,9 @@ async function fetchProductsFromAPI() {
   }
 }
 
-// Display product list
 function displayProducts(products) {
   const productsSection = document.querySelector(".products-box");
-  productsSection.innerHTML = ""; // Clear previous content
+  productsSection.innerHTML = "";
 
   if (products.length === 0) {
     productsSection.innerHTML = `
@@ -78,12 +72,10 @@ function displayProducts(products) {
     addToCartButton.addEventListener("click", (e) => addToCart(e, product.id));
     box.appendChild(addToCartButton);
 
-    // Quick view event
     box
       .querySelector(".quick-view-icon")
       .addEventListener("click", () => showQuickView(product));
 
-    // Quantity increase and decrease events
     const pcsSpan = box.querySelector(".pcs");
     box
       .querySelector(".increase")
@@ -100,13 +92,11 @@ function displayProducts(products) {
   });
 }
 
-// Get query parameter from URL
 function getQueryParam(param) {
   const urlParams = new URLSearchParams(window.location.search);
   return urlParams.get(param);
 }
 
-// Filter products by category
 function filterProducts(categoryId) {
   const productsToDisplay =
     categoryId === "all"
@@ -115,7 +105,6 @@ function filterProducts(categoryId) {
   displayProducts(productsToDisplay);
 }
 
-// Display toast message
 function showToast(message) {
   const toastContainer = document.getElementById("toast-container");
   const toast = document.createElement("div");
@@ -125,7 +114,6 @@ function showToast(message) {
   setTimeout(() => toast.remove(), 5500);
 }
 
-// Add product to cart
 async function addToCart(e, productId) {
   const item = products_list.find((item) => item.id == productId);
   const pcs = parseInt(
@@ -165,7 +153,6 @@ async function addToCart(e, productId) {
   }
 }
 
-// Fetch and display cart information
 async function updateCartDisplay(cartId) {
   try {
     const response = await fetch(
@@ -174,7 +161,7 @@ async function updateCartDisplay(cartId) {
     const data = await response.json();
     if (data.statusCode === 200 && data.data) {
       displayCart(data.data);
-      updateCartIcon(data.data.sum); // Update the cart icon with the item count
+      updateCartIcon(data.data.sum);
     } else {
       console.error("Error fetching cart:", data.message);
     }
@@ -183,12 +170,10 @@ async function updateCartDisplay(cartId) {
   }
 }
 
-// Update cart icon with the number of items
 function updateCartIcon(itemCount) {
   document.querySelector(".no-of-cart-items").textContent = itemCount;
 }
 
-// Display cart
 function displayCart(cartData) {
   const cartListItems = document.querySelector(".cart-list-items");
   cartListItems.innerHTML = "";
@@ -224,7 +209,6 @@ function displayCart(cartData) {
   }
 }
 
-// Handle click on cart icon to update cart display
 document.querySelector(".cart-icon").addEventListener("click", () => {
   const cartId = sessionStorage.getItem("cartId");
   if (cartId) {

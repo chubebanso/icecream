@@ -1,26 +1,21 @@
-// Hiển thị pop-up tự động khi trang được tải
 window.onload = function () {
   document.getElementById("popup").style.display = "flex";
 };
 
-// Đóng pop-up khi người dùng bấm vào nút "đóng"
 document.querySelectorAll(".close-btn").forEach((button) => {
   button.addEventListener("click", function () {
     document.getElementById("popup").style.display = "none";
   });
 });
 
-// Xử lý khi form được submit
 document
   .getElementById("emailForm")
   .addEventListener("submit", async function (event) {
-    event.preventDefault(); // Ngăn chặn hành động mặc định của form
+    event.preventDefault();
 
-    const phone = document.getElementById("popup-email").value; // Lấy số điện thoại từ input
-
+    const phone = document.getElementById("popup-email").value;
     if (phone) {
       try {
-        // Gửi yêu cầu API để tạo giỏ hàng mới với số điện thoại
         const response = await fetch(
           `http://localhost:8080/create-cart?phone=${phone}`,
           {
@@ -29,14 +24,12 @@ document
         );
 
         if (response.ok) {
-          const data = await response.json(); // Chuyển phản hồi thành dữ liệu JSON
-          const cartId = data.data?.id; // Lấy id của giỏ hàng từ trường `data.id`
+          const data = await response.json();
+          const cartId = data.data?.id;
 
-          // Kiểm tra và hiển thị thông báo thành công với ID giỏ hàng
           if (cartId) {
-            alert(`Giỏ hàng đã được tạo thành công với ID: ${cartId}`);
+            alert(`Giỏ hàng đã được tạo thành công `);
             document.getElementById("popup").style.display = "none";
-            // Lưu `cartId` vào sessionStorage để dùng trong các trang khác nếu cần
             sessionStorage.setItem("cartId", cartId);
           } else {
             alert(
@@ -53,7 +46,6 @@ document
     }
   });
 
-// Xử lý khi người dùng bấm vào "Không, cảm ơn"
 document
   .querySelector(".no-thanks")
   .addEventListener("click", function (event) {
