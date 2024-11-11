@@ -57,7 +57,9 @@ public class SecurityConfiguration {
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(
                         authz -> authz
-                                .requestMatchers("/", "login", "/storage/**").permitAll()
+                                .requestMatchers("/", "login", "/storage/**", "/product", "/create-cart",
+                                        "/get-cart-by-id", "/add-to-cart")
+                                .permitAll()
                                 .anyRequest().authenticated())
                 .oauth2ResourceServer(
                         (oauth2) -> oauth2.jwt(Customizer.withDefaults())
