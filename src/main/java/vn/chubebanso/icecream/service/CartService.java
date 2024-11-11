@@ -19,7 +19,8 @@ public class CartService {
     private final CartItemRepository cartItemRepository;
     private final VoucherRepository voucherRepository;
 
-    public CartService(CartRepository cartRepo, CartItemRepository cartItemRepository, VoucherRepository voucherRepository) {
+    public CartService(CartRepository cartRepo, CartItemRepository cartItemRepository,
+            VoucherRepository voucherRepository) {
         this.cartRepo = cartRepo;
         this.cartItemRepository = cartItemRepository;
         this.voucherRepository = voucherRepository;
@@ -53,7 +54,13 @@ public class CartService {
 
                 total += subtotal;
             }
-            cart.setTotal(total);
+            
+            if (cart.getVoucher() == null) {
+                cart.setTotal(total);
+            } else {
+                float newTotal = total * (1 - (cart.getVoucher().getDiscountAmount()) / 100);
+                cart.setTotal(newTotal);
+            }
         }
         return cartList;
     }
@@ -75,7 +82,13 @@ public class CartService {
 
                 total += subtotal;
             }
-            cart.setTotal(total);
+            Voucher voucher = cart.getVoucher();
+            if (voucher == null) {
+                cart.setTotal(total);
+            } else {
+                float newTotal = total * (1 - (voucher.getDiscountAmount()) / 100);
+                cart.setTotal(newTotal);
+            }
         }
         return cartList;
     }
@@ -99,27 +112,12 @@ public class CartService {
         return this.cartRepo.save(cart);
     }
 
-    // thêm Voucher vào giỏ hàng 
+    // thêm Voucher vào giỏ hàng
     public void handleApplyVoucherToCart(Cart cart, Long voucher_id) {
         Optional<Voucher> optionalVoucher = this.voucherRepository.findById(voucher_id);
         if (optionalVoucher.isPresent()) {
-            Voucher oldVoucher = this.voucherRepository.findByCartAndVoucher(cart, optionalVoucher.get());
-            if (oldVoucher == null) {
-                Voucher voucher = new Voucher();
-                voucher.setVoucherName(optionalVoucher.get().getVoucherName());
-                voucher.setVoucherType(optionalVoucher.get().getVoucherType());
-                voucher.setDiscountAmount(optionalVoucher.get().getDiscountAmount());
-                voucher.setMinActivationValue(optionalVoucher.get().getMinActivationValue());
-
-                cart.setVoucher(voucher); 
-            } else {
-                oldVoucher.setVoucherName(optionalVoucher.get().getVoucherName());
-                oldVoucher.setVoucherType(optionalVoucher.get().getVoucherType());
-                oldVoucher.setDiscountAmount(optionalVoucher.get().getDiscountAmount());
-                oldVoucher.setMinActivationValue(optionalVoucher.get().getMinActivationValue());
-
-                cart.setVoucher(oldVoucher); 
-            }
+            System.out.println("Voucher found: " + optionalVoucher.get().getVoucherName());
+            cart.setVoucher(optionalVoucher.get());
         }
     }
 }

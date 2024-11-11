@@ -39,6 +39,16 @@ public class Cart {
 
     private float total;
 
+    private boolean isSubmit;
+
+    public boolean isSubmit() {
+        return isSubmit;
+    }
+
+    public void setSubmit(boolean isSubmit) {
+        this.isSubmit = isSubmit;
+    }
+
     public long getSum() {
         return sum;
     }

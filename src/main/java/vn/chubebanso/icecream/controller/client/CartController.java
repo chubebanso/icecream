@@ -1,7 +1,5 @@
 package vn.chubebanso.icecream.controller.client;
 
-import java.util.List;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -42,8 +40,8 @@ public class CartController {
     }
 
     // show tất cả các carts của khách => khách biết mình đã từng ăn gì đặt lại cho dễ
-    @GetMapping("/show-all-carts")
-    public ResponseEntity<List<Cart>> showAllCarts(@Valid @RequestParam("phone") String phone) {
-        return ResponseEntity.ok(this.cartService.showAllCarts(phone));
-    }
+    // @GetMapping("/show-all-carts")
+    // public ResponseEntity<List<Cart>> showAllCarts() {
+    //     return ResponseEntity.ok(this.cartService.showAllCarts());
+    // }
 }
