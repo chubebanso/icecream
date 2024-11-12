@@ -14,28 +14,30 @@ import vn.chubebanso.icecream.service.VoucherService;
 @RestController
 public class VoucherController {
 
-    private final VoucherService voucherService;
-    private final CartService cartService;
+private final VoucherService voucherService;
+private final CartService cartService;
 
-    public VoucherController(VoucherService voucherService, CartService cartService) {
-        this.voucherService = voucherService;
-        this.cartService = cartService;
-    }
+public VoucherController(VoucherService voucherService, CartService
+cartService) {
+this.voucherService = voucherService;
+this.cartService = cartService;
+}
 
-    @PostMapping("/apply-voucher-to-cart")
-    public ResponseEntity<String> applyVoucherToCart(@Valid @RequestParam("cart_id") Long cart_id,
-            @RequestParam("voucher_id") Long voucher_id) {
-        Cart cart = this.cartService.getCartById(cart_id);
-        if (cart == null) {
-            return ResponseEntity.badRequest().body("Giỏ hàng không tồn tại");
-        }
-        Voucher voucher = this.voucherService.getVoucherById(voucher_id);
-        if (voucher == null) {
-            return ResponseEntity.badRequest().body("Voucher không tồn tại");
-        }
-        // làm ExpiredDate nhé
-        this.cartService.handleApplyVoucherToCart(cart, voucher_id);
-        String voucherName = voucher.getVoucherName();
-        return ResponseEntity.ok("Thêm voucher " + voucherName + " thành công!");
-    }
+@PostMapping("/apply-voucher-to-cart")
+public ResponseEntity<String> applyVoucherToCart(@Valid
+@RequestParam("cart_id") Long cart_id,
+@RequestParam("voucher_id") Long voucher_id) {
+Cart cart = this.cartService.getCartById(cart_id);
+if (cart == null) {
+return ResponseEntity.badRequest().body("Giỏ hàng không tồn tại");
+}
+Voucher voucher = this.voucherService.getVoucherById(voucher_id);
+if (voucher == null) {
+return ResponseEntity.badRequest().body("Voucher không tồn tại");
+}
+// làm ExpiredDate nhé
+this.cartService.handleApplyVoucherToCart(cart, voucher_id);
+String voucherName = voucher.getVoucherName();
+return ResponseEntity.ok("Thêm voucher " + voucherName + " thành công!");
+}
 }
