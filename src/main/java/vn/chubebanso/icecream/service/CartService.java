@@ -19,7 +19,6 @@ public class CartService {
     private final CartItemRepository cartItemRepository;
     private final VoucherRepository voucherRepository;
 
-
     public CartService(CartRepository cartRepo, CartItemRepository cartItemRepository,
             VoucherRepository voucherRepository) {
         this.cartRepo = cartRepo;
@@ -55,7 +54,6 @@ public class CartService {
 
                 total += subtotal;
             }
-
 
             if (cart.getVoucher() == null) {
                 cart.setTotal(total);
@@ -149,5 +147,21 @@ public class CartService {
             cart.setVoucher(voucher);
             this.cartRepo.save(cart);
         }
+    }
+
+    public Cart showCartsById(Long id) {
+        Optional<Cart> cart = this.cartRepo.findById(id);
+        Cart newCart = cart.get();
+        List<CartItem> cartItems = this.cartItemRepository.findByCart(newCart);
+        float total = 0;
+        for (CartItem cartItem : cartItems) {
+            float productPrice = cartItem.getProduct().getPrice();
+            long productQuantity = cartItem.getProductQuantity();
+            float subtotal = productPrice * productQuantity;
+            cartItem.setSubTotal(subtotal);
+            total += subtotal;
+        }
+        newCart.setTotal(total);
+        return newCart;
     }
 }
