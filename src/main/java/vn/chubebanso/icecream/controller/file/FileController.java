@@ -44,5 +44,4 @@ public class FileController {
         ResUploadFileDTO res = new ResUploadFileDTO(uploadFile, Instant.now());
         return ResponseEntity.ok().body(res);
     }
-
 }

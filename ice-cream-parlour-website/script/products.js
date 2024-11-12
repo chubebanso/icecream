@@ -68,7 +68,7 @@ function displayProducts(products) {
     `;
 
     const addToCartButton = document.createElement("button");
-    addToCartButton.textContent = "Add to Cart";
+    addToCartButton.textContent = "Thêm vào giỏ hàng";
     addToCartButton.addEventListener("click", (e) => addToCart(e, product.id));
     box.appendChild(addToCartButton);
 
@@ -127,7 +127,7 @@ async function addToCart(e, productId) {
 
   const cartId = sessionStorage.getItem("cartId");
   if (!cartId) {
-    showToast("No cart available. Please create a cart first.");
+    showToast("Không có giỏ hàng. Hãy tạo giỏ hàng trước.");
     return;
   }
 
@@ -141,11 +141,11 @@ async function addToCart(e, productId) {
     const data = await response.text();
     if (response.ok) {
       showToast(data);
-      e.target.textContent = "Already in the cart - Add again?";
+      e.target.textContent = "Bạn đã thêm sản phẩm này vào giỏ hàng rồi? Thèm ăng típ rồi saooo?";
       updateCartDisplay(cartId); // Update cart display after adding item
     } else {
-      console.error("Error adding to cart:", data);
-      showToast("Failed to add to cart. Please try again.");
+      console.error("Lỗi thêm sản phẩm vào giỏ hàng:", data);
+      showToast("Thêm sản phẩm thất bại, thử lại trong vài giây");
     }
   } catch (error) {
     console.error("API error:", error);

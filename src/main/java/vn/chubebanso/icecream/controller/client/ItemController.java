@@ -41,7 +41,7 @@ public class ItemController {
             return ResponseEntity.badRequest().body("Đã hết sản phẩm!");
         }
         String productName = product.getName();
-        this.productService.handleAddProductToCart(cart, product_id, quantity);
+        this.productService.handleAddProductToCart(cart, product_id);
         return ResponseEntity.ok("Đã thêm sản phẩm " + productName + " vào giỏ hàng!");
     }
 

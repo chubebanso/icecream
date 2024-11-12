@@ -10,18 +10,21 @@ import vn.chubebanso.icecream.domain.CartItem;
 import vn.chubebanso.icecream.domain.Voucher;
 import vn.chubebanso.icecream.repository.CartItemRepository;
 import vn.chubebanso.icecream.repository.CartRepository;
+import vn.chubebanso.icecream.repository.VoucherRepository;
 
 @Service
 public class CartService {
 
     private final CartRepository cartRepo;
     private final CartItemRepository cartItemRepository;
-    // private final VoucherRepository voucherRepository;
+    private final VoucherRepository voucherRepository;
 
-    public CartService(CartRepository cartRepo, CartItemRepository cartItemRepository) {
+
+    public CartService(CartRepository cartRepo, CartItemRepository cartItemRepository,
+            VoucherRepository voucherRepository) {
         this.cartRepo = cartRepo;
         this.cartItemRepository = cartItemRepository;
-        // this.voucherRepository = voucherRepository;
+        this.voucherRepository = voucherRepository;
     }
 
     // System returning a cart by ID => no need for body, just id and cart
@@ -52,53 +55,68 @@ public class CartService {
 
                 total += subtotal;
             }
-            cart.setTotal(total);
-        }
-        return cartList;
-    }
 
-    // Customers show all previous orders
-    public List<Cart> showAllCarts(String phone) {
-        List<Cart> cartList = this.cartRepo.findAllByPhonenum(phone);
 
-        for (Cart cart : cartList) {
-            List<CartItem> cartItems = this.cartItemRepository.findByCart(cart);
-            float total = 0;
-
-            for (CartItem cartItem : cartItems) {
-                float productPrice = cartItem.getProduct().getPrice();
-                long productQuantity = cartItem.getProductQuantity();
-
-                float subtotal = productPrice * productQuantity;
-                cartItem.setSubTotal(subtotal);
-
-                total += subtotal;
+            if (cart.getVoucher() == null) {
+                cart.setTotal(total);
+            } else {
+                float newTotal = total * (1 - (cart.getVoucher().getDiscountAmount()) / 100);
+                cart.setTotal(total);
+                cart.setNewTotal(newTotal);
             }
-            cart.setTotal(total);
         }
         return cartList;
     }
 
+    // // Customers show all previous orders
+    // public List<Cart> showAllCarts(String phone) {
+    // List<Cart> cartList = this.cartRepo.findAllByPhonenum(phone);
+
+    // for (Cart cart : cartList) {
+    // List<CartItem> cartItems = this.cartItemRepository.findByCart(cart);
+    // float total = 0;
+
+    // for (CartItem cartItem : cartItems) {
+    // float productPrice = cartItem.getProduct().getPrice();
+    // long productQuantity = cartItem.getProductQuantity();
+
+    // float subtotal = productPrice * productQuantity;
+    // cartItem.setSubTotal(subtotal);
+
+    // total += subtotal;
+    // }
+    // Voucher voucher = cart.getVoucher();
+    // if (voucher == null) {
+    // cart.setTotal(total);
+    // } else {
+    // float newTotal = total * (1 - (voucher.getDiscountAmount()) / 100);
+    // cart.setTotal(newTotal);
+    // }
+    // }
+    // return cartList;
+    // }
+
     // Customers show all previous orders
-    public Cart showCartsById(Long id) {
-        Optional<Cart> cart = this.cartRepo.findById(id);
-        Cart newCart = cart.get();
-        List<CartItem> cartItems = this.cartItemRepository.findByCart(newCart);
-        float total = 0;
+    // public Cart showCartsById(Long id) {
+    // Optional<Cart> cart = this.cartRepo.findById(id);
+    // Cart newCart = cart.get();
+    // List<CartItem> cartItems = this.cartItemRepository.findByCart(newCart);
+    // float total = 0;
 
-        for (CartItem cartItem : cartItems) {
-            float productPrice = cartItem.getProduct().getPrice();
-            long productQuantity = cartItem.getProductQuantity();
+    // for (CartItem cartItem : cartItems) {
+    // float productPrice = cartItem.getProduct().getPrice();
+    // long productQuantity = cartItem.getProductQuantity();
 
-            float subtotal = productPrice * productQuantity;
-            cartItem.setSubTotal(subtotal);
+    // float subtotal = productPrice * productQuantity;
+    // cartItem.setSubTotal(subtotal);
 
-            total += subtotal;
-        }
-        newCart.setTotal(total);
-        return newCart;
+    // total += subtotal;
 
-    }
+    // }
+    // newCart.setTotal(total);
+    // return newCart;
+
+    // }
 
     // Customers delete cart
     public void deleteProductById(Long cart_id) {
@@ -119,29 +137,17 @@ public class CartService {
         return this.cartRepo.save(cart);
     }
 
-    // thêm Voucher vào giỏ hàng
-    // public void handleApplyVoucherToCart(Cart cart, Long voucher_id) {
-    // Optional<Voucher> optionalVoucher =
-    // this.voucherRepository.findById(voucher_id);
-    // if (optionalVoucher.isPresent()) {
-    // Voucher oldVoucher = this.voucherRepository.findByCartAndVoucher(cart,
-    // optionalVoucher.get());
-    // if (oldVoucher == null) {
-    // Voucher voucher = new Voucher();
-    // voucher.setVoucherName(optionalVoucher.get().getVoucherName());
-    // voucher.setVoucherType(optionalVoucher.get().getVoucherType());
-    // voucher.setDiscountAmount(optionalVoucher.get().getDiscountAmount());
-    // voucher.setMinActivationValue(optionalVoucher.get().getMinActivationValue());
-
-    // cart.setVoucher(voucher);
-    // } else {
-    // oldVoucher.setVoucherName(optionalVoucher.get().getVoucherName());
-    // oldVoucher.setVoucherType(optionalVoucher.get().getVoucherType());
-    // oldVoucher.setDiscountAmount(optionalVoucher.get().getDiscountAmount());
-    // oldVoucher.setMinActivationValue(optionalVoucher.get().getMinActivationValue());
-
-    // cart.setVoucher(oldVoucher);
-    // }
-    // }
-    // }
+    // Applies voucher to cart
+    public void handleApplyVoucherToCart(Cart cart, Voucher voucher) {
+        Voucher oldVoucher = cart.getVoucher();
+        if (oldVoucher == null) {
+            cart.setVoucher(voucher);
+            this.cartRepo.save(cart);
+        } else {
+            float total = cart.getTotal();
+            cart.setNewTotal(total);
+            cart.setVoucher(voucher);
+            this.cartRepo.save(cart);
+        }
+    }
 }
