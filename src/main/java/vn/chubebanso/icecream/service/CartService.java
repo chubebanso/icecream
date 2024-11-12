@@ -19,6 +19,7 @@ public class CartService {
     private final CartItemRepository cartItemRepository;
     private final VoucherRepository voucherRepository;
 
+
     public CartService(CartRepository cartRepo, CartItemRepository cartItemRepository,
             VoucherRepository voucherRepository) {
         this.cartRepo = cartRepo;
@@ -54,6 +55,7 @@ public class CartService {
 
                 total += subtotal;
             }
+
 
             if (cart.getVoucher() == null) {
                 cart.setTotal(total);
