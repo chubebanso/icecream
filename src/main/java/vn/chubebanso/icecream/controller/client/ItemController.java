@@ -29,7 +29,7 @@ public class ItemController {
 
     @PostMapping("/add-to-cart")
     public ResponseEntity<String> addProductToCart(@Valid @RequestParam("cart_id") Long cart_id,
-            @Valid @RequestParam("product_id") Long product_id) {
+            @Valid @RequestParam("product_id") Long product_id, @Valid @RequestParam("quantity") Long quantity) {
         Cart cart = cartService.getCartById(cart_id);
         if (cart == null) {
             return ResponseEntity.badRequest().body("Giỏ hàng không tồn tại");

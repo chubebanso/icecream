@@ -34,7 +34,7 @@ public class VoucherController {
             return ResponseEntity.badRequest().body("Voucher không tồn tại");
         }
         // làm ExpiredDate nhé
-        this.cartService.handleApplyVoucherToCart(cart, voucher_id);
+        this.cartService.handleApplyVoucherToCart(cart, voucher);
         String voucherName = voucher.getVoucherName();
         return ResponseEntity.ok("Thêm voucher " + voucherName + " thành công!");
     }

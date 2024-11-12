@@ -54,44 +54,67 @@ public class CartService {
 
                 total += subtotal;
             }
-            
+
             if (cart.getVoucher() == null) {
                 cart.setTotal(total);
             } else {
                 float newTotal = total * (1 - (cart.getVoucher().getDiscountAmount()) / 100);
-                cart.setTotal(newTotal);
+                cart.setTotal(total);
+                cart.setNewTotal(newTotal);
             }
         }
         return cartList;
     }
+
+    // // Customers show all previous orders
+    // public List<Cart> showAllCarts(String phone) {
+    // List<Cart> cartList = this.cartRepo.findAllByPhonenum(phone);
+
+    // for (Cart cart : cartList) {
+    // List<CartItem> cartItems = this.cartItemRepository.findByCart(cart);
+    // float total = 0;
+
+    // for (CartItem cartItem : cartItems) {
+    // float productPrice = cartItem.getProduct().getPrice();
+    // long productQuantity = cartItem.getProductQuantity();
+
+    // float subtotal = productPrice * productQuantity;
+    // cartItem.setSubTotal(subtotal);
+
+    // total += subtotal;
+    // }
+    // Voucher voucher = cart.getVoucher();
+    // if (voucher == null) {
+    // cart.setTotal(total);
+    // } else {
+    // float newTotal = total * (1 - (voucher.getDiscountAmount()) / 100);
+    // cart.setTotal(newTotal);
+    // }
+    // }
+    // return cartList;
+    // }
 
     // Customers show all previous orders
-    public List<Cart> showAllCarts(String phone) {
-        List<Cart> cartList = this.cartRepo.findAllByPhonenum(phone);
+    // public Cart showCartsById(Long id) {
+    // Optional<Cart> cart = this.cartRepo.findById(id);
+    // Cart newCart = cart.get();
+    // List<CartItem> cartItems = this.cartItemRepository.findByCart(newCart);
+    // float total = 0;
 
-        for (Cart cart : cartList) {
-            List<CartItem> cartItems = this.cartItemRepository.findByCart(cart);
-            float total = 0;
+    // for (CartItem cartItem : cartItems) {
+    // float productPrice = cartItem.getProduct().getPrice();
+    // long productQuantity = cartItem.getProductQuantity();
 
-            for (CartItem cartItem : cartItems) {
-                float productPrice = cartItem.getProduct().getPrice();
-                long productQuantity = cartItem.getProductQuantity();
+    // float subtotal = productPrice * productQuantity;
+    // cartItem.setSubTotal(subtotal);
 
-                float subtotal = productPrice * productQuantity;
-                cartItem.setSubTotal(subtotal);
+    // total += subtotal;
 
-                total += subtotal;
-            }
-            Voucher voucher = cart.getVoucher();
-            if (voucher == null) {
-                cart.setTotal(total);
-            } else {
-                float newTotal = total * (1 - (voucher.getDiscountAmount()) / 100);
-                cart.setTotal(newTotal);
-            }
-        }
-        return cartList;
-    }
+    // }
+    // newCart.setTotal(total);
+    // return newCart;
+
+    // }
 
     // Customers delete cart
     public void deleteProductById(Long cart_id) {
@@ -112,12 +135,17 @@ public class CartService {
         return this.cartRepo.save(cart);
     }
 
-    // thêm Voucher vào giỏ hàng
-    public void handleApplyVoucherToCart(Cart cart, Long voucher_id) {
-        Optional<Voucher> optionalVoucher = this.voucherRepository.findById(voucher_id);
-        if (optionalVoucher.isPresent()) {
-            System.out.println("Voucher found: " + optionalVoucher.get().getVoucherName());
-            cart.setVoucher(optionalVoucher.get());
+    // Applies voucher to cart
+    public void handleApplyVoucherToCart(Cart cart, Voucher voucher) {
+        Voucher oldVoucher = cart.getVoucher();
+        if (oldVoucher == null) {
+            cart.setVoucher(voucher);
+            this.cartRepo.save(cart);
+        } else {
+            float total = cart.getTotal();
+            cart.setNewTotal(total);
+            cart.setVoucher(voucher);
+            this.cartRepo.save(cart);
         }
     }
 }

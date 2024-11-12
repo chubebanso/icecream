@@ -35,7 +35,7 @@ class AdminVoucherController {
         return ResponseEntity.ok(newVoucher);
     }
 
-    @DeleteMapping("/delete/voucher/{voucher_id}")
+    @DeleteMapping("/delete/voucher")
     public ResponseEntity<Void> deleteVoucherById(@PathVariable("voucher_id") long voucher_id)
             throws IdInvalidException {
         if (voucher_id > 1500) {

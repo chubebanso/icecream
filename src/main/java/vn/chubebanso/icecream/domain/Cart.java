@@ -39,6 +39,16 @@ public class Cart {
 
     private float total;
 
+    private float newTotal;
+
+    public float getNewTotal() {
+        return newTotal;
+    }
+
+    public void setNewTotal(float newTotal) {
+        this.newTotal = newTotal;
+    }
+
     private boolean isSubmit;
 
     public boolean isSubmit() {
