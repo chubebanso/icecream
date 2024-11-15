@@ -11,7 +11,6 @@ import DialogTitle from '@mui/material/DialogTitle';
 import TextField from '@mui/material/TextField';
 import { Download as DownloadIcon } from '@phosphor-icons/react/dist/ssr/Download';
 import { Plus as PlusIcon } from '@phosphor-icons/react/dist/ssr/Plus';
-import { Upload as UploadIcon } from '@phosphor-icons/react/dist/ssr/Upload';
 
 import { ProductsTable } from '@/components/dashboard/product/product-table';
 import type { Product } from '@/components/dashboard/product/product-table';
@@ -19,7 +18,7 @@ import type { Product } from '@/components/dashboard/product/product-table';
 export default function Page(): React.JSX.Element {
   const [products, setProducts] = React.useState<Product[]>([]);
   const [open, setOpen] = React.useState(false);
-  const [imagePreview, setImagePreview] = React.useState<string | null>(null); // Trạng thái xem trước hình ảnh
+  const [imagePreview, setImagePreview] = React.useState<string | null>(null);
   const [newProduct, setNewProduct] = React.useState({
     name: '',
     price: '',
@@ -38,7 +37,7 @@ export default function Page(): React.JSX.Element {
 
   const handleClose = () => {
     setOpen(false);
-    setImagePreview(null); // Reset ảnh xem trước khi đóng modal
+    setImagePreview(null);
     setNewProduct({
       name: '',
       price: '',
@@ -56,58 +55,102 @@ export default function Page(): React.JSX.Element {
     });
   };
 
-  // Xử lý upload hình ảnh và xem trước
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      // Xem trước ảnh bằng FileReader
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result as string); // Cập nhật ảnh xem trước
-      };
-      reader.readAsDataURL(file);
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const file = e.target.files?.[0];
+  const token = localStorage.getItem('custom-auth-token');
 
-      // Nếu có API upload ảnh, gọi API và lưu URL vào newProduct.image
-      // Ví dụ:
-      // const formData = new FormData();
-      // formData.append('file', file);
-      // fetch('YOUR_IMAGE_UPLOAD_API_ENDPOINT', {
-      //   method: 'POST',
-      //   body: formData,
-      // }).then(response => response.json()).then(data => {
-      //   setNewProduct((prev) => ({ ...prev, image: data.url }));
-      // });
+  if (file && token) {
+    // Xem trước ảnh bằng FileReader
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setImagePreview(reader.result as string);
+    };
+    reader.readAsDataURL(file);
+
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+
+    const folder = 'admin';
+    const uploadUrl = `http://localhost:8080/files?folder=${folder}`;
+
+    try {
+      const response = await fetch(uploadUrl, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      });
+      const data = await response.json();
+      if (response.ok) {
+        setNewProduct((prev) => ({ ...prev, image: data.data.fileName })); 
+      } else {
+        console.error('File upload failed:', data.message);
+      }
+    } catch (error) {
+      console.error('Error uploading file:', error);
     }
-  };
+  } else {
+    console.error('No file selected or token missing');
+  }
+};
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const newProductData = {
-      id: `${Date.now()}`,
       ...newProduct,
-      image: imagePreview || '', // Sử dụng URL ảnh đã upload
       price: parseFloat(newProduct.price),
     };
-    setProducts((prevProducts) => [...prevProducts, newProductData]);
-    handleClose();
+    const token = localStorage.getItem('custom-auth-token');
+
+    if (token) {
+      try {
+        const response = await fetch('http://localhost:8080/create/product', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(newProductData),
+        });
+        const data = await response.json();
+        if (response.ok) {
+          setProducts((prevProducts) => [...prevProducts, data.data]);
+          handleClose();
+        } else {
+          console.error('Product creation failed:', data.message);
+        }
+      } catch (error) {
+        console.error('Error creating product:', error);
+      }
+    } else {
+      console.error('Token is missing');
+    }
   };
 
   React.useEffect(() => {
     const fetchProducts = async () => {
-      try {
-        const response = await fetch('http://localhost:8080/product', {
-          method: 'GET',
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('custom-auth-token')}`,
-          },
-        });
-        if (response.ok) {
-          const data = await response.json();
-          setProducts(data.data);
-        } else {
-          console.error('Failed to fetch products');
+      const token = localStorage.getItem('custom-auth-token');
+      if (token) {
+        try {
+          const response = await fetch('http://localhost:8080/product', {
+            method: 'GET',
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          if (response.ok) {
+            const data = await response.json();
+            setProducts(data.data);
+          } else {
+            console.error('Failed to fetch products');
+          }
+        } catch (error) {
+          console.error('Error fetching products:', error);
         }
-      } catch (error) {
-        console.error('Error fetching products:', error);
+      } else {
+        console.error('Token is missing');
       }
     };
 
@@ -140,7 +183,6 @@ export default function Page(): React.JSX.Element {
         rowsPerPage={rowsPerPage}
       />
 
-      {/* Modal thêm sản phẩm */}
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>Thêm sản phẩm mới</DialogTitle>
         <DialogContent>
