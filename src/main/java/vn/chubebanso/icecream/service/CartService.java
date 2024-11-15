@@ -58,9 +58,14 @@ public class CartService {
             if (cart.getVoucher() == null) {
                 cart.setTotal(total);
             } else {
-                float newTotal = total * (1 - (cart.getVoucher().getDiscountAmount()) / 100);
-                cart.setTotal(total);
-                cart.setNewTotal(newTotal);
+                float activationValue = cart.getVoucher().getMinActivationValue();
+                if (total >= activationValue) {
+                    float newTotal = total * (1 - (cart.getVoucher().getDiscountAmount()) / 100);
+                    cart.setTotal(total);
+                    cart.setNewTotal(newTotal);
+                } else {
+                    cart.setTotal(total);
+                }
             }
         }
         return cartList;
@@ -161,7 +166,20 @@ public class CartService {
             cartItem.setSubTotal(subtotal);
             total += subtotal;
         }
-        newCart.setTotal(total);
+
+        if (newCart.getVoucher() == null) {
+            newCart.setTotal(total);
+        } else {
+            float activationValue = newCart.getVoucher().getMinActivationValue();
+            if (total >= activationValue) {
+                float newTotal = total * (1 - (newCart.getVoucher().getDiscountAmount()) / 100);
+                newCart.setTotal(total);
+                newCart.setNewTotal(newTotal);
+            } else {
+                newCart.setTotal(total);
+            }
+        }
+
         return newCart;
     }
 }

@@ -100,7 +100,7 @@ export function ProductsTable({
                     />
                   </TableCell>
                   <TableCell>
-                    <Avatar src={row.image} alt={row.name} />
+                    <Avatar src={`/assets/admin/${row.image}`} alt={row.name} />
                   </TableCell>
                   <TableCell>{row.name}</TableCell>
                   <TableCell>{row.price.toLocaleString()} VND</TableCell>

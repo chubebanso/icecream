@@ -18,7 +18,7 @@
     <link rel="stylesheet" href="styles/topscrollindicator.css">
 
     <!-- link to add favicon -->
-    <link rel="icon" href="./images/logo.png" type="image/png">
+    <link rel="icon" href="/ice-cream-react/public/assets/images/logo.png" type="image/png">
 
     <!-- font awesome icons script -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -67,7 +67,7 @@
     <!-- nav bar -->
     <div class="nav-bar">
         <div class="logo">
-            <img src="./images/logo.png" alt="icyco-logo" height="40px" width="40px">
+            <img src="/ice-cream-react/public/assets/images/logo.png" alt="icyco-logo" height="40px" width="40px">
             <a href="./index.html">Thủy Tạ</a>
         </div>
         <div class="nav-links">
@@ -76,14 +76,8 @@
         </div>
         <div class="icons">
             <div class="icon">
-                <a href="./login.html"><i class="fa fa-user" aria-hidden="true"></i></a>
-            </div>
-            <div class="icon">
                 <span class="i"><i class="fa fa-shopping-cart cart-icon" aria-hidden="true"></i> <span
                         class="no-of-cart-items">0</span></span>
-            </div>
-            <div class="icon">
-                <i class="fa fa-bars menu" aria-hidden="true" id="menu-icon"></i>
             </div>
         </div>
     </div>
@@ -105,7 +99,8 @@
 
         <div class="empty-cart active">
             <div class="empty-cart-img-div">
-                <img src="images/empty-cart.png" alt="Delicious Ice Cream" class="ice-cream-image" />
+                <img src="/ice-cream-react/public/assets/images/empty-cart.png" alt="Delicious Ice Cream"
+                    class="ice-cream-image" />
             </div>
             <p class="empty-cart-text">Giỏ hàng của bạn đang trống!</p>
         </div>
@@ -115,8 +110,8 @@
     <section class="home" id="home">
         <div class="text">
             <h1>Thủy Tạ - thương hiệu bền bỉ cùng năm tháng</h1>
-            <h4> Công ty Cổ phần Thủy Tạ được thành lập năm 1958, 
-                tiền thân là Nhà hàng ăn uống giải khát Thủy Tạ. 
+            <h4> Công ty Cổ phần Thủy Tạ được thành lập năm 1958,
+                tiền thân là Nhà hàng ăn uống giải khát Thủy Tạ.
                 Tên gọi ban đầu của Thủy Tạ là “Thủy Tọa”</h4>
             <a href="./products.html"><button style="margin-top: 15px;">Đặt hàng ngay</button></a>
         </div>
@@ -138,12 +133,14 @@
     <div id="popup" class="popup">
         <div class="popup-content">
             <div class="popup-left">
-                <img src="images/popupice.jpg" alt="Discount Image">
+                <img src="/ice-cream-react/public/assets/images/popupice.jpg" alt="Discount Image">
             </div>
             <div class="popup-right">
                 <h1>Đợi đã!</h1>
                 <h2>Bạn đã là một thành viên của Thủy Tạ chưa???</h2>
-                <p><center>Đăng ký ngay để nhận giảm giá tới 30% cho đơn hàng đầu tiên.</center></p>
+                <p>
+                    <center>Đăng ký ngay để nhận giảm giá tới 30% cho đơn hàng đầu tiên.</center>
+                </p>
                 <form id="emailForm">
                     <input type="text" id="popup-email" placeholder="Nhập số điện thoại" required>
                     <button type="submit" class="signup-btn">Tiếp tục</button>
@@ -155,67 +152,6 @@
             <span class="close-btn" id="close-btn2">&times; </span>
         </div>
     </div>
-
-    <!-- About -->
-    <section class="about" id="about">
-        <div class="box-container about-box">
-            <h2 class="rightani">Get The Cool Down With Our Creamy Creations!</h2>
-            <p class="leftani">We at IcyCo, We're more than just a company – we're a community driven by a shared vision
-                and
-                commitment to excellence. We're excited toa continue and expand our business all while staying true
-                to our roots and the values that define us. Come visit us and let’s create sweet memories together!
-            </p>
-        </div>
-    </section>
-
-    <!-- WHY icyCO ? -->
-    <section class="why-icyco">
-        <h1>Why IcyCo?</h1>
-        <div class="feature-container">
-            <div class="inner">
-                <div class="feature-box rightani">
-                    <div class="icon-circle">
-                        <img src="images/flavour-icon.png" alt="Flavors Icon">
-                    </div>
-                    <div class="feature-text">
-                        <h3>Range of Flavors</h3>
-                        <p>From classic vanilla to exotic matcha, Icyco offers a wide range of flavors to satisfy every
-                            palate.</p>
-                    </div>
-                </div>
-                <div class="feature-box leftani">
-                    <div class="icon-circle ">
-                        <img src="images/hygiene-icon.png" alt="Hygiene Icon">
-                    </div>
-                    <div class="feature-text">
-                        <h3>Hygiene & Food Safety</h3>
-                        <p>We maintain the highest hygiene standards, ensuring every scoop is safe and delicious.</p>
-                    </div>
-                </div>
-            </div>
-            <div class="inner">
-                <div class="feature-box rightani">
-                    <div class="icon-circle">
-                        <img src="images/quality-icon.png" alt="Quality Ingredients Icon">
-                    </div>
-                    <div class="feature-text">
-                        <h3>Best Quality Ingredients</h3>
-                        <p>Only the finest ingredients make it into our ice cream, for a rich and unforgettable
-                            experience.</p>
-                    </div>
-                </div>
-                <div class="feature-box leftani">
-                    <div class="icon-circle">
-                        <img src="images/friendly-icon.png" alt="Fun Atmosphere Icon">
-                    </div>
-                    <div class="feature-text">
-                        <h3>Fun & Friendly Atmosphere</h3>
-                        <p>Our parlors are designed to be fun and inviting, making every visit a sweet memory.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
 
     <!-- Toaster -->
     <div id="toast-container" class="toast-container"></div>

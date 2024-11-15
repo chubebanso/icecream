@@ -30,7 +30,7 @@
 
 body {
     background-color: var(--body-color);
-    cursor: url("../images/logo.png"), auto;
+    cursor: url("/ice-cream-react/public/assets/images/logo.png"), auto;
 }
 
 /* ---------------------- */
@@ -503,6 +503,26 @@ h3 {
 {
     display: flex; 
     justify-content: center; 
+}
+
+.voucher-popup {
+    display: none; /* Ẩn pop-up ban đầu */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Nền mờ */
+    justify-content: center;
+    align-items: center;
+}
+
+.voucher-popup-content {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    width: 300px;
+    text-align: center;
 }
 
 .ice-cream-image {
