@@ -13,8 +13,9 @@
     <link rel="stylesheet" href="styles/swiper-bundle.min.css">
     <link rel="stylesheet" href="styles/topscrollindicator.css">
 
+
     <!-- link to add favicon -->
-    <link rel="icon" href="/ice-cream-react/public/assets/images/logo.png" type="image/png">
+    <link rel="icon" href="/ice-cream-react/public/assets/images//logo.png" type="image/png">
 
     <!-- font awesome icons script -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -72,11 +73,15 @@
         </div>
         <div class="icons">
             <div class="icon">
-                <span class="i"><i class="fa fa-shopping-cart cart-icon" aria-hidden="true"></i> <span
-                        class="no-of-cart-items">0</span></span>
+                <span class="i">
+                    <i class="fa fa-shopping-cart cart-icon" aria-hidden="true"></i>
+                    <span class="no-of-cart-items">0</span>
+                </span>
             </div>
             <div class="icon">
-                <i class="fa fa-bars menu" aria-hidden="true"></i>
+                <a href="#" id="logoutButton" class="logout-link">
+                    <i class="fa fa-sign-out-alt" aria-hidden="true"></i>
+                </a>
             </div>
         </div>
     </div>
@@ -87,11 +92,10 @@
         <h1>Giỏ hàng</h1>
 
         <div class="no-empty-cart">
-            <ul class="cart-list-items">
-            </ul>
+            <ul class="cart-list-items"></ul>
             <div>
                 <div class="total">Tổng tiền: <span class="sub-total">0 VNĐ</span></div>
-                <button id="payButton">Thanh toán</button>
+                <button id="payButton" id="payButton">Thanh toán</button>
             </div>
         </div>
 
@@ -113,18 +117,12 @@
             <div class="voucher-popup-content">
                 <h2>Chọn Voucher</h2>
                 <p>Chọn voucher bạn muốn sử dụng cho giỏ hàng của mình:</p>
-
-                <div class="search-container">
-                    <input type="text" id="search-input" placeholder="Tìm kiếm voucher...">
-                    <div class="suggestions-container" id="suggestions-container"></div>
-                </div>
-                
-
-                <!-- Danh sách Voucher -->
-                <ul class="voucher-list" id="voucherList"></ul>
-
-                <!-- Nút áp dụng và hủy -->
-                <button id="applyVoucherBtn">Áp dụng</button>
+                <ul class="voucher-list">
+                    <li><input type="radio" id="voucher1" name="voucher" value="voucher1"> Voucher Giảm Giá 10%</li>
+                    <li><input type="radio" id="voucher2" name="voucher" value="voucher2"> Voucher Giảm Giá 20%</li>
+                    <li><input type="radio" id="voucher3" name="voucher" value="voucher3"> Voucher Giảm Giá 30%</li>
+                </ul>
+                <button id="applyVoucherBtn">Áp Dụng</button>
                 <button class="cancel-popup" id="cancelPopupBtn">Hủy</button>
 
                 <!-- Phân trang -->
@@ -137,19 +135,15 @@
         </div>
 
     </div>
-
-    <!-- Products -->
     <section class="products" id="products" style="margin-top: 100px;">
         <h1>Sản <span>phẩm</span></h1>
         <div class="categories-wrapper" style="margin-bottom: 20px;"></div>
-        <div class="search-container" style=" width: 65%; margin: auto;"></div>
-        <div class="box-container products-box " style="margin-top: 40px;"></div>
+        <div class="search-container" style="width: 65%; margin: auto;"></div>
+        <div class="box-container products-box" style="margin-top: 40px;"></div>
     </section>
 
-    <!-- Overlay Section -->
     <div id="overlay" style="display: none;"></div>
 
-    <!-- Toaster -->
     <div id="toast-container" class="toast-container"></div>
     <script>
         // Chuyển hướng đến trang thanh toán khi nhấn nút "Thanh toán"
@@ -165,6 +159,8 @@
     <script type="module" src="script/cart.js"></script>
     <script src="script/topscrollindicator.js"></script>
     <script src="script/cursor.js"></script>
+
+
 </body>
 
 </html>
