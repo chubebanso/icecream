@@ -12,7 +12,6 @@ import vn.chubebanso.icecream.domain.Voucher;
 import vn.chubebanso.icecream.service.CartService;
 import vn.chubebanso.icecream.service.VoucherService;
 
-
 @RestController
 public class VoucherController {
 
@@ -35,7 +34,6 @@ public class VoucherController {
         if (voucher == null) {
             return ResponseEntity.badRequest().body("Voucher không tồn tại");
         }
-        // làm ExpiredDate nhé
         this.cartService.handleApplyVoucherToCart(cart, voucher);
         String voucherName = voucher.getVoucherName();
         return ResponseEntity.ok("Thêm voucher " + voucherName + " thành công!");

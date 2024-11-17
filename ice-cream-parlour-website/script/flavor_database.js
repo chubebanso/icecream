@@ -2,27 +2,27 @@ const falvors_list = [
     {
         id: "f001",
         name: "Regular",
-        image: "images/regular.jpg"
+        image: "/ice-cream-react/public/assets/images/regular.jpg"
     },
     {
         id: "f002",
         name: "Gelato",
-        image: "images/gelato.jpg"
+        image: "/ice-cream-react/public/assets/images/gelato.jpg"
     },
     {
         id: "f003",
         name: "Sorbet",
-        image: "images/sorbet.jpg"
+        image: "/ice-cream-react/public/assets/images/sorbet.jpg"
     },
     {
         id: "f004",
         name: "Frozen Yogurt",
-        image: "images/yogurt.jpg"
+        image: "/ice-cream-react/public/assets/images/yogurt.jpg"
     },
     {
         id: "f005",
         name: "Non-Dairy/Vegan",
-        image: "images/vegan.jpg"
+        image: "/ice-cream-react/public/assets/images/vegan.jpg"
     }
 ]
 

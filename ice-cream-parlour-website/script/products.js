@@ -37,7 +37,7 @@ function displayProducts(products) {
     productsSection.innerHTML = `
       <div class="no-product-container">
         <h1 class="no-product-heading">No Product Found</h1>
-        <img src="images/product-not-found.png" alt="No products available" class="no-product-image">
+        <img src="/ice-cream-react/public/assets/images/product-not-found.png" alt="No products available" class="no-product-image">
         <p class="no-product-text">We're sorry, but it seems we can't find the product you're looking for. Try searching for another flavor!</p>
       </div>
     `;
@@ -49,7 +49,7 @@ function displayProducts(products) {
     box.className = "box";
     box.id = product.id;
 
-    const imagePath = `images/${product.image}`;
+    const imagePath = `file:///C:/Java_vs_minh_beo/01-java-spring-icecream/ice-cream-react/public/assets/admin/${product.image}`;
     box.innerHTML = `
       <div class="image-wrapper">
         <img src="${imagePath}" alt="${product.name}">
@@ -58,7 +58,7 @@ function displayProducts(products) {
       </div>
       <div class="name-price">
         <div class="name">${product.name}</div>
-        <div class="price">$${product.price}</div>
+        <div class="price">${product.price} VNĐ</div>
       </div>
       <div class="qty">
         <span class="decrease">-</span>
@@ -120,11 +120,6 @@ async function addToCart(e, productId) {
     e.target.parentElement.querySelector(".pcs").textContent
   );
 
-  if (!pcs) {
-    showToast("Please select the number of cups you want!");
-    return;
-  }
-
   const cartId = sessionStorage.getItem("cartId");
   if (!cartId) {
     showToast("Không có giỏ hàng. Hãy tạo giỏ hàng trước.");
@@ -183,13 +178,12 @@ function displayCart(cartData) {
       const cartItem = document.createElement("li");
       cartItem.className = "cart-item";
       cartItem.innerHTML = `
-        <div class="cart-item-image"><img src="images/${
-          item.product.image
+        <div class="cart-item-image"><img src="/ice-cream-react/public/assets/images/${item.product.image
         }" alt="${item.product.name}"></div>
         <div class="cart-item-details">
           <h3 class="cart-item-name">${item.product.name}</h3>
-          <p class="cart-item-quantity">Quantity: ${item.productQuantity}</p>
-          <p class="cart-item-subtotal">$${item.subTotal.toFixed(2)}</p>
+          <p class="cart-item-quantity">Số lượng: ${item.productQuantity}</p>
+          <p class="cart-item-subtotal">${item.subTotal.toFixed(0)} VNĐ</p>
         </div>
         <div class="cart-item-remove"><i class="fa fa-trash remove-item" aria-hidden="true"></i></div>
       `;
@@ -200,7 +194,7 @@ function displayCart(cartData) {
     });
     document.querySelector(
       ".sub-total"
-    ).textContent = `$${cartData.total.toFixed(2)}`;
+    ).textContent = `${cartData.total.toFixed(2)} VNĐ`;
     document.querySelector(".empty-cart").classList.remove("active");
     document.querySelector(".no-empty-cart").classList.add("active");
   } else {

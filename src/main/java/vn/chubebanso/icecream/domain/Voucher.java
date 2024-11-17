@@ -10,6 +10,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Pattern;
 
 @Entity
 @Table(name = "voucher")
@@ -19,6 +21,8 @@ public class Voucher {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
+    @NotEmpty(message = "Voucher type cannot be empty")
+    @Pattern(regexp = "Khuyến mãi hàng tháng|Sinh nhật nhà hàng|Trung thu|Tết Âm Lịch|Quốc Khánh|30/4 - 1/5|Khác", message = "Voucher Type must be one of {Khuyến mãi hàng tháng, Sinh nhật nhà hàng, Trung thu, Tết Âm Lịch, Quốc Khánh, 30/4 - 1/5, Khác}")
     private String voucherType;
 
     private String voucherName;
@@ -31,8 +35,26 @@ public class Voucher {
     @OneToMany(mappedBy = "voucher")
     private List<Cart> carts;
 
-    // private String createdDate
-    // private String expiredDate;
+    private String createdDate;
+
+    private String expiredDate;
+
+    public String getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(String createdDate) {
+        this.createdDate = createdDate;
+    }
+
+    public String getExpiredDate() {
+        return expiredDate;
+    }
+
+    public void setExpiredDate(String expiredDate) {
+        this.expiredDate = expiredDate;
+    }
+
     public long getId() {
         return id;
     }
