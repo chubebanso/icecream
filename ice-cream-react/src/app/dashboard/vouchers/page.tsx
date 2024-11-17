@@ -1,100 +1,301 @@
+'use client';
+
 import * as React from 'react';
-
-import { config } from '@/config';
-import { IntegrationCard } from '@/components/dashboard/vouchers/integrations-card';
-import type { Vouchers } from '@/components/dashboard/vouchers/integrations-card';
-import { CompaniesFilters } from '@/components/dashboard/vouchers/integrations-filters';
-
-import type { Metadata } from 'next';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import Pagination from '@mui/material/Pagination';
-import Stack from '@mui/material/Stack';
-import Typography from '@mui/material/Typography';
-import Grid from '@mui/material/Unstable_Grid2';
-import { Download as DownloadIcon } from '@phosphor-icons/react/dist/ssr/Download';
+import {
+  Box,
+  Button,
+  Card,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
+  Stack,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TablePagination,
+  TableRow,
+  TextField,
+  Typography,
+  Divider,
+} from '@mui/material';
 import { Plus as PlusIcon } from '@phosphor-icons/react/dist/ssr/Plus';
-import { Upload as UploadIcon } from '@phosphor-icons/react/dist/ssr/Upload';
-import dayjs from 'dayjs';
 
+// Định nghĩa kiểu dữ liệu cho voucher
+interface Voucher {
+  id: number;
+  voucherType: string;
+  voucherName: string;
+  discountAmount: number;
+  minActivationValue: number;
+  createdDate: string;
+  expiredDate: string;
+}
 
-export const metadata = { title: `Vouchers | Dashboard | ${config.site.name}` } satisfies Metadata;
-// Mấy cái này còn phải chỉnh chọt thành Voucher có logic =)))
-const vouchers = [
-  {
-    id: 'INTEG-006',
-    title: 'Dropbox',
-    description: 'Dropbox is a file hosting service that offers cloud storage, file synchronization, a personal cloud.',
-    logo: '/assets/logo-dropbox.png',
-    installs: 594,
-    updatedAt: dayjs().subtract(12, 'minute').toDate(),
-  },
-  {
-    id: 'INTEG-005',
-    title: 'Medium Corporation',
-    description: 'Medium is an online publishing platform developed by Evan Williams, and launched in August 2012.',
-    logo: '/assets/logo-medium.png',
-    installs: 625,
-    updatedAt: dayjs().subtract(43, 'minute').subtract(1, 'hour').toDate(),
-  },
-  {
-    id: 'INTEG-004',
-    title: 'Slack',
-    description: 'Slack is a cloud-based set of team collaboration tools and services, founded by Stewart Butterfield.',
-    logo: '/assets/logo-slack.png',
-    installs: 857,
-    updatedAt: dayjs().subtract(50, 'minute').subtract(3, 'hour').toDate(),
-  },
-  {
-    id: 'INTEG-003',
-    title: 'Lyft',
-    description: 'Lyft is an on-demand transportation company based in San Francisco, California.',
-    logo: '/assets/logo-lyft.png',
-    installs: 406,
-    updatedAt: dayjs().subtract(7, 'minute').subtract(4, 'hour').subtract(1, 'day').toDate(),
-  },
-  {
-    id: 'INTEG-002',
-    title: 'GitHub',
-    description: 'GitHub is a web-based hosting service for version control of code using Git.',
-    logo: '/assets/logo-github.png',
-    installs: 835,
-    updatedAt: dayjs().subtract(31, 'minute').subtract(4, 'hour').subtract(5, 'day').toDate(),
-  },
-  {
-    id: 'INTEG-001',
-    title: 'Squarespace',
-    description: 'Squarespace provides software as a service for website building and hosting. Headquartered in NYC.',
-    logo: '/assets/logo-squarespace.png',
-    installs: 435,
-    updatedAt: dayjs().subtract(25, 'minute').subtract(6, 'hour').subtract(6, 'day').toDate(),
-  },
-] satisfies Vouchers[];
+export default function VoucherPage(): React.JSX.Element {
+  const [vouchers, setVouchers] = React.useState<Voucher[]>([]); // Xác định rõ kiểu dữ liệu là Voucher[]
+  const [open, setOpen] = React.useState(false);
+  const [newVoucher, setNewVoucher] = React.useState<Voucher>({
+    id: 0,
+    voucherType: '',
+    voucherName: '',
+    discountAmount: 0,
+    minActivationValue: 0,
+    createdDate: new Date().toISOString().split('T')[0], // Mặc định là ngày hiện tại
+    expiredDate: '',
+  });
 
-export default function Page(): React.JSX.Element {
+  const [page, setPage] = React.useState(0);
+  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+
+  // Các lựa chọn cho loại voucher
+  const voucherTypeOptions = [
+    'Khuyến mãi hàng tháng',
+    'Sinh nhật nhà hàng',
+    'Trung thu',
+    'Tết Âm Lịch',
+    'Quốc Khánh',
+    '30/4 - 1/5',
+    'Khác',
+  ];
+
+  // Fetch danh sách voucher khi trang được load
+  React.useEffect(() => {
+    const fetchVouchers = async () => {
+      const token = localStorage.getItem('custom-auth-token');
+      if (token) {
+        try {
+          const response = await fetch('http://localhost:8080/voucher', {
+            method: 'GET',
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          const data = await response.json();
+          if (response.ok) {
+            setVouchers(data.data);
+          } else {
+            console.error('Failed to fetch vouchers:', data.message);
+          }
+        } catch (error) {
+          console.error('Error fetching vouchers:', error);
+        }
+      } else {
+        console.error('Token is missing');
+      }
+    };
+
+    fetchVouchers();
+  }, []);
+
+  const handleOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+    setNewVoucher({
+      id: 0,
+      voucherType: '',
+      voucherName: '',
+      discountAmount: 0,
+      minActivationValue: 0,
+      createdDate: new Date().toISOString().split('T')[0],
+      expiredDate: '',
+    });
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | { name?: string; value: unknown }>) => {
+    const { name, value } = e.target;
+    setNewVoucher((prev) => ({
+      ...prev,
+      [name as string]: value,
+    }));
+  };
+
+  const handleSelectChange = (e: SelectChangeEvent<string>) => {
+    setNewVoucher({
+      ...newVoucher,
+      voucherType: e.target.value,
+    });
+  };
+
+  const handleSubmit = async () => {
+    const token = localStorage.getItem('custom-auth-token');
+
+    if (token) {
+      try {
+        const response = await fetch('http://localhost:8080/create/voucher', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            ...newVoucher,
+            discountAmount: parseFloat(newVoucher.discountAmount.toString()),
+            minActivationValue: parseFloat(newVoucher.minActivationValue.toString()),
+          }),
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          setVouchers((prevVouchers) => [...prevVouchers, data.data]);
+          handleClose();
+        } else {
+          console.error('Voucher creation failed:', data.message);
+        }
+      } catch (error) {
+        console.error('Error creating voucher:', error);
+      }
+    } else {
+      console.error('Token is missing');
+    }
+  };
+
+  const handleChangePage = (event: unknown, newPage: number) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
+  const paginatedVouchers = vouchers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
+
   return (
     <Stack spacing={3}>
       <Stack direction="row" spacing={3}>
         <Stack spacing={1} sx={{ flex: '1 1 auto' }}>
-          <Typography variant="h4">Danh mục Vouchers</Typography>
+          <Typography variant="h4">Voucher</Typography>
         </Stack>
         <div>
-          <Button startIcon={<PlusIcon fontSize="var(--icon-fontSize-md)" />} variant="contained">
+          <Button startIcon={<PlusIcon fontSize="var(--icon-fontSize-md)" />} variant="contained" onClick={handleOpen}>
             Thêm mới Voucher
           </Button>
         </div>
       </Stack>
-      <CompaniesFilters />
-      <Grid container spacing={3}>
-        {vouchers.map((voucher) => (
-          <Grid key={voucher.id} lg={4} md={6} xs={12}>
-            <IntegrationCard voucher={voucher} />
-          </Grid>
-        ))}
-      </Grid>
-      <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-        <Pagination count={3} size="small" />
-      </Box>
+
+      <Card>
+        <Box sx={{ overflowX: 'auto' }}>
+          <TableContainer>
+            <Table sx={{ minWidth: 800 }}>
+              <TableHead>
+                <TableRow>
+                  <TableCell>ID</TableCell>
+                  <TableCell>Loại Voucher</TableCell>
+                  <TableCell>Tên Voucher</TableCell>
+                  <TableCell>Tỉ lệ giảm </TableCell>
+                  <TableCell>Giá trị đơn hàng tối thiểu</TableCell>
+                  <TableCell>Ngày tạo</TableCell>
+                  <TableCell>Ngày hết hạn</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {paginatedVouchers.map((voucher) => (
+                  <TableRow hover key={voucher.id}>
+                    <TableCell>{voucher.id}</TableCell>
+                    <TableCell>{voucher.voucherType}</TableCell>
+                    <TableCell>{voucher.voucherName}</TableCell>
+                    <TableCell>{voucher.discountAmount.toLocaleString()} VNĐ</TableCell>
+                    <TableCell>{voucher.minActivationValue.toLocaleString()} VNĐ</TableCell>
+                    <TableCell>{voucher.createdDate}</TableCell>
+                    <TableCell>{voucher.expiredDate}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Box>
+        <Divider />
+        <TablePagination
+          component="div"
+          count={vouchers.length}
+          page={page}
+          onPageChange={handleChangePage}
+          rowsPerPage={rowsPerPage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+          rowsPerPageOptions={[5, 10, 25]}
+        />
+      </Card>
+
+      <Dialog open={open} onClose={handleClose}>
+        <DialogTitle>Thêm Voucher mới</DialogTitle>
+        <DialogContent>
+          <FormControl fullWidth margin="dense">
+            <InputLabel>Loại Voucher</InputLabel>
+            <Select
+              name="voucherType"
+              value={newVoucher.voucherType}
+              onChange={handleSelectChange}
+              label="Loại Voucher"
+            >
+              {voucherTypeOptions.map((type) => (
+                <MenuItem key={type} value={type}>
+                  {type}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          <TextField
+            autoFocus
+            margin="dense"
+            name="voucherName"
+            label="Tên Voucher"
+            type="text"
+            fullWidth
+            variant="outlined"
+            value={newVoucher.voucherName}
+            onChange={handleChange}
+          />
+          <TextField
+            margin="dense"
+            name="discountAmount"
+            label="Số tiền giảm giá"
+            type="number"
+            fullWidth
+            variant="outlined"
+            value={newVoucher.discountAmount}
+            onChange={handleChange}
+          />
+          <TextField
+            margin="dense"
+            name="minActivationValue"
+            label="Giá trị kích hoạt tối thiểu"
+            type="number"
+            fullWidth
+            variant="outlined"
+            value={newVoucher.minActivationValue}
+            onChange={handleChange}
+          />
+          <TextField
+            margin="dense"
+            name="expiredDate"
+            label="Ngày hết hạn"
+            type="date"
+            fullWidth
+            variant="outlined"
+            value={newVoucher.expiredDate}
+            onChange={handleChange}
+            InputLabelProps={{ shrink: true }}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose}>Huỷ</Button>
+          <Button onClick={handleSubmit} variant="contained">
+            Thêm Voucher
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Stack>
   );
 }

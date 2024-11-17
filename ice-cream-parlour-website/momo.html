@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thanh Toán MoMo</title>
+
+    <link rel="stylesheet" href="styles/styles.css">
+
+    <style>
+        .momo-page {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            height: 100vh;
+            background-color: #f8f9fa;
+        }
+
+        .momo-container {
+            text-align: center;
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .momo-container h1 {
+            margin-bottom: 20px;
+            font-size: 24px;
+            color: #333;
+        }
+
+        .momo-container p {
+            margin: 10px 0;
+            color: #666;
+            font-size: 16px;
+        }
+
+        .momo-container img {
+            width: 250px;
+            height: auto;
+            border-radius: 10px;
+            border: 1px solid #ddd;
+            margin: 20px 0;
+        }
+
+        .countdown-timer {
+            margin: 20px 0;
+            font-size: 18px;
+            color: #ff0000;
+        }
+
+        .momo-container .back-btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: pink;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .momo-container .back-btn:hover {
+            background-color: palevioletred;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="momo-page">
+        <div class="momo-container">
+            <h1>Thông tin thanh toán MoMo</h1>
+            <p>Vui lòng quét mã QR bên dưới hoặc chuyển khoản tới số tài khoản được cung cấp.</p>
+            <img src="/ice-cream-react/public/assets/images/momo-qr.png" alt="Mã QR MoMo">
+            <p><strong>Tên tài khoản:</strong> Đỗ Quang Minh</p>
+            <p><strong>Số điện thoại:</strong> 0123456789</p>
+            <p><strong>Nội dung:</strong> Thanh toán kem thủy tạ</p>
+            <div class="countdown-timer">
+                <span id="timer">05:00</span> còn lại để hoàn tất thanh toán
+            </div>
+            <a href="products.html" class="back-btn">Quay lại giỏ hàng</a>
+        </div>
+    </div>
+
+    <script>
+        let timer = 600;
+
+        const timerElement = document.getElementById('timer');
+
+        function updateTimer() {
+            const minutes = Math.floor(timer / 60);
+            const seconds = timer % 60;
+
+            timerElement.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+
+            if (timer === 0) {
+                clearInterval(countdown);
+                alert('Thời gian thanh toán đã hết. Vui lòng thực hiện lại giao dịch.');
+                window.location.href = "products.html"; // Quay lại trang sản phẩm
+            }
+
+            timer--;
+        }
+        const countdown = setInterval(updateTimer, 1000);
+        updateTimer(); 
+    </script>
+</body>
+
+</html>

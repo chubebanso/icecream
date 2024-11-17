@@ -95,7 +95,7 @@
             </ul>
             <div>
                 <div class="total">Tổng tiền: <span class="sub-total">0 VNĐ</span></div>
-                <button>Thanh toán</button>
+                <button id="payButton">Thanh toán</button>
             </div>
         </div>
 
@@ -104,7 +104,7 @@
                 <img src="/ice-cream-react/public/assets/images/empty-cart.png" alt="Delicious Ice Cream"
                     class="ice-cream-image" />
             </div>
-            <p class="empty-cart-text">Giỏ hàng của bạn đang trống nè!</p>
+            <p class="empty-cart-text">Gi   ỏ hàng của bạn đang trống nè!</p>
             <p class="empty-cart-info">Hãy lấp đầy giỏ hàng với những sản phẩm thượng hạng siêu ngon của Thủy Tạ chúng
                 tôi!</p>
         </div>
@@ -140,7 +140,13 @@
 
     <!-- Toaster -->
     <div id="toast-container" class="toast-container"></div>
-
+<script>
+    // Chuyển hướng đến trang MoMo khi nhấn nút "Thanh toán"
+    const payButton = document.getElementById('payButton');
+    payButton.addEventListener('click', () => {
+        window.location.href = 'momo.html'; // Chuyển hướng đến trang momo.html
+    });
+</script>
     <script src="https://unpkg.com/scrollreveal"></script>
     <script type="module" src="script/products.js"></script>
     <script type="module" src="script/nav.js"></script>
