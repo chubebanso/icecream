@@ -103,7 +103,7 @@ export function ProductsTable({
                     <Avatar src={`/assets/admin/${row.image}`} alt={row.name} />
                   </TableCell>
                   <TableCell>{row.name}</TableCell>
-                  <TableCell>{row.price.toLocaleString()} VND</TableCell>
+                  <TableCell>{row.price.toLocaleString()} VNĐ</TableCell>
                   <TableCell>{row.unit}</TableCell>
                   <TableCell>{row.category}</TableCell>
                   <TableCell>{row.availableForOrder ? 'Còn' : 'Đã hết'}</TableCell>
