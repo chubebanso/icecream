@@ -1,14 +1,22 @@
 'use client';
 
 import * as React from 'react';
-import Button from '@mui/material/Button';
-import Stack from '@mui/material/Stack';
-import Typography from '@mui/material/Typography';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
-import TextField from '@mui/material/TextField';
+import {
+  Button,
+  Stack,
+  Typography,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  TextField,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  InputAdornment,
+  SelectChangeEvent,
+} from '@mui/material';
 import { Download as DownloadIcon } from '@phosphor-icons/react/dist/ssr/Download';
 import { Plus as PlusIcon } from '@phosphor-icons/react/dist/ssr/Plus';
 
@@ -27,6 +35,10 @@ export default function Page(): React.JSX.Element {
     image: '',
     availableForOrder: true,
   });
+
+  // Dummy data for unit and category options
+  const unitOptions = ['ly', 'chai', 'chiếc', 'que', 'hộp']; // Bạn có thể thay đổi giá trị này tùy ý
+  const categoryOptions = ['Bánh trung thu', 'Nước', 'Kem']; // Thay đổi theo yêu cầu của bạn
 
   const page = 0;
   const rowsPerPage = 5;
@@ -48,7 +60,15 @@ export default function Page(): React.JSX.Element {
     });
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | { name?: string; value: unknown }>) => {
+    const { name, value } = e.target;
+    setNewProduct((prev) => ({
+      ...prev,
+      [name as string]: value,
+    }));
+  };
+
+  const handleSelectChange = (e: SelectChangeEvent<string>) => {
     setNewProduct({
       ...newProduct,
       [e.target.name]: e.target.value,
@@ -56,46 +76,44 @@ export default function Page(): React.JSX.Element {
   };
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-  const file = e.target.files?.[0];
-  const token = localStorage.getItem('custom-auth-token');
+    const file = e.target.files?.[0];
+    const token = localStorage.getItem('custom-auth-token');
 
-  if (file && token) {
-    // Xem trước ảnh bằng FileReader
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setImagePreview(reader.result as string);
-    };
-    reader.readAsDataURL(file);
+    if (file && token) {
+      // Xem trước ảnh bằng FileReader
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
 
+      const formData = new FormData();
+      formData.append('file', file);
 
-    const formData = new FormData();
-    formData.append('file', file);
+      const folder = 'admin';
+      const uploadUrl = `http://localhost:8080/files?folder=${folder}`;
 
-
-    const folder = 'admin';
-    const uploadUrl = `http://localhost:8080/files?folder=${folder}`;
-
-    try {
-      const response = await fetch(uploadUrl, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        body: formData,
-      });
-      const data = await response.json();
-      if (response.ok) {
-        setNewProduct((prev) => ({ ...prev, image: data.data.fileName })); 
-      } else {
-        console.error('File upload failed:', data.message);
+      try {
+        const response = await fetch(uploadUrl, {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          body: formData,
+        });
+        const data = await response.json();
+        if (response.ok) {
+          setNewProduct((prev) => ({ ...prev, image: data.data.fileName }));
+        } else {
+          console.error('File upload failed:', data.message);
+        }
+      } catch (error) {
+        console.error('Error uploading file:', error);
       }
-    } catch (error) {
-      console.error('Error uploading file:', error);
+    } else {
+      console.error('No file selected or token missing');
     }
-  } else {
-    console.error('No file selected or token missing');
-  }
-};
+  };
 
   const handleSubmit = async () => {
     const newProductData = {
@@ -205,28 +223,58 @@ export default function Page(): React.JSX.Element {
             fullWidth
             variant="outlined"
             value={newProduct.price}
-            onChange={handleChange}
+            onChange={(e) => {
+              const value = Math.max(0, parseInt(e.target.value)); // Không cho phép giá trị nhỏ hơn 0
+              setNewProduct({
+                ...newProduct,
+                price: isNaN(value) ? '' : value.toString(), // Xử lý khi input không phải số
+              });
+            }}
+            InputProps={{
+              inputProps: {
+                step: 1000, // Bước nhảy là 1,000
+                min: 0, // Giá trị nhỏ nhất là 0
+              },
+              endAdornment: <InputAdornment position="end">VNĐ</InputAdornment>, // Hiển thị VNĐ
+            }}
           />
-          <TextField
-            margin="dense"
-            name="unit"
-            label="Đơn vị"
-            type="text"
-            fullWidth
-            variant="outlined"
-            value={newProduct.unit}
-            onChange={handleChange}
-          />
-          <TextField
-            margin="dense"
-            name="category"
-            label="Danh mục"
-            type="text"
-            fullWidth
-            variant="outlined"
-            value={newProduct.category}
-            onChange={handleChange}
-          />
+
+          {/* Dropdown for Unit */}
+          <FormControl fullWidth margin="dense" variant="outlined">
+            <InputLabel id="unit-label">Đơn vị</InputLabel>
+            <Select
+              labelId="unit-label"
+              name="unit"
+              value={newProduct.unit}
+              onChange={handleSelectChange}
+              label="Đơn vị"
+            >
+              {unitOptions.map((unit) => (
+                <MenuItem key={unit} value={unit}>
+                  {unit}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+
+          {/* Dropdown for Category */}
+          <FormControl fullWidth margin="dense" variant="outlined">
+            <InputLabel id="category-label">Danh mục</InputLabel>
+            <Select
+              labelId="category-label"
+              name="category"
+              value={newProduct.category}
+              onChange={handleSelectChange}
+              label="Danh mục"
+            >
+              {categoryOptions.map((category) => (
+                <MenuItem key={category} value={category}>
+                  {category}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+
           <input
             accept="image/*"
             style={{ display: 'none' }}

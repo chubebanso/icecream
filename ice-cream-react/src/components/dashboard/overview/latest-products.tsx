@@ -1,3 +1,5 @@
+'use client'; // Thêm để đảm bảo đây là Client Component
+
 import React from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -14,6 +16,7 @@ import type { SxProps } from '@mui/material/styles';
 import { ArrowRight as ArrowRightIcon } from '@phosphor-icons/react/dist/ssr/ArrowRight';
 import { DotsThreeVertical as DotsThreeVerticalIcon } from '@phosphor-icons/react/dist/ssr/DotsThreeVertical';
 import dayjs from 'dayjs';
+import { useRouter } from 'next/navigation'; // Sử dụng hook useRouter
 
 export interface Product {
   id: string;
@@ -28,6 +31,13 @@ export interface LatestProductsProps {
 }
 
 export function LatestProducts({ products = [], sx }: LatestProductsProps): React.JSX.Element {
+  const router = useRouter(); // Khởi tạo useRouter để điều hướng
+
+  // Hàm xử lý khi bấm vào nút "Xem tất cả"
+  const handleViewAllClick = () => {
+    router.push('/dashboard/products'); // Điều hướng đến trang sản phẩm
+  };
+
   return (
     <Card sx={sx}>
       <CardHeader title="Sản phẩm mới nhất" />
@@ -68,6 +78,7 @@ export function LatestProducts({ products = [], sx }: LatestProductsProps): Reac
           endIcon={<ArrowRightIcon fontSize="var(--icon-fontSize-md)" />}
           size="small"
           variant="text"
+          onClick={handleViewAllClick} // Thêm sự kiện onClick để điều hướng
         >
           Xem tất cả
         </Button>
