@@ -29,8 +29,6 @@ public class Cart {
     @JoinColumn(name = "voucher_id")
     private Voucher voucher;
 
-    private String description;
-
     @Min(value = 0)
     private long sum;
 
@@ -40,6 +38,16 @@ public class Cart {
     private float total;
 
     private float newTotal;
+
+    private String status;
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
 
     public float getNewTotal() {
         return newTotal;
@@ -73,14 +81,6 @@ public class Cart {
 
     public void setId(long id) {
         this.id = id;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public List<CartItem> getItems() {

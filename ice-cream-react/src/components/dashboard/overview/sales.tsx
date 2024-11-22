@@ -37,11 +37,6 @@ export function Sales({ chartSeries, sx }: SalesProps): React.JSX.Element {
         <Chart height={350} options={chartOptions} series={chartSeries} type="bar" width="100%" />
       </CardContent>
       <Divider />
-      <CardActions sx={{ justifyContent: 'flex-end' }}>
-        <Button color="inherit" endIcon={<ArrowRightIcon fontSize="var(--icon-fontSize-md)" />} size="small">
-          Tổng quan
-        </Button>
-      </CardActions>
     </Card>
   );
 }

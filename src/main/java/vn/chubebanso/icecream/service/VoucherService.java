@@ -33,6 +33,8 @@ public class VoucherService {
         ZonedDateTime createdDate = instant.atZone(zone);
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        DateTimeFormatter f = DateTimeFormatter.ofPattern("MM");
+
         // Thiết lập ngày tạo Voucher
         voucher.setCreatedDate(createdDate.format(formatter));
 
@@ -57,7 +59,16 @@ public class VoucherService {
                 case "30/4 - 1/5" -> voucher.setExpiredDate(createdDate.plus(10, ChronoUnit.DAYS).format(formatter));
             }
 
-        return this.voucherRepo.save(voucher);
+        Voucher newVoucher = this.voucherRepo.save(voucher);
+        long discountAmount = (long) newVoucher.getDiscountAmount();
+        long id = newVoucher.getId();
+
+        id = (id == 100) ? 0 : id;
+        String customedName = "TT" + createdDate.format(f) +
+                (id < 10 ? "0" + id : id) +
+                (discountAmount < 10 ? "0" + discountAmount : discountAmount);
+        newVoucher.setVoucherName(customedName);
+        return this.voucherRepo.save(newVoucher);
     }
 
     // lấy hết voucher (có thể để show trong trang Voucher của Admin + Client)
