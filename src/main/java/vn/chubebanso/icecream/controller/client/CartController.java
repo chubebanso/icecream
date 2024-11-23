@@ -30,7 +30,7 @@ public class CartController {
     }
 
     @DeleteMapping("/cart/{cart_id}")
-    public ResponseEntity<Void> deleteCart(@PathVariable("product_id") Long cart_id)
+    public ResponseEntity<Void> deleteCart(@PathVariable("cart_id") Long cart_id)
             throws IdInvalidException {
         if (cart_id > 1500) {
             throw new vn.chubebanso.icecream.util.error.IdInvalidException("Khong tim thay cart");
@@ -40,7 +40,7 @@ public class CartController {
     }
 
     @GetMapping("/get-cart-by-id")
-    public ResponseEntity<Cart> getCartByid(@Valid @RequestParam("id") Long id) {
+    public ResponseEntity<Cart> getCartById(@Valid @RequestParam("id") Long id) {
         return ResponseEntity.ok(this.cartService.showCartsById(id));
     }
 }

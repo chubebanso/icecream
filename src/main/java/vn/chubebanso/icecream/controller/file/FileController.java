@@ -33,12 +33,14 @@ public class FileController {
         if (file == null || file.isEmpty()) {
             throw new StorageException("File không được rỗng");
         }
+        
         String fileName = file.getOriginalFilename();
         List<String> alowwExtension = Arrays.asList("doc", "pdf", "png", "jpeg", "jpg");
         boolean isValid = alowwExtension.stream().anyMatch(item -> fileName.toLowerCase().endsWith(item));
         if (!isValid) {
             throw new StorageException("File chỉ được chứa định dạng doc, pdf, png, jpeg, jpg");
         }
+        
         this.fileService.createDirectory(baseURI + folder);
         String uploadFile = this.fileService.store(file, folder);
         ResUploadFileDTO res = new ResUploadFileDTO(uploadFile, Instant.now());

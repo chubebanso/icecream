@@ -49,7 +49,7 @@ function displayProducts(products) {
     box.className = "box";
     box.id = product.id;
 
-    const imagePath = `file:///C:/Java_vs_minh_beo/01-java-spring-icecream/ice-cream-react/public/assets/admin/${product.image}`;
+    const imagePath = `/ice-cream-react/public/assets/${product.image}`;
     box.innerHTML = `
       <div class="image-wrapper">
         <img src="${imagePath}" alt="${product.name}">

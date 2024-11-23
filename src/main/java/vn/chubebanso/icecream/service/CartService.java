@@ -57,6 +57,7 @@ public class CartService {
 
             if (cart.getVoucher() == null) {
                 cart.setTotal(total);
+                cart.setNewTotal(total);
             } else {
                 float activationValue = cart.getVoucher().getMinActivationValue();
                 if (total >= activationValue) {

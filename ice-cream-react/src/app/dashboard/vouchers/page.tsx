@@ -1,5 +1,7 @@
 'use client';
 
+import type { Metadata } from 'next';
+import { config } from '@/config';
 import * as React from 'react';
 import {
   Box,
@@ -25,8 +27,10 @@ import {
   TextField,
   Typography,
   Divider,
+  InputAdornment,
 } from '@mui/material';
 import { Plus as PlusIcon } from '@phosphor-icons/react/dist/ssr/Plus';
+
 
 // Định nghĩa kiểu dữ liệu cho voucher
 interface Voucher {
@@ -193,11 +197,11 @@ export default function VoucherPage(): React.JSX.Element {
                 <TableRow>
                   <TableCell>ID</TableCell>
                   <TableCell>Loại Voucher</TableCell>
-                  <TableCell>Tên Voucher</TableCell>
-                  <TableCell>Tỉ lệ giảm </TableCell>
-                  <TableCell>Giá trị đơn hàng tối thiểu</TableCell>
-                  <TableCell>Ngày tạo</TableCell>
-                  <TableCell>Ngày hết hạn</TableCell>
+                  <TableCell><center>Tên Voucher</center></TableCell>
+                  <TableCell><center>Tỷ lệ giảm</center></TableCell>
+                  <TableCell><center>Giá trị đơn hàng tối thiểu</center></TableCell>
+                  <TableCell><center>Ngày tạo</center></TableCell>
+                  <TableCell><center>Ngày hết hạn</center></TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -205,11 +209,11 @@ export default function VoucherPage(): React.JSX.Element {
                   <TableRow hover key={voucher.id}>
                     <TableCell>{voucher.id}</TableCell>
                     <TableCell>{voucher.voucherType}</TableCell>
-                    <TableCell>{voucher.voucherName}</TableCell>
-                    <TableCell>{voucher.discountAmount.toLocaleString()} VNĐ</TableCell>
-                    <TableCell>{voucher.minActivationValue.toLocaleString()} VNĐ</TableCell>
-                    <TableCell>{voucher.createdDate}</TableCell>
-                    <TableCell>{voucher.expiredDate}</TableCell>
+                    <TableCell><center>{voucher.voucherName}</center></TableCell>
+                    <TableCell><center>{voucher.discountAmount.toLocaleString()} %</center></TableCell>
+                    <TableCell><center>{voucher.minActivationValue.toLocaleString()} </center></TableCell>
+                    <TableCell><center>{voucher.createdDate}</center></TableCell>
+                    <TableCell><center>{voucher.expiredDate}</center></TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -231,6 +235,14 @@ export default function VoucherPage(): React.JSX.Element {
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>Thêm Voucher mới</DialogTitle>
         <DialogContent>
+          <input
+            type="hidden"
+            name="voucherName"
+            value={newVoucher.voucherName}
+            onChange={(e) =>
+              setNewVoucher({ ...newVoucher, voucherName: e.target.value })
+            }
+          />
           <FormControl fullWidth margin="dense">
             <InputLabel>Loại Voucher</InputLabel>
             <Select
@@ -247,25 +259,20 @@ export default function VoucherPage(): React.JSX.Element {
             </Select>
           </FormControl>
           <TextField
-            autoFocus
-            margin="dense"
-            name="voucherName"
-            label="Tên Voucher"
-            type="text"
-            fullWidth
-            variant="outlined"
-            value={newVoucher.voucherName}
-            onChange={handleChange}
-          />
-          <TextField
             margin="dense"
             name="discountAmount"
-            label="Số tiền giảm giá"
+            label="% giảm giá"
             type="number"
             fullWidth
             variant="outlined"
             value={newVoucher.discountAmount}
-            onChange={handleChange}
+            onChange={(e) => {
+              const value = Math.max(0, parseInt(e.target.value)); // Không cho phép giá trị nhỏ hơn 0
+              setNewVoucher({
+                ...newVoucher,
+                discountAmount: isNaN(value) ? 0 : value, // Xử lý khi input không phải số
+              });
+            }}
           />
           <TextField
             margin="dense"
@@ -275,7 +282,21 @@ export default function VoucherPage(): React.JSX.Element {
             fullWidth
             variant="outlined"
             value={newVoucher.minActivationValue}
-            onChange={handleChange}
+            onChange={(e) => {
+              const value = Math.max(0, parseInt(e.target.value)); // Không cho phép giá trị nhỏ hơn 0
+              setNewVoucher({
+                ...newVoucher,
+                minActivationValue: isNaN(value) ? 0 : value, // Xử lý khi input không phải số
+              });
+            }}
+            InputProps={{
+              inputProps: {
+                step: 1000, // Bước nhảy là 1,000
+                min: 0, // Giá trị nhỏ nhất là 0
+              },
+              endAdornment: <InputAdornment position="end">VNĐ</InputAdornment>, // Hiển thị VNĐ
+            }}
+
           />
           <TextField
             margin="dense"

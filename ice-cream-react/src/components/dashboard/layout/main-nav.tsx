@@ -40,34 +40,15 @@ export function MainNav(): React.JSX.Element {
           sx={{ alignItems: 'center', justifyContent: 'space-between', minHeight: '64px', px: 2 }}
         >
           <Stack sx={{ alignItems: 'center' }} direction="row" spacing={2}>
-            <IconButton
-              onClick={(): void => {
-                setOpenNav(true);
-              }}
-              sx={{ display: { lg: 'none' } }}
-            >
-              <ListIcon />
-            </IconButton>
-            <Tooltip title="Tìm kiếm">
-              <IconButton>
-                <MagnifyingGlassIcon />
-              </IconButton>
+            <Tooltip title="Thông tin đăng nhập">
+              <Avatar
+                onClick={userPopover.handleOpen}
+                ref={userPopover.anchorRef}
+                src="/assets/avatar.png"
+                sx={{ cursor: 'pointer' }}
+              />
             </Tooltip>
-          </Stack>
-          <Stack sx={{ alignItems: 'center' }} direction="row" spacing={2}>
-            <Tooltip title="Thông báo">
-              <Badge badgeContent={4} color="success" variant="dot">
-                <IconButton>
-                  <BellIcon />
-                </IconButton>
-              </Badge>
-            </Tooltip>
-            <Avatar
-              onClick={userPopover.handleOpen}
-              ref={userPopover.anchorRef}
-              src="/assets/avatar.png"
-              sx={{ cursor: 'pointer' }}
-            />
+
           </Stack>
         </Stack>
       </Box>
