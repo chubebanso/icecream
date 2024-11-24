@@ -1,7 +1,5 @@
 'use client';
 
-import type { Metadata } from 'next';
-import { config } from '@/config';
 import * as React from 'react';
 import {
   Box,

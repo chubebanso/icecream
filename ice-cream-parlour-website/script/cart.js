@@ -41,13 +41,26 @@ cancelPopupBtn.addEventListener("click", () => {
     voucherPopup.style.display = "none";
 });
 
-// Áp dụng voucher và ẩn pop-up khi nhấn "Áp Dụng"
-applyVoucherBtn.addEventListener("click", () => {
+// Áp dụng voucher khi nhấn nút "Áp dụng"
+applyVoucherBtn.addEventListener("click", async () => {
     const selectedVoucher = document.querySelector('.voucher-item.selected');
+    const cartId = localStorage.getItem('cart_id'); // Lấy ID giỏ hàng từ localStorage (hoặc từ source khác)
 
-    if (selectedVoucher) {
-        const voucherName = selectedVoucher.dataset.voucherName;
-        alert(`Voucher "${voucherName}" đã được áp dụng!`);
+    if (selectedVoucher && cartId) {
+        const voucherId = selectedVoucher.querySelector('input[type="radio"]').value;
+
+        try {
+            // Gọi hàm applyVoucherToCart để gửi yêu cầu áp dụng voucher
+            const response = await applyVoucherToCart(voucherId, cartId);
+
+            if (response.ok) {
+                // Nếu API phản hồi thành công, hiển thị thông báo
+                alert(`Voucher đã được áp dụng vào giỏ hàng!`);
+            }
+        } catch (error) {
+            // Xử lý lỗi xảy ra trong quá trình gọi API
+            alert(`Có lỗi xảy ra: ${error.message}`);
+        }
     } else {
         alert("Vui lòng chọn voucher trước khi áp dụng.");
     }
@@ -94,7 +107,7 @@ document.addEventListener("DOMContentLoaded", function () {
                             <p class="voucher-discount">${voucher.voucherType}: Giảm ${voucher.discountAmount} %</p>
                             <p class="voucher-condition">Đơn tối thiểu: ${voucher.minActivationValue} VNĐ</p>
                         </div>
-                        <input type="radio" name="voucher" value="${voucher.voucherName}" class="voucher-select">
+                        <input type="radio" name="voucher" value="${voucher.id}" class="voucher-select"> <!-- ID của voucher -->
                     </div>
                     <div class="voucher-footer">
                         <p class="voucher-used">HSD: ${voucher.expiredDate}</p>
@@ -102,14 +115,13 @@ document.addEventListener("DOMContentLoaded", function () {
                 </div>
             `;
 
-            // Lắng nghe sự kiện click vào voucher để chọn voucher
             voucherItem.addEventListener('click', () => {
                 // Bỏ chọn tất cả các voucher-item khác
                 document.querySelectorAll('.voucher-item.selected').forEach(item => item.classList.remove('selected'));
-
+                
                 // Chọn voucher nếu chưa được chọn
                 voucherItem.classList.add('selected');
-
+                
                 // Đánh dấu radio button của voucher là checked
                 const radioButton = voucherItem.querySelector('input[type="radio"]');
                 if (radioButton) radioButton.checked = true;
@@ -155,3 +167,32 @@ document.addEventListener("DOMContentLoaded", function () {
 
     fetchVouchers();
 });
+
+/**
+ * Gọi API để áp dụng voucher vào giỏ hàng
+ * @param {number} voucherId - ID của voucher được chọn để áp dụng.
+ * @param {number} cartId - ID của giỏ hàng hiện tại.
+ * @returns {Promise<Response>} - Trả về một Promise chứa phản hồi từ server.
+ */
+async function applyVoucherToCart(voucherId, cartId) {
+    try {
+      const response = await fetch(
+        `http://localhost:8080/apply-voucher-to-cart?voucher_id=${voucherId}&cart_id=${cartId}`,
+        {
+          method: "POST",
+        }
+      );
+      const data = await response.text();
+      if (response.ok) {
+        showToast(data); // Hiển thị thông báo thành công
+        updateCartDisplay(cartId); // Cập nhật giỏ hàng sau khi áp dụng voucher
+      } else {
+        console.error("Lỗi áp dụng voucher:", data);
+        showToast("Áp dụng voucher thất bại, thử lại trong vài giây");
+      }
+    } catch (error) {
+      console.error("API error:", error);
+      showToast("Có lỗi xảy ra, vui lòng thử lại sau.");
+    }
+}
+

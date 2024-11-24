@@ -36,9 +36,9 @@ function displayProducts(products) {
   if (products.length === 0) {
     productsSection.innerHTML = `
       <div class="no-product-container">
-        <h1 class="no-product-heading">No Product Found</h1>
+        <h1 class="no-product-heading">Không có sản phẩm nào!!</h1>
         <img src="/ice-cream-react/public/assets/images/product-not-found.png" alt="No products available" class="no-product-image">
-        <p class="no-product-text">We're sorry, but it seems we can't find the product you're looking for. Try searching for another flavor!</p>
+        <p class="no-product-text">Chúng tôi xin lỗi cơ mà giờ này chắc mấy ông dev tắt server đi rồi, bảo bọn tôi để gọi dev dậy nhé!</p>
       </div>
     `;
     return;

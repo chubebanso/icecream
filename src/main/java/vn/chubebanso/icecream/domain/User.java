@@ -12,7 +12,6 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
-    private long role_id;
     private String email;
     private String username;
     private String password;
@@ -48,13 +47,4 @@ public class User {
     public void setEmail(String email) {
         this.email = email;
     }
-
-    public long getRole_id() {
-        return role_id;
-    }
-
-    public void setRole_id(long role_id) {
-        this.role_id = role_id;
-    }
-
 }

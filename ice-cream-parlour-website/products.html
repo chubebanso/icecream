@@ -112,17 +112,22 @@
         <!-- Nút để mở pop-up chọn voucher -->
         <button id="voucherBtn">Chọn Voucher</button>
 
-        <!-- Pop-up Voucher Selection -->
         <div class="voucher-popup" id="voucherPopup" style="display: none;">
             <div class="voucher-popup-content">
                 <h2>Chọn Voucher</h2>
                 <p>Chọn voucher bạn muốn sử dụng cho giỏ hàng của mình:</p>
-                <ul class="voucher-list">
-                    <li><input type="radio" id="voucher1" name="voucher" value="voucher1"> Voucher Giảm Giá 10%</li>
-                    <li><input type="radio" id="voucher2" name="voucher" value="voucher2"> Voucher Giảm Giá 20%</li>
-                    <li><input type="radio" id="voucher3" name="voucher" value="voucher3"> Voucher Giảm Giá 30%</li>
-                </ul>
-                <button id="applyVoucherBtn">Áp Dụng</button>
+
+                <div class="search-container">
+                    <input type="text" id="search-input" placeholder="Tìm kiếm voucher...">
+                    <div class="suggestions-container" id="suggestions-container"></div>
+                </div>
+                
+
+                <!-- Danh sách Voucher -->
+                <ul class="voucher-list" id="voucherList"></ul>
+
+                <!-- Nút áp dụng và hủy -->
+                <button id="applyVoucherBtn">Áp dụng</button>
                 <button class="cancel-popup" id="cancelPopupBtn">Hủy</button>
 
                 <!-- Phân trang -->
