@@ -152,7 +152,15 @@
             window.location.href = 'momo.html'; // Chuyển hướng đến trang momo.html
         });
     </script>
-
+<script>
+    const logoutButton = document.getElementById('logoutButton');
+    logoutButton.addEventListener('click', (event) => {
+        event.preventDefault();
+        sessionStorage.clear(); 
+        alert('Bạn đã đăng xuất thành công!'); 
+        window.location.href = './index.html'; 
+    });
+</script>
     <script src="https://unpkg.com/scrollreveal"></script>
     <script type="module" src="script/products.js"></script>
     <script type="module" src="script/nav.js"></script>
