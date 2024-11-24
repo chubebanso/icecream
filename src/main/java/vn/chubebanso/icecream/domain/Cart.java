@@ -32,7 +32,6 @@ public class Cart {
     @Min(value = 0)
     private long sum;
 
-    @NotNull
     private String phonenum;
 
     private float total;
