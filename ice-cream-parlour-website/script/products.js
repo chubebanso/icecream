@@ -54,8 +54,8 @@ function displayProducts(products) {
     const box = document.createElement("div");
     box.className = "box";
     box.id = product.id;
-
-    const imagePath = `/ice-cream-react/public/assets/${product.image}`;
+    // "E:\javalambeo\icecream\ice-cream-react\public\assets\1732517266228-product-3.png.png"
+    const imagePath = `/ice-cream-react/public/assets/admin/${product.image}`;
     box.innerHTML = `
       <div class="image-wrapper">
         <img src="${imagePath}" alt="${product.name}">
@@ -64,7 +64,7 @@ function displayProducts(products) {
       </div>
       <div class="name-price">
         <div class="name">${product.name}</div>
-        <div class="price">${product.price} VNĐ</div>
+        <div class="price">${product.price} VND</div>
       </div>
       <div class="qty">
         <span class="decrease">-</span>
@@ -166,13 +166,13 @@ async function updateCartDisplay(cartId) {
 
       document.querySelector(
         ".sub-total"
-      ).textContent = `${cartData.total.toFixed(2)} VNĐ`;
+      ).textContent = `${cartData.total.toFixed(2)} VND`;
       if (cartData.newTotal) {
         document.querySelector(
           ".new-total"
-        ).textContent = `${cartData.newTotal.toFixed(2)} VNĐ`;
+        ).textContent = `${cartData.newTotal.toFixed(2)} VND`;
       } else {
-        document.querySelector(".new-total").textContent = "0 VNĐ"; // Mặc định nếu không có newTotal
+        document.querySelector(".new-total").textContent = "0 VND"; // Mặc định nếu không có newTotal
       }
     } else {
       showToast("Lỗi khi lấy thông tin giỏ hàng. Vui lòng thử lại.");
@@ -197,19 +197,17 @@ function displayCart(cartData) {
       cartItem.className = "cart-item";
       cartItem.innerHTML = `
           <div class="cart-item-image">
-            <img src="/ice-cream-react/public/assets/images/${
-              item.product.image
-            }" alt="${item.product.name}">
+            <img src="/ice-cream-react/public/assets/admin/${item.product.image
+        }" alt="${item.product.name}">
           </div>
           <div class="cart-item-details">
             <h3 class="cart-item-name">${item.product.name}</h3>
             <p class="cart-item-quantity">Số lượng: ${item.productQuantity}</p>
-            <p class="cart-item-subtotal">${item.subTotal.toFixed(0)} VNĐ</p>
+            <p class="cart-item-subtotal">${item.subTotal.toFixed(0)} VND</p>
           </div>
           <div class="cart-item-remove">
-            <i class="fa fa-trash remove-item" data-product-id="${
-              item.product.id
-            }" aria-hidden="true"></i>
+            <i class="fa fa-trash remove-item" data-product-id="${item.product.id
+        }" aria-hidden="true"></i>
           </div>
         `;
       cartListItems.appendChild(cartItem);
@@ -233,7 +231,7 @@ function displayCart(cartData) {
 
     document.querySelector(
       ".sub-total"
-    ).textContent = `${cartData.total.toFixed(2)} VNĐ`;
+    ).textContent = `${cartData.total.toFixed(2)} VND`;
     document.querySelector(".empty-cart").classList.remove("active");
     document.querySelector(".no-empty-cart").classList.add("active");
   } else {

@@ -31,3 +31,31 @@ html {
 body {
   height: 100%;
 }
+
+/* Ẩn div trong giao diện bình thường */
+.printable-content {
+  display: none;
+}
+
+.printable-content .header {
+  text-align: center; /* Căn giữa văn bản */
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Căn giữa theo chiều ngang */
+  justify-content: center; /* Căn giữa theo chiều dọc nếu cần */
+}
+
+/* Khi in, hiển thị div */
+@media print {
+  .printable-content {
+    display: block;
+  }
+}
+
+.printable-content .footer {
+  text-align: center; /* Căn giữa văn bản */
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Căn giữa theo chiều ngang */
+  justify-content: center; /* Căn giữa theo chiều dọc nếu cần */
+}

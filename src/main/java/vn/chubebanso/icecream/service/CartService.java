@@ -1,5 +1,9 @@
 package vn.chubebanso.icecream.service;
 
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 
@@ -10,20 +14,16 @@ import vn.chubebanso.icecream.domain.CartItem;
 import vn.chubebanso.icecream.domain.Voucher;
 import vn.chubebanso.icecream.repository.CartItemRepository;
 import vn.chubebanso.icecream.repository.CartRepository;
-import vn.chubebanso.icecream.repository.VoucherRepository;
 
 @Service
 public class CartService {
 
     private final CartRepository cartRepo;
     private final CartItemRepository cartItemRepository;
-    private final VoucherRepository voucherRepository;
 
-    public CartService(CartRepository cartRepo, CartItemRepository cartItemRepository,
-            VoucherRepository voucherRepository) {
+    public CartService(CartRepository cartRepo, CartItemRepository cartItemRepository) {
         this.cartRepo = cartRepo;
         this.cartItemRepository = cartItemRepository;
-        this.voucherRepository = voucherRepository;
     }
 
     // System returning a cart by ID => no need for body, just id and cart
@@ -83,6 +83,16 @@ public class CartService {
         newCart.setSum(0);
         newCart.setPhonenum(phone);
         newCart.setTotal(0);
+        Instant instant = Instant.now();
+        ZoneId zone = ZoneId.of("Asia/Ho_Chi_Minh");
+
+        // Ngày tạo Voucher với múi giờ Việt Nam
+        ZonedDateTime createdDate = instant.atZone(zone);
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
+
+        newCart.setCreatedAt(createdDate.format(formatter));
+
         return this.cartRepo.save(newCart);
     }
 
@@ -120,6 +130,7 @@ public class CartService {
 
         if (newCart.getVoucher() == null) {
             newCart.setTotal(total);
+            newCart.setNewTotal(total);
         } else {
             float activationValue = newCart.getVoucher().getMinActivationValue();
             if (total >= activationValue) {

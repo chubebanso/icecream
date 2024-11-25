@@ -15,9 +15,10 @@ import {
   Select,
   MenuItem,
   InputAdornment,
+  Pagination,
   SelectChangeEvent,
+  FormHelperText,
 } from '@mui/material';
-import { Download as DownloadIcon } from '@phosphor-icons/react/dist/ssr/Download';
 import { Plus as PlusIcon } from '@phosphor-icons/react/dist/ssr/Plus';
 
 import { ProductsTable } from '@/components/dashboard/product/product-table';
@@ -35,13 +36,15 @@ export default function Page(): React.JSX.Element {
     image: '',
     availableForOrder: true,
   });
+  const [priceError, setPriceError] = React.useState(false); // State for price validation error
+
+  // Pagination state
+  const [page, setPage] = React.useState(0); // Trang hiện tại
+  const [rowsPerPage, setRowsPerPage] = React.useState(5); // Số dòng trên mỗi trang
 
   // Dummy data for unit and category options
-  const unitOptions = ['ly', 'chai', 'chiếc', 'que', 'hộp']; // Bạn có thể thay đổi giá trị này tùy ý
-  const categoryOptions = ['Bánh trung thu', 'Nước', 'Kem']; // Thay đổi theo yêu cầu của bạn
-
-  const page = 0;
-  const rowsPerPage = 5;
+  const unitOptions = ['ly', 'chai', 'chiếc', 'que', 'hộp'];
+  const categoryOptions = ['Bánh trung thu', 'Nước', 'Kem'];
 
   const handleOpen = () => {
     setOpen(true);
@@ -58,6 +61,7 @@ export default function Page(): React.JSX.Element {
       image: '',
       availableForOrder: true,
     });
+    setPriceError(false);
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | { name?: string; value: unknown }>) => {
@@ -80,7 +84,6 @@ export default function Page(): React.JSX.Element {
     const token = localStorage.getItem('custom-auth-token');
 
     if (file && token) {
-      // Xem trước ảnh bằng FileReader
       const reader = new FileReader();
       reader.onloadend = () => {
         setImagePreview(reader.result as string);
@@ -116,6 +119,11 @@ export default function Page(): React.JSX.Element {
   };
 
   const handleSubmit = async () => {
+    if (isNaN(parseFloat(newProduct.price)) || newProduct.price === '') {
+      setPriceError(true);
+      return;
+    }
+
     const newProductData = {
       ...newProduct,
       price: parseFloat(newProduct.price),
@@ -175,15 +183,35 @@ export default function Page(): React.JSX.Element {
     fetchProducts();
   }, []);
 
+  // Hàm phân trang
+  const applyPagination = (data: Product[], page: number, rowsPerPage: number): Product[] => {
+    const startIndex = page * rowsPerPage; // Vị trí bắt đầu của trang hiện tại
+    const endIndex = startIndex + rowsPerPage; // Vị trí kết thúc của trang hiện tại
+
+    return data.slice(startIndex, endIndex); // Cắt mảng dữ liệu sản phẩm theo trang
+  };
+
   const paginatedProducts = applyPagination(products, page, rowsPerPage);
+
+  // Pagination handler
+  const handlePageChange = (newPage: number) => {
+    setPage(newPage);
+  };
+
+  const handleRowsPerPageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newRowsPerPage = parseInt(e.target.value, 10);
+    setRowsPerPage(newRowsPerPage);
+
+    if (page * newRowsPerPage > products.length) {
+      setPage(0); // Đưa về trang đầu tiên nếu số trang vượt quá tổng số trang
+    }
+  };
 
   return (
     <Stack spacing={3}>
       <Stack direction="row" spacing={3}>
         <Stack spacing={1} sx={{ flex: '1 1 auto' }}>
           <Typography variant="h4">Sản phẩm</Typography>
-          <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
-          </Stack>
         </Stack>
         <div>
           <Button startIcon={<PlusIcon fontSize="var(--icon-fontSize-md)" />} variant="contained" onClick={handleOpen}>
@@ -192,10 +220,12 @@ export default function Page(): React.JSX.Element {
         </div>
       </Stack>
       <ProductsTable
-        count={products.length}
-        page={page}
-        rows={paginatedProducts}
-        rowsPerPage={rowsPerPage}
+        count={products.length} // Tổng số sản phẩm
+        page={page} // Trang hiện tại
+        rows={paginatedProducts} // Dữ liệu sản phẩm đã phân trang
+        rowsPerPage={rowsPerPage} // Số lượng sản phẩm mỗi trang
+        onPageChange={handlePageChange} // Hàm xử lý sự thay đổi trang
+        onRowsPerPageChange={handleRowsPerPageChange} // Hàm xử lý sự thay đổi số dòng mỗi trang
       />
 
       <Dialog open={open} onClose={handleClose}>
@@ -221,21 +251,22 @@ export default function Page(): React.JSX.Element {
             variant="outlined"
             value={newProduct.price}
             onChange={(e) => {
-              const value = Math.max(0, parseInt(e.target.value)); // Không cho phép giá trị nhỏ hơn 0
+              const value = Math.max(0, parseInt(e.target.value));
               setNewProduct({
                 ...newProduct,
-                price: isNaN(value) ? '' : value.toString(), // Xử lý khi input không phải số
+                price: isNaN(value) ? '' : value.toString(),
               });
+              setPriceError(false); // Reset error on change
             }}
             InputProps={{
               inputProps: {
-                step: 1000, // Bước nhảy là 1,000
-                min: 0, // Giá trị nhỏ nhất là 0
+                step: 1000,
+                min: 0,
               },
-              endAdornment: <InputAdornment position="end">VNĐ</InputAdornment>, // Hiển thị VNĐ
+              endAdornment: <InputAdornment position="end">VND</InputAdornment>,
             }}
           />
-
+          {priceError && <FormHelperText error>Giá phải là một số hợp lệ.</FormHelperText>}
           {/* Dropdown for Unit */}
           <FormControl fullWidth margin="dense" variant="outlined">
             <InputLabel id="unit-label">Đơn vị</InputLabel>
@@ -285,20 +316,20 @@ export default function Page(): React.JSX.Element {
             </Button>
           </label>
           {imagePreview && (
-            <img src={imagePreview} alt="Image Preview" style={{ width: '100%', marginTop: '10px' }} />
+            <div>
+              <img src={imagePreview} alt="preview" style={{ maxWidth: '100%' }} />
+            </div>
           )}
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose}>Huỷ</Button>
-          <Button onClick={handleSubmit} variant="contained">
-            Thêm sản phẩm
+          <Button onClick={handleClose} color="primary">
+            Hủy
+          </Button>
+          <Button onClick={handleSubmit} color="primary">
+            Thêm
           </Button>
         </DialogActions>
       </Dialog>
     </Stack>
   );
-}
-
-function applyPagination(rows: Product[], page: number, rowsPerPage: number): Product[] {
-  return rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 }

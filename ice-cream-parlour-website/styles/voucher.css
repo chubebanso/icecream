@@ -1,0 +1,189 @@
+/* Container tổng quát cho pop-up */
+.voucher-popup {
+    display: none; /* Ẩn pop-up ban đầu */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Nền mờ */
+    display: flex;
+    justify-content: center; /* Căn giữa theo chiều ngang */
+    align-items: center; /* Căn giữa theo chiều dọc */
+    z-index: 999; /* Đảm bảo pop-up xuất hiện phía trước */
+    overflow-y: auto; /* Thêm khả năng cuộn khi quá nhiều nội dung */
+}
+
+/* Nội dung chính của pop-up */
+.voucher-popup-content {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    width: 80%;
+    max-width: 800px; /* Tăng chiều rộng tối đa để pop-up rộng hơn */
+    text-align: center;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3); /* Tạo bóng để pop-up nổi bật */
+}
+
+/* Grid cho các voucher */
+.voucher-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 3 cột mỗi hàng */
+    gap: 10px; /* Khoảng cách giữa các item */
+    margin: 20px 0; /* Khoảng cách xung quanh */
+}
+
+/* Thiết lập cho từng item của voucher */
+.voucher-item {
+    background-color: #fff;
+    border: 1px solid #ddd; /* Đường viền cho voucher */
+    border-radius: 8px; /* Góc bo tròn */
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Giãn đều các phần tử */
+    box-sizing: border-box;
+    overflow: hidden; /* Đảm bảo không bị tràn nội dung */
+}
+
+.voucher-item:hover {
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); /* Tăng bóng đổ khi hover */
+}
+
+/* Header cho thông tin voucher */
+.voucher-header {
+    display: flex;
+    align-items: center; /* Căn giữa theo chiều dọc */
+    justify-content: space-between; /* Chia đều các phần tử: logo bên trái, thông tin bên phải */
+    padding-bottom: 10px;
+    position: relative; /* Để sử dụng position absolute cho nút radio button */
+}
+
+.voucher-logo {
+    width: 40px; /* Điều chỉnh kích thước logo */
+    height: auto;
+    margin-right: 8px;
+    display: block;
+    margin-top: 10px; /* Đẩy logo xuống dưới */
+}
+
+/* Thông tin voucher */
+.voucher-info {
+    font-size: 16px;
+    margin-bottom: 5px;
+    display: flex;
+    flex-direction: column; /* Căn các thông tin theo chiều dọc */
+    justify-content: flex-start; /* Đảm bảo thông tin không bị căn giữa */
+    flex-grow: 1; /* Đảm bảo phần này chiếm không gian còn lại */
+}
+
+.voucher-title {
+    font-weight: bold;
+    font-size: 16px; /* Tăng kích thước font nếu cần */
+    margin-bottom: 10px; /* Tăng khoảng cách dưới */
+    padding-top: 20px; /* Thêm padding nếu cần để nó không bị dính vào cạnh trên */
+    text-align: center; /* Căn giữa nếu cần */
+}
+
+.voucher-discount,
+.voucher-condition {
+    font-size: 12px;
+    margin: 0;
+    text-align: left;
+    margin-top: 5px;
+    margin-left: 5px; /* Cách logo sang phía bên phải */
+}
+
+/* Nút chọn voucher */
+.voucher-select {
+    position: absolute;
+    top: 10px; /* Cách lề trên 10px */
+    right: 10px; /* Cách lề phải 10px */
+}
+
+/* Footer hiển thị điều kiện sử dụng và trạng thái */
+.voucher-footer {
+    font-size: 12px;
+    color: #888;
+}
+
+.voucher-used {
+    color: #999; /* Màu xám cho trạng thái đã dùng */
+}
+
+.voucher-terms {
+    color: #007bff;
+    text-decoration: none;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.voucher-terms:hover {
+    text-decoration: underline; /* Hiệu ứng hover để dễ nhận biết */
+}
+
+/* Container tìm kiếm */
+.search-container {
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: center; /* Căn giữa theo chiều ngang */
+    align-items: center; /* Căn giữa theo chiều dọc */
+    width: 100%;
+}
+
+#search-input {
+    width: 60%;
+    padding: 12px 16px;
+    font-size: 16px;
+    border: 2px solid #ccc;
+    border-radius: 25px;
+    outline: none;
+    transition: border-color 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: center; /* Căn giữa văn bản bên trong input */
+}
+
+#search-input:focus {
+    border-color: #007bff;
+    box-shadow: 0 4px 6px rgba(0, 123, 255, 0.3);
+}
+
+/* Đảm bảo modal không có phần thừa */
+.modal-container {
+    box-sizing: border-box; /* Tính padding và border vào kích thước tổng */
+    position: absolute;
+    overflow: hidden; /* Ẩn phần thừa nếu có */
+    justify-content: center;
+    align-items: center;
+}
+
+/* Các phần tử con trong modal */
+.suggestions-container, .modal-content {
+    width: 100%;
+    margin: 0; /* Loại bỏ margin thừa */
+    padding: 0; /* Loại bỏ padding thừa */
+    justify-content: center;
+    align-items: center;
+}
+
+/* Cải thiện hiển thị cho mỗi item trong danh sách */
+.suggestion-item {
+    padding: 12px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    white-space: nowrap; /* Ngăn văn bản bị xuống dòng */
+    overflow: visible; /* Ẩn bớt phần thừa nếu có */
+    text-overflow: ellipsis; /* Thêm dấu "..." nếu văn bản quá dài */
+}
+
+.suggestion-item:hover {
+    background-color: #f1f1f1;
+}
+
+/* Tối ưu cho responsive */
+@media (max-width: 768px) {
+    .suggestions-container {
+        width: 80%;
+    }
+}

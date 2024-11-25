@@ -117,16 +117,10 @@ public class ProductService {
         CartItem cartItem = this.cartItemRepository.findByCartAndProduct(cart, product);
 
         if (cartItem != null) {
-            long newQuantity = cartItem.getProductQuantity() - 1;
-
-            if (newQuantity <= 0) {
-                // Xóa sản phẩm khỏi giỏ hàng nếu số lượng là 0
-                this.cartItemRepository.delete(cartItem);
-            } else {
-                // Cập nhật số lượng sản phẩm còn lại nếu số lượng lớn hơn 0
-                cartItem.setProductQuantity(newQuantity);
-                this.cartItemRepository.save(cartItem);
-            }
+            this.cartItemRepository.delete(cartItem);
+            long newSum = cart.getSum() - 1;
+            cart.setSum(newSum);
+            this.cartRepo.save(cart);
         }
     }
 }
