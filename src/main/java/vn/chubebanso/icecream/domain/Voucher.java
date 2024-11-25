@@ -23,6 +23,8 @@ public class Voucher {
 
     @NotEmpty(message = "Voucher type cannot be empty")
     @Pattern(regexp = "Khuyến mãi hàng tháng|Sinh nhật nhà hàng|Trung thu|Tết Âm Lịch|Quốc Khánh|30/4 - 1/5|Khác", message = "Voucher Type must be one of {Khuyến mãi hàng tháng, Sinh nhật nhà hàng, Trung thu, Tết Âm Lịch, Quốc Khánh, 30/4 - 1/5, Khác}")
+    @NotEmpty(message = "Voucher type cannot be empty")
+    @Pattern(regexp = "Khuyến mãi hàng tháng|Sinh nhật nhà hàng|Trung thu|Tết Âm Lịch|Quốc Khánh|30/4 - 1/5|Khác", message = "Voucher Type must be one of {Khuyến mãi hàng tháng, Sinh nhật nhà hàng, Trung thu, Tết Âm Lịch, Quốc Khánh, 30/4 - 1/5, Khác}")
     private String voucherType;
 
     private String voucherName;
