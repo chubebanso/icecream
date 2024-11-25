@@ -10,20 +10,16 @@ import vn.chubebanso.icecream.domain.CartItem;
 import vn.chubebanso.icecream.domain.Voucher;
 import vn.chubebanso.icecream.repository.CartItemRepository;
 import vn.chubebanso.icecream.repository.CartRepository;
-import vn.chubebanso.icecream.repository.VoucherRepository;
 
 @Service
 public class CartService {
 
     private final CartRepository cartRepo;
     private final CartItemRepository cartItemRepository;
-    private final VoucherRepository voucherRepository;
 
-    public CartService(CartRepository cartRepo, CartItemRepository cartItemRepository,
-            VoucherRepository voucherRepository) {
+    public CartService(CartRepository cartRepo, CartItemRepository cartItemRepository) {
         this.cartRepo = cartRepo;
         this.cartItemRepository = cartItemRepository;
-        this.voucherRepository = voucherRepository;
     }
 
     // System returning a cart by ID => no need for body, just id and cart
