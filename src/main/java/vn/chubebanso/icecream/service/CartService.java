@@ -72,56 +72,6 @@ public class CartService {
         return cartList;
     }
 
-    // // Customers show all previous orders
-    // public List<Cart> showAllCarts(String phone) {
-    // List<Cart> cartList = this.cartRepo.findAllByPhonenum(phone);
-
-    // for (Cart cart : cartList) {
-    // List<CartItem> cartItems = this.cartItemRepository.findByCart(cart);
-    // float total = 0;
-
-    // for (CartItem cartItem : cartItems) {
-    // float productPrice = cartItem.getProduct().getPrice();
-    // long productQuantity = cartItem.getProductQuantity();
-
-    // float subtotal = productPrice * productQuantity;
-    // cartItem.setSubTotal(subtotal);
-
-    // total += subtotal;
-    // }
-    // Voucher voucher = cart.getVoucher();
-    // if (voucher == null) {
-    // cart.setTotal(total);
-    // } else {
-    // float newTotal = total * (1 - (voucher.getDiscountAmount()) / 100);
-    // cart.setTotal(newTotal);
-    // }
-    // }
-    // return cartList;
-    // }
-
-    // Customers show all previous orders
-    // public Cart showCartsById(Long id) {
-    // Optional<Cart> cart = this.cartRepo.findById(id);
-    // Cart newCart = cart.get();
-    // List<CartItem> cartItems = this.cartItemRepository.findByCart(newCart);
-    // float total = 0;
-
-    // for (CartItem cartItem : cartItems) {
-    // float productPrice = cartItem.getProduct().getPrice();
-    // long productQuantity = cartItem.getProductQuantity();
-
-    // float subtotal = productPrice * productQuantity;
-    // cartItem.setSubTotal(subtotal);
-
-    // total += subtotal;
-
-    // }
-    // newCart.setTotal(total);
-    // return newCart;
-
-    // }
-
     // Customers delete cart
     public void deleteProductById(Long cart_id) {
         this.cartRepo.deleteById(cart_id);
@@ -180,7 +130,12 @@ public class CartService {
                 newCart.setTotal(total);
             }
         }
-
         return newCart;
+    }
+
+    public void submitCart(Cart cart) {
+        cart.setSubmit(true);
+        cart.setStatus("Đang chờ");
+        this.cartRepo.save(cart);
     }
 }

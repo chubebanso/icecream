@@ -4,12 +4,10 @@ import * as React from 'react';
 import RouterLink from 'next/link';
 import { usePathname } from 'next/navigation';
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import { ArrowSquareUpRight as ArrowSquareUpRightIcon } from '@phosphor-icons/react/dist/ssr/ArrowSquareUpRight';
-import { CaretUpDown as CaretUpDownIcon } from '@phosphor-icons/react/dist/ssr/CaretUpDown';
+import { CaretDown as CaretUpDownIcon } from '@phosphor-icons/react/dist/ssr/CaretDown';
 
 import type { NavItemConfig } from '@/types/nav';
 import { paths } from '@/paths';
@@ -21,6 +19,52 @@ import { navIcons } from './nav-icons';
 
 export function SideNav(): React.JSX.Element {
   const pathname = usePathname();
+  const [openDropdowns, setOpenDropdowns] = React.useState<Record<string, boolean>>({});
+  const [username, setUsername] = React.useState<string>(''); // State để lưu username
+
+  // Hàm toggle mở/đóng dropdown dựa trên key của mục
+  const toggleDropdown = (key: string) => {
+    setOpenDropdowns((prev) => ({
+      ...prev,
+      [key]: !prev[key],
+    }));
+  };
+
+  // Hàm để lấy user từ backend (http://localhost:8080/all-user)
+  const fetchUser = async () => {
+    try {
+      // Gọi API lấy thông tin user
+      const response = await fetch('http://localhost:8080/all-user', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        const user = data.data[0]; // Giả sử bạn muốn lấy người dùng đầu tiên trong mảng data
+        setUsername(user.username); // Lấy username từ API
+      } else {
+        console.error("Error fetching users:", response.statusText);
+        const storedUsername = localStorage.getItem('username');
+        if (storedUsername) {
+          setUsername(storedUsername); // Nếu không lấy được từ API, dùng dữ liệu từ localStorage
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching users:", error);
+      const storedUsername = localStorage.getItem('username');
+      if (storedUsername) {
+        setUsername(storedUsername); // Nếu không lấy được từ API, dùng dữ liệu từ localStorage
+      }
+    }
+  };
+
+  // Gọi fetchUser khi component được render
+  React.useEffect(() => {
+    fetchUser(); // Lấy dữ liệu người dùng
+  }, []); // Chạy một lần khi component được render
 
   return (
     <Box
@@ -35,17 +79,17 @@ export function SideNav(): React.JSX.Element {
         '--NavItem-icon-color': 'var(--mui-palette-neutral-400)',
         '--NavItem-icon-active-color': 'var(--mui-palette-primary-contrastText)',
         '--NavItem-icon-disabled-color': 'var(--mui-palette-neutral-600)',
-        bgcolor: 'var(--SideNav-background)',
+        bgcolor: 'black',
         color: 'var(--SideNav-color)',
         display: { xs: 'none', lg: 'flex' },
         flexDirection: 'column',
         height: '100%',
         left: 0,
-        maxWidth: '100%',
+        maxWidth: '110%',
         position: 'fixed',
         scrollbarWidth: 'none',
         top: 0,
-        width: 'var(--SideNav-width)',
+        width: '350x', // Điều chỉnh chiều rộng sidebar
         zIndex: 'var(--SideNav-zIndex)',
         '&::-webkit-scrollbar': { display: 'none' },
       }}
@@ -59,7 +103,7 @@ export function SideNav(): React.JSX.Element {
             alignItems: 'center',
             backgroundColor: 'var(--mui-palette-neutral-950)',
             border: '1px solid var(--mui-palette-neutral-700)',
-            borderRadius: '12px',
+            borderRadius: '14px',
             cursor: 'pointer',
             display: 'flex',
             p: '4px 12px',
@@ -70,15 +114,18 @@ export function SideNav(): React.JSX.Element {
               Chào mừng
             </Typography>
             <Typography color="inherit" variant="subtitle1">
-              Chó Long Biên
+              {username || 'Đỗ Quang Minh'} {/* Nếu username không có, hiển thị tên mặc định */}
             </Typography>
           </Box>
           <CaretUpDownIcon />
         </Box>
       </Stack>
       <Divider sx={{ borderColor: 'var(--mui-palette-neutral-700)' }} />
-      <Box component="nav" sx={{ flex: '1 1 auto', p: '12px' }}>
-        {renderNavItems({ pathname, items: navItems })}
+      <Box component="nav" sx={{
+        width: '260px', // Độ rộng của side-nav
+        flexShrink: 0,
+      }} >
+        {renderNavItems({ pathname, items: navItems, openDropdowns, toggleDropdown })}
       </Box>
       <Divider sx={{ borderColor: 'var(--mui-palette-neutral-700)' }} />
       <Stack spacing={2} sx={{ p: '12px' }}>
@@ -86,8 +133,8 @@ export function SideNav(): React.JSX.Element {
           <Typography color="var(--mui-palette-neutral-100)" variant="subtitle2">
             Vì tổ quốc xã hội chủ nghĩa
           </Typography>
-          <Typography color="var(--mui-palette-neutral-400)" variant="body2">
-            Hãy làm việc cống hiến cho nước nhà
+          <Typography color="white" variant="body2">
+            <b>Hãy làm việc cống hiến cho nước nhà</b>
           </Typography>
         </div>
       </Stack>
@@ -95,11 +142,49 @@ export function SideNav(): React.JSX.Element {
   );
 }
 
-function renderNavItems({ items = [], pathname }: { items?: NavItemConfig[]; pathname: string }): React.JSX.Element {
-  const children = items.reduce((acc: React.ReactNode[], curr: NavItemConfig): React.ReactNode[] => {
-    const { key, ...item } = curr;
+// Giữ lại phần renderNavItems và NavItem như trong mã của bạn
 
-    acc.push(<NavItem key={key} pathname={pathname} {...item} />);
+function renderNavItems({
+  items = [],
+  pathname,
+  openDropdowns,
+  toggleDropdown,
+}: {
+  items?: NavItemConfig[];
+  pathname: string;
+  openDropdowns: Record<string, boolean>;
+  toggleDropdown: (key: string) => void;
+}): React.JSX.Element {
+  const children = items.reduce((acc: React.ReactNode[], curr: NavItemConfig): React.ReactNode[] => {
+    const { key, children, ...item } = curr;
+
+    // Kiểm tra xem có mục con hay không
+    const hasChildren = Boolean(children?.length);
+    const isDropdownOpen = openDropdowns[key] || false;
+
+    acc.push(
+      <React.Fragment key={key}>
+        <NavItem
+          key={key} // Thêm thuộc tính này
+          pathname={pathname}
+          {...item}
+          onClick={hasChildren ? () => toggleDropdown(key) : undefined}
+          showDropdownIcon={hasChildren}
+          isDropdownOpen={isDropdownOpen}
+        />
+        {hasChildren && isDropdownOpen && (
+          <Stack component="ul" spacing={1} sx={{ listStyle: 'none', m: 0, p: '0 0 0 20px' }}>
+            {children?.map((child) => {
+              const { key, ...rest } = child; // Loại bỏ 'key' khỏi spread operator
+              return (
+                <NavItem key={key} pathname={pathname} {...rest} />
+              );
+            })}
+          </Stack>
+        )}
+      </React.Fragment>
+    );
+
 
     return acc;
   }, []);
@@ -112,23 +197,39 @@ function renderNavItems({ items = [], pathname }: { items?: NavItemConfig[]; pat
 }
 
 interface NavItemProps extends Omit<NavItemConfig, 'items'> {
+  key: string; // Thêm dòng này
   pathname: string;
+  onClick?: () => void;
+  showDropdownIcon?: boolean;
+  isDropdownOpen?: boolean;
 }
 
-function NavItem({ disabled, external, href, icon, matcher, pathname, title }: NavItemProps): React.JSX.Element {
+
+function NavItem({
+  disabled,
+  external,
+  href,
+  icon,
+  matcher,
+  pathname,
+  title,
+  onClick,
+  showDropdownIcon,
+  isDropdownOpen,
+}: NavItemProps): React.JSX.Element {
   const active = isNavItemActive({ disabled, external, href, matcher, pathname });
   const Icon = icon ? navIcons[icon] : null;
 
   return (
-    <li>
+    <li onClick={onClick}>
       <Box
         {...(href
           ? {
-              component: external ? 'a' : RouterLink,
-              href,
-              target: external ? '_blank' : undefined,
-              rel: external ? 'noreferrer' : undefined,
-            }
+            component: external ? 'a' : RouterLink,
+            href,
+            target: external ? '_blank' : undefined,
+            rel: external ? 'noreferrer' : undefined,
+          }
           : { role: 'button' })}
         sx={{
           alignItems: 'center',
@@ -167,6 +268,15 @@ function NavItem({ disabled, external, href, icon, matcher, pathname, title }: N
             {title}
           </Typography>
         </Box>
+        {/* Hiển thị biểu tượng mũi tên nếu có mục con */}
+        {showDropdownIcon && (
+          <CaretUpDownIcon
+            style={{
+              transform: isDropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+              transition: 'transform 0.3s ease',
+            }}
+          />
+        )}
       </Box>
     </li>
   );

@@ -1,5 +1,6 @@
 package vn.chubebanso.icecream.service;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
@@ -25,18 +26,22 @@ public class UserService {
 
     public ResultPaginationDTO getAllUser(Pageable pageable) {
         Page<User> pageUser = this.userRepository.findAll(pageable);
-        
+
         Meta meta = new Meta();
         ResultPaginationDTO resultPaginationDTO = new ResultPaginationDTO();
-        
+
         meta.setPage(pageUser.getNumber());
         meta.setPageSize(pageUser.getSize());
         meta.setPages(pageUser.getTotalPages());
         meta.setTotalPage(pageUser.getNumberOfElements());
         resultPaginationDTO.setMeta(meta);
         resultPaginationDTO.setResult(pageUser.getContent());
-        
+
         return resultPaginationDTO;
+    }
+
+    public List<User> getEveryUser() {
+        return this.userRepository.findAll();
     }
 
     public User getUserById(Long user_id) {

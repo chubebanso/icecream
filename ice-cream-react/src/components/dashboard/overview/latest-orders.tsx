@@ -1,6 +1,7 @@
-"use client";
+'use client'; // Đảm bảo đây là Client Component
 
 import React, { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation'; // Sử dụng hook useRouter
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
@@ -24,13 +25,14 @@ interface Order {
   id: number;
   phonenum: string;
   sum: number;
-  total: number; // Tổng tiền
+  voucher?: string | null; // Trường voucher tùy chọn
   status: 'pending' | 'delivered' | 'refunded';
   createdAt: Date;
 }
 
 export function LatestOrders({ sx }: { sx?: any }): React.JSX.Element {
   const [orders, setOrders] = useState<Order[]>([]);
+  const router = useRouter(); // Khởi tạo useRouter để điều hướng
 
   useEffect(() => {
     // Lấy token từ Local Storage
@@ -57,9 +59,9 @@ export function LatestOrders({ sx }: { sx?: any }): React.JSX.Element {
           id: cart.id,
           phonenum: cart.phonenum,
           sum: cart.sum,
-          total: cart.total, // Lấy tổng tiền từ API
+          voucher: cart.voucher ? cart.voucher.name : null, // Lấy tên voucher nếu có
           status: cart.submit ? 'delivered' : 'pending',
-          createdAt: new Date(),
+          createdAt: new Date(cart.createdAt), // Sử dụng thời gian từ API
         }));
 
         setOrders(formattedOrders); // Cập nhật state
@@ -69,6 +71,11 @@ export function LatestOrders({ sx }: { sx?: any }): React.JSX.Element {
       });
   }, []);
 
+  // Hàm xử lý khi bấm vào nút "Xem tất cả"
+  const handleViewAllClick = () => {
+    router.push('/dashboard/carts'); // Điều hướng đến trang giỏ hàng
+  };
+
   return (
     <Card sx={sx}>
       <CardHeader title="Đơn hàng gần đây" />
@@ -77,10 +84,10 @@ export function LatestOrders({ sx }: { sx?: any }): React.JSX.Element {
         <Table sx={{ minWidth: 800 }}>
           <TableHead>
             <TableRow>
-              <TableCell>Mã đơn hàng</TableCell>
+              <TableCell><center>Mã đơn hàng</center></TableCell>
               <TableCell>Số điện thoại</TableCell>
-              <TableCell>Tổng sản phẩm</TableCell>
-              <TableCell>Tổng tiền</TableCell>
+              <TableCell><center>Tổng sản phẩm</center></TableCell>
+              <TableCell>Voucher sử dụng</TableCell>
               <TableCell>Trạng thái</TableCell>
             </TableRow>
           </TableHead>
@@ -90,10 +97,10 @@ export function LatestOrders({ sx }: { sx?: any }): React.JSX.Element {
 
               return (
                 <TableRow hover key={order.id}>
-                  <TableCell>{order.id}</TableCell>
+                  <TableCell><center>{order.id}</center></TableCell>
                   <TableCell>{order.phonenum}</TableCell>
-                  <TableCell>{order.sum}</TableCell>
-                  <TableCell>{order.total.toLocaleString()} VND</TableCell>
+                  <TableCell><center>{order.sum}</center></TableCell>
+                  <TableCell>{order.voucher ? order.voucher : 'Không có voucher'}</TableCell>
                   <TableCell>
                     <Chip color={color} label={label} size="small" />
                   </TableCell>
@@ -105,7 +112,12 @@ export function LatestOrders({ sx }: { sx?: any }): React.JSX.Element {
       </Box>
       <Divider />
       <CardActions sx={{ justifyContent: 'flex-end' }}>
-        <Button color="inherit" size="small" variant="text">
+        <Button
+          color="inherit"
+          size="small"
+          variant="text"
+          onClick={handleViewAllClick} // Thêm sự kiện onClick để điều hướng
+        >
           Xem tất cả
         </Button>
       </CardActions>

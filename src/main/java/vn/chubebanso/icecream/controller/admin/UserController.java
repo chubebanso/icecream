@@ -1,5 +1,6 @@
 package vn.chubebanso.icecream.controller.admin;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.PageRequest;
@@ -61,6 +62,11 @@ public class UserController {
         int pageSize = Integer.parseInt(sPagesize);
         Pageable pageable = PageRequest.of(currentPage - 1, pageSize);
         return ResponseEntity.ok(this.userService.getAllUser(pageable));
+    }
+
+    @GetMapping("/all-user")
+    public ResponseEntity<List<User>> getEveryUser() {
+        return ResponseEntity.ok(this.userService.getEveryUser());
     }
 
     @GetMapping("/user/{user_id}")
