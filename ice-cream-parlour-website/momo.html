@@ -66,6 +66,15 @@
         .momo-container .back-btn:hover {
             background-color: palevioletred;
         }
+
+        .success-message {
+            display: none;
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
     </style>
 </head>
 
@@ -81,18 +90,61 @@
                 <span id="timer">01:30</span> còn lại để hoàn tất thanh toán
             </div>
             <a href="products.html" class="back-btn">Quay lại giỏ hàng</a>
+            <div class="success-message" id="successMessage">Thanh toán thành công!</div>
         </div>
     </div>
 
     <script>
         let timer = 90;
-
         const timerElement = document.getElementById('timer');
+        const successMessage = document.getElementById('successMessage');
+        const cartId = sessionStorage.getItem("cartId");
 
+        // if (!cartId) {
+        //     console.error('Cart ID is missing in sessionStorage');
+        //     window.location.href = 'products.html';
+        // }
+
+        // Function to check the order status from the API
+        async function checkOrderStatus(cartId) {
+            try {
+                  const response = await fetch(`http://localhost:8080/get-cart-by-id?id=${cartId}`, {
+                    method: 'GET'
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    const order = data.data;
+
+                    // Check if order status is delivered
+                    if (order && order.status === 'delivered') {
+                        clearInterval(countdown); // Stop the countdown
+                        successMessage.style.display = 'block'; // Show success message
+                        sessionStorage.clear();
+                        setTimeout(() => {
+                            window.location.href = 'index.html'; // Redirect to index page after a short delay
+                        }, 2000);
+                    } else {
+                        console.log("Order not delivered yet.");
+                    }
+
+                    // Optional: Display order summary information
+                    console.log('Total:', order.total);
+                    console.log('New Total after discount:', order.newTotal);
+                    console.log('Voucher:', order.voucher ? order.voucher.voucherName : 'No voucher');
+
+                } else {
+                    console.error('Failed to fetch order data');
+                }
+            } catch (error) {
+                console.error('Error checking order status:', error);
+            }
+        }
+
+        // Timer countdown function
         function updateTimer() {
             const minutes = Math.floor(timer / 60);
             const seconds = timer % 60;
-
             timerElement.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
 
             if (timer === 0) {
@@ -103,8 +155,12 @@
 
             timer--;
         }
+
         const countdown = setInterval(updateTimer, 1000);
-        updateTimer(); 
+        updateTimer();
+
+        // Check order status every 10 seconds
+        setInterval(() => checkOrderStatus(cartId), 10000); // Check every 10 seconds
     </script>
 </body>
 

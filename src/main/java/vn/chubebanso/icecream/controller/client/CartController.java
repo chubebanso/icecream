@@ -32,12 +32,23 @@ public class CartController {
     }
 
     @PostMapping("/submit-cart-by-id")
-    public ResponseEntity<String> submitCart(@Valid @RequestParam("cart_id") long cart_id){
+    public ResponseEntity<String> submitCart(@Valid @RequestParam("cart_id") long cart_id) {
         Cart cart = cartService.getCartById(cart_id);
         if (cart == null) {
             return ResponseEntity.badRequest().body("Giỏ hàng không tồn tại");
         }
         this.cartService.submitCart(cart);
+        return ResponseEntity.ok("Xác nhận giỏ hàng thành công!");
+    }
+
+    @PostMapping("/admin/pay-cart")
+    public ResponseEntity<String> payCart(@Valid @RequestParam("cart_id") long cart_id,
+            @RequestParam("status") String status) {
+        Cart cart = cartService.getCartById(cart_id);
+        if (cart == null) {
+            return ResponseEntity.badRequest().body("Giỏ hàng không tồn tại");
+        }
+        this.cartService.update(cart, status);
         return ResponseEntity.ok("Xác nhận giỏ hàng thành công!");
     }
 }

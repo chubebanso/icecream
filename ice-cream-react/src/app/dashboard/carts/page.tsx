@@ -2,10 +2,9 @@
 
 import { useState, useEffect } from "react";
 import * as React from 'react';
-import { Stack, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Select, MenuItem, SelectChangeEvent, Button, TablePagination, Dialog, DialogTitle, DialogContent, DialogActions, Divider } from '@mui/material';
+import { Stack, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Select, MenuItem, SelectChangeEvent, Button, TablePagination, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
 import { useReactToPrint } from "react-to-print";
 import { useRef } from "react";
-import { borderRight, fontWeight } from "@mui/system";
 
 const statusMap = {
   pending: { label: 'Đang chờ', color: '#FFAA00' }, // yellow
@@ -84,9 +83,6 @@ export default function CartPage(): React.JSX.Element {
       ...prevSelected,
       [orderId]: newStatus,
     }));
-
-    // Gọi saveCart ngay khi thay đổi trạng thái
-    saveCart(orderId, newStatus);
   };
 
   const fetchCartData = async () => {
@@ -123,15 +119,19 @@ export default function CartPage(): React.JSX.Element {
     const token = localStorage.getItem('custom-auth-token');
     if (token) {
       try {
-        const response = await fetch(`http://localhost:8080/cart/update/${cartId}`, {
-          method: 'PUT',  // Sử dụng PUT để cập nhật giỏ hàng
+        const statusMapToString: { [key in StatusKey]: string } = {
+          pending: 'pending',
+          delivered: 'delivered',
+          refunded: 'refunded',
+        };
+        
+        const statusParam = statusMapToString[status];  // Convert status to string
+        
+        const response = await fetch(`http://localhost:8080/admin/pay-cart?cart_id=${cartId}&status=${statusParam}`, {
+          method: 'POST',  // You can change it to PUT if required by your API
           headers: {
             Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
           },
-          body: JSON.stringify({
-            status: status,// Dữ liệu cần cập nhật (ví dụ, trạng thái giỏ hàng, thông tin sản phẩm, v.v.)
-          }),
         });
 
         if (response.ok) {
@@ -159,6 +159,11 @@ export default function CartPage(): React.JSX.Element {
       setSelectedOrder(order); // Store the full order for invoice data
       setOpen(true);
     }
+  };
+
+  const handleSaveStatus = (cartId: number) => {
+    const status = selectedStatus[cartId] || 'pending'; // Default to 'pending' if not selected
+    saveCart(cartId, status);
   };
 
   const paginatedCarts = cartData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
@@ -215,7 +220,7 @@ export default function CartPage(): React.JSX.Element {
                     <Button
                       variant="contained"
                       color="secondary"
-                      onClick={() => saveCart(cart.id, selectedStatus[cart.id] || cart.status)}
+                      onClick={() => handleSaveStatus(cart.id)}
                     >
                       Lưu
                     </Button>
@@ -251,9 +256,9 @@ export default function CartPage(): React.JSX.Element {
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell align="center" style={{ fontWeight: 'bold', }}>Tên sản phẩm</TableCell>
-                  <TableCell align="center" style={{ fontWeight: 'bold', }}>Số lượng</TableCell>
-                  <TableCell align="center" style={{ fontWeight: 'bold', }}>Thành tiền</TableCell>
+                  <TableCell align="center">Tên sản phẩm</TableCell>
+                  <TableCell align="center">Số lượng</TableCell>
+                  <TableCell align="center">Thành tiền</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -270,73 +275,7 @@ export default function CartPage(): React.JSX.Element {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Huỷ</Button>
-          <Button variant="contained" onClick={() => reactToPrintFn()}>In hóa đơn</Button>
-          <div className="printable-content" ref={contentRef}>
-            <div className="header">
-              <h1>Nhà hàng Thủy Tạ</h1>
-              <p>Địa chỉ: 1 P. Lê Thái Tổ, Hàng Trống, Hoàn Kiếm, Hà Nội</p>
-              <p>Điện thoại: 024 3828 8148</p>
-              <p>-------------------------------------------------------</p>
-              <h2>HÓA ĐƠN</h2>
-              <p>Hóa đơn ngày: {selectedOrder?.createdAt}</p>
-              <p>Số điện thoại khách hàng: {selectedOrder?.phonenum}</p>
-            </div>
-
-            <TableContainer>
-              <Table>
-                <TableHead>
-                  <TableRow style={{
-                    border: '2px solid black', // Thêm border dưới hàng đầu tiên
-                  }}>
-                    <TableCell style={{ fontWeight: 'bold' }}>Tên sản phẩm</TableCell>
-                    <TableCell align="center" style={{ fontWeight: 'bold' }}>SL</TableCell>
-                    <TableCell align="center" style={{ fontWeight: 'bold' }}>Đơn giá</TableCell>
-                    <TableCell align="center" style={{ fontWeight: 'bold' }}>Thành tiền</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {selectedOrderItems.map((item) => (
-                    <TableRow key={item.id}>
-                      <TableCell>{item.product.name}</TableCell>
-                      <TableCell align="center">{item.productQuantity}</TableCell>
-                      <TableCell align="center">{item.product.price.toLocaleString()}</TableCell>
-                      <TableCell align="center">{item.subTotal.toLocaleString()}</TableCell>
-                    </TableRow>
-                  ))}
-
-                  <TableRow>
-                    <TableCell colSpan={3} align="right" style={{ fontWeight: 'bold' }}>
-                      Tổng thanh toán:
-                    </TableCell>
-                    <TableCell align="center" style={{ fontWeight: 'bold' }}>
-                      {selectedOrderItems.reduce((total, item) => total + item.subTotal, 0).toLocaleString()} VND
-                    </TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell colSpan={3} align="right" style={{ fontWeight: 'bold' }}>
-                      Chiết khẩu:
-                    </TableCell>
-                    <TableCell align="center" style={{ fontWeight: 'bold' }}>
-                      {selectedOrder?.voucher?.discountAmount || null}%
-                    </TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell colSpan={3} align="right" style={{ fontWeight: 'bold' }}>
-                      Thành tiền:
-                    </TableCell>
-                    <TableCell align="center" style={{ fontWeight: 'bold' }}>
-                      {selectedOrder?.newTotal.toLocaleString()} VND
-                    </TableCell>
-                  </TableRow>
-                </TableBody>
-              </Table>
-              <div className="footer">
-                  <p>--------------------------------</p>
-                  <h3>Cảm ơn quý khách và hẹn gặp lại!</h3>
-              </div>
-            </TableContainer>
-
-          </div>
+          <Button variant="contained" onClick={reactToPrintFn}>In hóa đơn</Button>
         </DialogActions>
       </Dialog>
     </Stack>
