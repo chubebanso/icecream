@@ -12,6 +12,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 // shift+alt+F for align
 @Entity
@@ -32,6 +33,8 @@ public class Cart {
     @Min(value = 0)
     private long sum;
 
+    @NotNull
+    @Size(min = 6, max = 11, message = "Số điện thoại của bạn không hợp lệ")
     private String phonenum;
 
     private float total;
@@ -39,6 +42,36 @@ public class Cart {
     private float newTotal;
 
     private String status;
+
+    private float points;
+
+    private String customerType;
+
+    private String createdAt;
+
+    public float getPoints() {
+        return points;
+    }
+
+    public void setPoints(float points) {
+        this.points = points;
+    }
+
+    public String getCustomerType() {
+        return customerType;
+    }
+
+    public void setCustomerType(String customerType) {
+        this.customerType = customerType;
+    }
+
+    public String getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(String createdAt) {
+        this.createdAt = createdAt;
+    }
 
     public String getStatus() {
         return status;

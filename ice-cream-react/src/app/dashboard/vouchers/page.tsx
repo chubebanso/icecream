@@ -130,6 +130,16 @@ export default function VoucherPage(): React.JSX.Element {
   };
 
   const handleSubmit = async () => {
+    if (newVoucher.discountAmount <= 0) {
+      alert("Phần trăm giảm giá phải lớn hơn 0");
+      return;
+    }
+
+    if (newVoucher.discountAmount >= 100) {
+      alert("Phần trăm giảm giá phải nhỏ hơn 100");
+      return;
+    }
+
     const token = localStorage.getItem('custom-auth-token');
 
     if (token) {
@@ -174,6 +184,11 @@ export default function VoucherPage(): React.JSX.Element {
 
   const paginatedVouchers = vouchers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
+  const handleDelete = (id: number) => {
+    console.log(`Edit action triggered for cart with ID: ${id}`);
+    // Thực hiện hành động khác như mở modal hoặc điều hướng
+  };
+
   return (
     <Stack spacing={3}>
       <Stack direction="row" spacing={3}>
@@ -182,7 +197,7 @@ export default function VoucherPage(): React.JSX.Element {
         </Stack>
         <div>
           <Button startIcon={<PlusIcon fontSize="var(--icon-fontSize-md)" />} variant="contained" onClick={handleOpen}>
-            Thêm mới Voucher
+            Thêm mới
           </Button>
         </div>
       </Stack>
@@ -200,6 +215,7 @@ export default function VoucherPage(): React.JSX.Element {
                   <TableCell><center>Giá trị đơn hàng tối thiểu</center></TableCell>
                   <TableCell><center>Ngày tạo</center></TableCell>
                   <TableCell><center>Ngày hết hạn</center></TableCell>
+                  <TableCell><center>Thao tác</center></TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -212,6 +228,17 @@ export default function VoucherPage(): React.JSX.Element {
                     <TableCell><center>{voucher.minActivationValue.toLocaleString()} </center></TableCell>
                     <TableCell><center>{voucher.createdDate}</center></TableCell>
                     <TableCell><center>{voucher.expiredDate}</center></TableCell>
+                    <TableCell>
+                      <center>
+                        <Button
+                          variant="contained"
+                          color="error"
+                          onClick={() => handleDelete(voucher.id)}
+                        >
+                          Xóa
+                        </Button>
+                      </center>
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -231,7 +258,7 @@ export default function VoucherPage(): React.JSX.Element {
       </Card>
 
       <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>Thêm Voucher mới</DialogTitle>
+        <DialogTitle>Tạo voucher mới</DialogTitle>
         <DialogContent>
           <input
             type="hidden"
@@ -242,7 +269,7 @@ export default function VoucherPage(): React.JSX.Element {
             }
           />
           <FormControl fullWidth margin="dense">
-            <InputLabel>Loại Voucher</InputLabel>
+            <InputLabel>Loại voucher</InputLabel>
             <Select
               name="voucherType"
               value={newVoucher.voucherType}
@@ -292,7 +319,7 @@ export default function VoucherPage(): React.JSX.Element {
                 step: 1000, // Bước nhảy là 1,000
                 min: 0, // Giá trị nhỏ nhất là 0
               },
-              endAdornment: <InputAdornment position="end">VNĐ</InputAdornment>, // Hiển thị VNĐ
+              endAdornment: <InputAdornment position="end">VND</InputAdornment>, // Hiển thị VND
             }}
 
           />

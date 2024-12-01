@@ -22,7 +22,10 @@ export default function NextAppDirEmotionCacheProvider(props: NextAppDirEmotionC
   const { options, CacheProvider = DefaultCacheProvider, children } = props;
 
   const [registry] = React.useState<Registry>(() => {
-    const cache = createCache(options);
+    const cache = createCache({
+      ...options,
+      key: options.key ?? 'default', // Thêm giá trị mặc định
+    });
     cache.compat = true;
     // eslint-disable-next-line @typescript-eslint/unbound-method -- Expected
     const prevInsert = cache.insert;
@@ -52,18 +55,18 @@ export default function NextAppDirEmotionCacheProvider(props: NextAppDirEmotionC
     }
 
     let styles = '';
-    let dataEmotionAttribute = registry.cache.key;
+    let dataEmotionAttribute: string = registry.cache.key ?? 'default'; // Đảm bảo luôn có giá trị kiểu string
 
     const globals: { name: string; style: string }[] = [];
 
     inserted.forEach(({ name, isGlobal }) => {
       const style = registry.cache.inserted[name];
-
-      if (typeof style !== 'boolean') {
+      if (typeof style !== 'boolean' && style !== undefined) {
+        const validStyle = style || ''; // Đảm bảo kiểu luôn là string
         if (isGlobal) {
-          globals.push({ name, style });
+          globals.push({ name, style: validStyle });
         } else {
-          styles += style;
+          styles += validStyle;
           dataEmotionAttribute += ` ${name}`;
         }
       }

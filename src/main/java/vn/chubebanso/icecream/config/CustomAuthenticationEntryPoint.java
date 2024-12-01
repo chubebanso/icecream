@@ -31,7 +31,7 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
         this.deleate.commence(request, response, authException);
         RestResponse<Object> res = new RestResponse<Object>();
         response.setContentType("application/json;charset=UTF-8");
-        String errorMessage = Optional.ofNullable(authException.getCause()) // NULL
+        String errorMessage = Optional.ofNullable(authException.getCause())
                 .map(Throwable::getMessage)
                 .orElse(authException.getMessage());
         res.setErrCode(errorMessage);

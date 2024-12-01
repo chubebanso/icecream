@@ -66,5 +66,6 @@ public class ItemController {
         String productName = product.getName();
         this.productService.handleDeleteItemFromCart(cart, product);
         return ResponseEntity.ok("Đã xóa sản phẩm " + productName + " thành công!");
+        // alo
     }
 }

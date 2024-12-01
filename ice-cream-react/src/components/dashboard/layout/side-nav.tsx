@@ -71,7 +71,7 @@ export function SideNav(): React.JSX.Element {
       sx={{
         '--SideNav-background': 'var(--mui-palette-neutral-950)',
         '--SideNav-color': 'var(--mui-palette-common-white)',
-        '--NavItem-color': 'var(--mui-palette-neutral-300)',
+        '--NavItem-color': 'var(--mui-palette-common-white)', // Màu chữ thành trắng
         '--NavItem-hover-background': 'rgba(255, 255, 255, 0.04)',
         '--NavItem-active-background': 'var(--mui-palette-primary-main)',
         '--NavItem-active-color': 'var(--mui-palette-primary-contrastText)',
@@ -109,40 +109,20 @@ export function SideNav(): React.JSX.Element {
             p: '4px 12px',
           }}
         >
-          <Box sx={{ flex: '1 1 auto' }}>
-            <Typography color="var(--mui-palette-neutral-400)" variant="body2">
-              Chào mừng
-            </Typography>
-            <Typography color="inherit" variant="subtitle1">
-              {username || 'Đỗ Quang Minh'} {/* Nếu username không có, hiển thị tên mặc định */}
-            </Typography>
-          </Box>
-          <CaretUpDownIcon />
         </Box>
       </Stack>
       <Divider sx={{ borderColor: 'var(--mui-palette-neutral-700)' }} />
       <Box component="nav" sx={{
-        width: '260px', // Độ rộng của side-nav
+        width: '260px',
         flexShrink: 0,
-      }} >
+        '& svg': { color: 'white' }, // Đảm bảo rằng tất cả các icon sẽ có màu trắng
+      }}>
         {renderNavItems({ pathname, items: navItems, openDropdowns, toggleDropdown })}
       </Box>
       <Divider sx={{ borderColor: 'var(--mui-palette-neutral-700)' }} />
-      <Stack spacing={2} sx={{ p: '12px' }}>
-        <div>
-          <Typography color="var(--mui-palette-neutral-100)" variant="subtitle2">
-            Vì tổ quốc xã hội chủ nghĩa
-          </Typography>
-          <Typography color="white" variant="body2">
-            <b>Hãy làm việc cống hiến cho nước nhà</b>
-          </Typography>
-        </div>
-      </Stack>
     </Box>
   );
 }
-
-// Giữ lại phần renderNavItems và NavItem như trong mã của bạn
 
 function renderNavItems({
   items = [],
@@ -204,7 +184,6 @@ interface NavItemProps extends Omit<NavItemConfig, 'items'> {
   isDropdownOpen?: boolean;
 }
 
-
 function NavItem({
   disabled,
   external,
@@ -228,54 +207,60 @@ function NavItem({
             component: external ? 'a' : RouterLink,
             href,
             target: external ? '_blank' : undefined,
-            rel: external ? 'noreferrer' : undefined,
+            rel: external ? 'noopener noreferrer' : undefined,
           }
-          : { role: 'button' })}
+          : {})}
         sx={{
           alignItems: 'center',
-          borderRadius: 1,
-          color: 'var(--NavItem-color)',
-          cursor: 'pointer',
+          backgroundColor: active ? 'var(--NavItem-active-background)' : undefined,
+          borderRadius: '14px',
+          color: active ? 'var(--NavItem-active-color)' : 'var(--NavItem-color)',
           display: 'flex',
-          flex: '0 0 auto',
-          gap: 1,
-          p: '6px 16px',
-          position: 'relative',
+          fontSize: 14,
+          fontWeight: 500,
+          height: '48px',
+          px: 3,
           textDecoration: 'none',
-          whiteSpace: 'nowrap',
+          userSelect: 'none',
+          '&:hover': {
+            backgroundColor: 'var(--NavItem-hover-background)',
+          },
           ...(disabled && {
-            bgcolor: 'var(--NavItem-disabled-background)',
             color: 'var(--NavItem-disabled-color)',
-            cursor: 'not-allowed',
+            pointerEvents: 'none',
           }),
-          ...(active && { bgcolor: 'var(--NavItem-active-background)', color: 'var(--NavItem-active-color)' }),
         }}
       >
-        <Box sx={{ alignItems: 'center', display: 'flex', justifyContent: 'center', flex: '0 0 auto' }}>
-          {Icon ? (
-            <Icon
-              fill={active ? 'var(--NavItem-icon-active-color)' : 'var(--NavItem-icon-color)'}
-              fontSize="var(--icon-fontSize-md)"
-              weight={active ? 'fill' : undefined}
-            />
-          ) : null}
-        </Box>
-        <Box sx={{ flex: '1 1 auto' }}>
-          <Typography
-            component="span"
-            sx={{ color: 'inherit', fontSize: '0.875rem', fontWeight: 500, lineHeight: '28px' }}
-          >
-            {title}
-          </Typography>
-        </Box>
-        {/* Hiển thị biểu tượng mũi tên nếu có mục con */}
-        {showDropdownIcon && (
-          <CaretUpDownIcon
-            style={{
-              transform: isDropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)',
-              transition: 'transform 0.3s ease',
+        {Icon && (
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              mr: 2,
+              color: 'white', // Đặt màu tại đây
             }}
-          />
+          >
+            <Icon style={{ color: 'inherit' }} /> {/* Kế thừa màu từ Box */}
+          </Box>
+        )}
+        <Typography color="inherit" sx={{ color: 'white' }}>
+          {title}
+        </Typography>
+        {showDropdownIcon && (
+          <Box
+            sx={{
+              ml: 'auto',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              color: isDropdownOpen
+                ? 'var(--NavItem-icon-active-color)'
+                : 'var(--NavItem-icon-color)',
+            }}
+          >
+            <CaretUpDownIcon />
+          </Box>
         )}
       </Box>
     </li>

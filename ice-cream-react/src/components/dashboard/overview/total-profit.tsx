@@ -5,7 +5,7 @@ import CardContent from '@mui/material/CardContent';
 import Stack from '@mui/material/Stack';
 import type { SxProps } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
-import { Money as ProfitIcon } from '@phosphor-icons/react/dist/ssr/Money';
+import { Calculator as ProfitIcon } from '@phosphor-icons/react/dist/ssr/Calculator';
 
 export interface TotalProfitProps {
   sx?: SxProps;
@@ -19,9 +19,9 @@ export function TotalProfit({ value, sx }: TotalProfitProps): React.JSX.Element 
         <Stack direction="row" sx={{ alignItems: 'flex-start', justifyContent: 'space-between' }} spacing={3}>
           <Stack spacing={1}>
             <Typography color="text.secondary" variant="overline">
-              Lợi nhuận
+              Doanh số tháng
             </Typography>
-            <Typography variant="h4">{'480 triệu'}</Typography>
+            <Typography variant="h4">17435</Typography>
           </Stack>
           <Avatar sx={{ backgroundColor: 'green', height: '56px', width: '56px' }}>
             <ProfitIcon fontSize="var(--icon-fontSize-lg)" />
