@@ -1,5 +1,9 @@
 package vn.chubebanso.icecream.service;
 
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 
@@ -79,6 +83,16 @@ public class CartService {
         newCart.setSum(0);
         newCart.setPhonenum(phone);
         newCart.setTotal(0);
+        Instant instant = Instant.now();
+        ZoneId zone = ZoneId.of("Asia/Ho_Chi_Minh");
+
+        // Ngày tạo Voucher với múi giờ Việt Nam
+        ZonedDateTime createdDate = instant.atZone(zone);
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
+
+        newCart.setCreatedAt(createdDate.format(formatter));
+
         return this.cartRepo.save(newCart);
     }
 
@@ -116,6 +130,7 @@ public class CartService {
 
         if (newCart.getVoucher() == null) {
             newCart.setTotal(total);
+            newCart.setNewTotal(total);
         } else {
             float activationValue = newCart.getVoucher().getMinActivationValue();
             if (total >= activationValue) {

@@ -1,136 +1,344 @@
 'use client';
 
+import { useState, useEffect } from "react";
 import * as React from 'react';
-import { Stack, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Select, MenuItem, SelectChangeEvent } from '@mui/material';
-import { styled } from '@mui/system';
+import { Stack, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Select, MenuItem, SelectChangeEvent, Button, TablePagination, Dialog, DialogTitle, DialogContent, DialogActions, Divider } from '@mui/material';
+import { useReactToPrint } from "react-to-print";
+import { useRef } from "react";
+import { borderRight, fontWeight } from "@mui/system";
 
 const statusMap = {
-  pending: { label: 'Đang chờ', color: '#FFAA00' }, // màu vàng nhạt
-  delivered: { label: 'Đã thanh toán', color: '#4CAF50' }, // màu xanh lá
-  refunded: { label: 'Hủy đơn', color: '#F44336' }, // màu đỏ
+  pending: { label: 'Đang chờ', color: '#FFAA00' }, // yellow
+  delivered: { label: 'Đã thanh toán', color: '#4CAF50' }, // green
+  refunded: { label: 'Hủy đơn', color: '#F44336' }, // red
 } as const;
 
-type StatusKey = keyof typeof statusMap; // Định nghĩa kiểu hợp lệ cho status
+type StatusKey = keyof typeof statusMap;
+
+interface Product {
+  id: number;
+  name: string;
+  price: number;
+  unit: string;
+  image: string;
+  category: string;
+  availableForOrder: boolean;
+}
 
 interface Voucher {
-  name: string; // Đảm bảo voucher có thuộc tính `name`
+  id: number;
+  voucherType: string;
+  voucherName: string;
+  discountAmount: number;
+  minActivationValue: number;
+  createdDate: string;
+  expiredDate: string;
+}
+
+interface OrderItem {
+  id: number;
+  product: Product;
+  productQuantity: number;
+  subTotal: number;
 }
 
 interface Order {
   id: number;
   phonenum: string;
   sum: number;
-  voucher?: Voucher | null; // Sửa đổi kiểu để voucher là object chứa `name`
-  status: StatusKey; // Sử dụng kiểu `StatusKey` cho status
-  createdAt: Date;
-  total: number; // Giả sử có thuộc tính `total`
-  newTotal: number; // Giả sử có thuộc tính `newTotal`
+  voucher?: Voucher | null;
+  status: StatusKey;
+  createdAt: string;
+  total: number;
+  newTotal: number;
+  items: OrderItem[];
 }
 
 export default function CartPage(): React.JSX.Element {
-  const [cartData, setCartData] = React.useState<Order[]>([]); // Định nghĩa rõ kiểu dữ liệu giỏ hàng
-  const [selectedStatus, setSelectedStatus] = React.useState<{ [key: number]: StatusKey }>({}); // Quản lý trạng thái cho mỗi đơn hàng
+  const [cartData, setCartData] = useState<Order[]>([]);
+  const [selectedStatus, setSelectedStatus] = useState<{ [key: number]: StatusKey }>({});
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [open, setOpen] = useState(false);
+  const [selectedOrderItems, setSelectedOrderItems] = useState<OrderItem[]>([]); // Store selected order items
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);  // To store selected order for invoice details
+  const contentRef = useRef<HTMLDivElement>(null);
+  const reactToPrintFn = useReactToPrint({ contentRef });
+
+  const handleChangePage = (event: unknown, newPage: number) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   const handleStatusChange = (event: SelectChangeEvent, orderId: number) => {
     const newStatus = event.target.value as StatusKey;
-    setCartData((prevData) =>
-      prevData.map((cart) =>
-        cart.id === orderId ? { ...cart, status: newStatus } : cart
-      )
-    );
     setSelectedStatus((prevSelected) => ({
       ...prevSelected,
       [orderId]: newStatus,
     }));
+
+    // Gọi saveCart ngay khi thay đổi trạng thái
+    saveCart(orderId, newStatus);
   };
 
-  React.useEffect(() => {
-    const fetchCartData = async () => {
-      const token = localStorage.getItem('custom-auth-token');
-      if (token) {
-        try {
-          const response = await fetch('http://localhost:8080/cart', {
-            method: 'GET',
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
-          if (response.ok) {
-            const data = await response.json();
-            setCartData(data.data);
-          } else {
-            console.error('Failed to fetch cart data');
-          }
-        } catch (error) {
-          console.error('Error fetching cart data:', error);
+  const fetchCartData = async () => {
+    const token = localStorage.getItem('custom-auth-token');
+    if (token) {
+      try {
+        const response = await fetch('http://localhost:8080/cart', {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        if (response.ok) {
+          const data = await response.json();
+          // Sắp xếp mảng cartData theo id giảm dần
+          const sortedData = data.data.sort((a: Order, b: Order) => b.id - a.id);
+          setCartData(sortedData);
+        } else {
+          console.error('Failed to fetch cart data');
         }
-      } else {
-        console.error('Token is missing');
+      } catch (error) {
+        console.error('Error fetching cart data:', error);
       }
-    };
+    } else {
+      console.error('Token is missing');
+    }
+  };
 
+  useEffect(() => {
     fetchCartData();
   }, []);
 
+  const saveCart = async (cartId: number, status: StatusKey) => {
+    const token = localStorage.getItem('custom-auth-token');
+    if (token) {
+      try {
+        const response = await fetch(`http://localhost:8080/cart/update/${cartId}`, {
+          method: 'PUT',  // Sử dụng PUT để cập nhật giỏ hàng
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            status: status,// Dữ liệu cần cập nhật (ví dụ, trạng thái giỏ hàng, thông tin sản phẩm, v.v.)
+          }),
+        });
+
+        if (response.ok) {
+          console.log('Cart updated successfully');
+          setCartData((prevData) =>
+            prevData.map((cart) =>
+              cart.id === cartId ? { ...cart, status: status } : cart
+            )
+          );
+        } else {
+          console.error('Failed to update cart');
+        }
+      } catch (error) {
+        console.error('Error updating cart:', error);
+      }
+    } else {
+      console.error('Token is missing');
+    }
+  };
+
+  const handleOpen = (orderId: number) => {
+    const order = cartData.find((cart) => cart.id === orderId);
+    if (order) {
+      setSelectedOrderItems(order.items); // Set the items of the selected order
+      setSelectedOrder(order); // Store the full order for invoice data
+      setOpen(true);
+    }
+  };
+
+  const paginatedCarts = cartData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
+
   return (
     <Stack spacing={3}>
-      <Stack direction="row" spacing={3}>
-        <Stack spacing={1} sx={{ flex: '1 1 auto' }}>
-          <Typography variant="h4">QUẢN LÝ TRẠNG THÁI GIỎ HÀNG</Typography>
-        </Stack>
-      </Stack>
+      <Typography variant="h4">QUẢN LÝ TRẠNG THÁI GIỎ HÀNG</Typography>
 
-      <center>
-        <TableContainer component={Paper}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell align="center">ID</TableCell>
-                <TableCell align="center">SĐT</TableCell>
-                <TableCell align="center">Thành tiền</TableCell>
-                <TableCell align="center">Voucher</TableCell>
-                <TableCell align="center">Phải trả</TableCell>
-                <TableCell align="center">Trạng thái</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {cartData.map((cart) => (
-                <TableRow key={cart.id}>
-                  <TableCell align="center">{cart.id}</TableCell>
-                  <TableCell align="center">{cart.phonenum}</TableCell>
-                  <TableCell align="center">{cart.total} VNĐ</TableCell>
-                  <TableCell align="center">{cart.voucher ? cart.voucher.name : 'Không có'}</TableCell>
-                  <TableCell align="center">{cart.newTotal} VNĐ</TableCell>
-                  <TableCell align="center">
-                    <Select
-                      value={selectedStatus[cart.id] || cart.status}
-                      onChange={(e) => handleStatusChange(e, cart.id)}
-                      sx={{
-                        minWidth: '150px',
-                        color: statusMap[selectedStatus[cart.id] || cart.status]?.color || 'black',
-                        textTransform: 'none',
-                      }}
+      <TableContainer component={Paper}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell align="center">ID</TableCell>
+              <TableCell align="center">SĐT</TableCell>
+              <TableCell align="center">Thành tiền</TableCell>
+              <TableCell align="center">Phải trả</TableCell>
+              <TableCell align="center">Trạng thái</TableCell>
+              <TableCell align="center">Thao tác</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {paginatedCarts.map((cart) => (
+              <TableRow key={cart.id}>
+                <TableCell align="center">{cart.id}</TableCell>
+                <TableCell align="center">{cart.phonenum}</TableCell>
+                <TableCell align="center">{cart.total.toLocaleString()} VND</TableCell>
+                <TableCell align="center">{cart.newTotal.toLocaleString()} VND</TableCell>
+                <TableCell align="center">
+                  <Select
+                    value={selectedStatus[cart.id] || cart.status}
+                    onChange={(e) => handleStatusChange(e, cart.id)}
+                    sx={{
+                      minWidth: '150px',
+                      color: statusMap[selectedStatus[cart.id] || cart.status]?.color || 'black',
+                      textTransform: 'none',
+                    }}
+                  >
+                    {Object.entries(statusMap).map(([key, { label, color }]) => (
+                      <MenuItem
+                        key={key}
+                        value={key}
+                        sx={{
+                          color: color,
+                          textTransform: 'none',
+                        }}
+                      >
+                        {label}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </TableCell>
+                <TableCell>
+                  <center>
+                    <Button
+                      variant="contained"
+                      color="secondary"
+                      onClick={() => saveCart(cart.id, selectedStatus[cart.id] || cart.status)}
                     >
-                      {Object.entries(statusMap).map(([key, { label, color }]) => (
-                        <MenuItem
-                          key={key}
-                          value={key}
-                          sx={{
-                            color: color,
-                            textTransform: 'none',
-                          }}
-                        >
-                          {label}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </TableCell>
+                      Lưu
+                    </Button>
+                    <span> </span>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={() => handleOpen(cart.id)}
+                    >
+                      Hóa đơn
+                    </Button>
+                  </center>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+        <TablePagination
+          component="div"
+          count={cartData.length}
+          page={page}
+          onPageChange={handleChangePage}
+          rowsPerPage={rowsPerPage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+          rowsPerPageOptions={[5, 10, 25]}
+        />
+      </TableContainer>
+
+      <Dialog open={open} onClose={handleClose}>
+        <DialogTitle>Chi tiết giỏ hàng</DialogTitle>
+        <DialogContent>
+          <TableContainer>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell align="center" style={{ fontWeight: 'bold', }}>Tên sản phẩm</TableCell>
+                  <TableCell align="center" style={{ fontWeight: 'bold', }}>Số lượng</TableCell>
+                  <TableCell align="center" style={{ fontWeight: 'bold', }}>Thành tiền</TableCell>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </center>
+              </TableHead>
+              <TableBody>
+                {selectedOrderItems.map((item) => (
+                  <TableRow key={item.id}>
+                    <TableCell align="center">{item.product.name}</TableCell>
+                    <TableCell align="center">{item.productQuantity}</TableCell>
+                    <TableCell align="center">{item.subTotal.toLocaleString()}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose}>Huỷ</Button>
+          <Button variant="contained" onClick={() => reactToPrintFn()}>In hóa đơn</Button>
+          <div className="printable-content" ref={contentRef}>
+            <div className="header">
+              <h1>Nhà hàng Thủy Tạ</h1>
+              <p>Địa chỉ: 1 P. Lê Thái Tổ, Hàng Trống, Hoàn Kiếm, Hà Nội</p>
+              <p>Điện thoại: 024 3828 8148</p>
+              <p>-------------------------------------------------------</p>
+              <h2>HÓA ĐƠN</h2>
+              <p>Hóa đơn ngày: {selectedOrder?.createdAt}</p>
+              <p>Số điện thoại khách hàng: {selectedOrder?.phonenum}</p>
+            </div>
+
+            <TableContainer>
+              <Table>
+                <TableHead>
+                  <TableRow style={{
+                    border: '2px solid black', // Thêm border dưới hàng đầu tiên
+                  }}>
+                    <TableCell style={{ fontWeight: 'bold' }}>Tên sản phẩm</TableCell>
+                    <TableCell align="center" style={{ fontWeight: 'bold' }}>SL</TableCell>
+                    <TableCell align="center" style={{ fontWeight: 'bold' }}>Đơn giá</TableCell>
+                    <TableCell align="center" style={{ fontWeight: 'bold' }}>Thành tiền</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {selectedOrderItems.map((item) => (
+                    <TableRow key={item.id}>
+                      <TableCell>{item.product.name}</TableCell>
+                      <TableCell align="center">{item.productQuantity}</TableCell>
+                      <TableCell align="center">{item.product.price.toLocaleString()}</TableCell>
+                      <TableCell align="center">{item.subTotal.toLocaleString()}</TableCell>
+                    </TableRow>
+                  ))}
+
+                  <TableRow>
+                    <TableCell colSpan={3} align="right" style={{ fontWeight: 'bold' }}>
+                      Tổng thanh toán:
+                    </TableCell>
+                    <TableCell align="center" style={{ fontWeight: 'bold' }}>
+                      {selectedOrderItems.reduce((total, item) => total + item.subTotal, 0).toLocaleString()} VND
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell colSpan={3} align="right" style={{ fontWeight: 'bold' }}>
+                      Chiết khẩu:
+                    </TableCell>
+                    <TableCell align="center" style={{ fontWeight: 'bold' }}>
+                      {selectedOrder?.voucher?.discountAmount || null}%
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell colSpan={3} align="right" style={{ fontWeight: 'bold' }}>
+                      Thành tiền:
+                    </TableCell>
+                    <TableCell align="center" style={{ fontWeight: 'bold' }}>
+                      {selectedOrder?.newTotal.toLocaleString()} VND
+                    </TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
+              <div className="footer">
+                  <p>--------------------------------</p>
+                  <h3>Cảm ơn quý khách và hẹn gặp lại!</h3>
+              </div>
+            </TableContainer>
+
+          </div>
+        </DialogActions>
+      </Dialog>
     </Stack>
   );
 }

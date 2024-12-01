@@ -10,6 +10,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.DecimalMax;
+import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
 
@@ -23,14 +25,15 @@ public class Voucher {
 
     @NotEmpty(message = "Voucher type cannot be empty")
     @Pattern(regexp = "Khuyến mãi hàng tháng|Sinh nhật nhà hàng|Trung thu|Tết Âm Lịch|Quốc Khánh|30/4 - 1/5|Khác", message = "Voucher Type must be one of {Khuyến mãi hàng tháng, Sinh nhật nhà hàng, Trung thu, Tết Âm Lịch, Quốc Khánh, 30/4 - 1/5, Khác}")
-    @NotEmpty(message = "Voucher type cannot be empty")
-    @Pattern(regexp = "Khuyến mãi hàng tháng|Sinh nhật nhà hàng|Trung thu|Tết Âm Lịch|Quốc Khánh|30/4 - 1/5|Khác", message = "Voucher Type must be one of {Khuyến mãi hàng tháng, Sinh nhật nhà hàng, Trung thu, Tết Âm Lịch, Quốc Khánh, 30/4 - 1/5, Khác}")
     private String voucherType;
 
     private String voucherName;
 
+    @DecimalMin(value = "1", message = "Phần trăm giảm giá phải lớn hơn 0")
+    @DecimalMax(value = "100", message = "Phần trăm giảm giá phải nhỏ hơn 100")
     private float discountAmount;
 
+    @DecimalMin(value = "0", message = "Activation value cannot be negative")
     private float minActivationValue;
 
     @JsonIgnore

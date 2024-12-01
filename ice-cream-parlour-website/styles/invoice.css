@@ -1,0 +1,111 @@
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f4f9;
+    padding: 40px;
+    margin: 0;
+}
+.invoice {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 8px 25px rgba(255, 105, 180, 0.3);
+    max-width: 600px;
+    margin: 0 auto;
+    font-size: 14px;
+    border: 2px solid #ff66b2;
+}
+.invoice-header {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #ff66b2;
+}
+.invoice-header h2 {
+    color: #ff3399;
+    font-size: 36px;
+    margin: 0;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+.invoice-header p {
+    color: #7a7a7a;
+    margin: 5px 0;
+}
+.invoice-details {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 30px;
+}
+.invoice-details th, .invoice-details td {
+    padding: 15px;
+    text-align: left;
+    border-bottom: 2px solid #f1f1f1;
+}
+.invoice-details th {
+    background-color: #ff66b2;
+    color: white;
+    font-size: 16px;
+}
+.invoice-details td {
+    background-color: #f9f9f9;
+}
+.invoice-details tr:nth-child(even) td {
+    background-color: #fce4ec;
+}
+.total {
+    text-align: right;
+    font-weight: bold;
+    font-size: 18px;
+    color: #ff3399;
+    padding-top: 10px;
+}
+.footer {
+    text-align: center;
+    color: white;
+    font-weight: bold;
+    font-size: 13px;
+    margin-top: 20px;
+    background-color: #ff66b2;
+}
+.footer p {
+    margin: 5px 0;
+    font-weight: bold;
+}
+.line {
+    height: 3px;
+    background-color: #ff66b2;
+    margin: 20px 0;
+    border-radius: 3px;
+}
+.invoice .highlight {
+    color: #ff3399;
+    font-weight: bold;
+}
+
+/* cursor */
+.circle {
+    height: 24px;
+    width: 24px;
+    border-radius: 24px;
+    background-color: black;
+    position: fixed;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    z-index: 99999999;
+    /* so that it stays on top of all other elements */
+}
+
+.invoice > div:last-child {
+    text-align: center; /* Căn giữa nội dung trong div */
+}
+
+.invoice > div:last-child button {
+    cursor: pointer; /* Hiệu ứng con trỏ */
+    border: none; /* Bỏ viền */ 
+    border-radius: 5px; /* Bo góc nút */
+    transition: all 0.3s ease; /* Hiệu ứng mượt */  
+}
+
+.invoice > div:last-child button:hover {
+    background: linear-gradient(45deg, #ff66b2, #ff3399); /* Đảo màu gradient */
+}

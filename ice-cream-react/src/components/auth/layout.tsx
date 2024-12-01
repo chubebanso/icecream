@@ -104,11 +104,11 @@ export function Layout({ children, welcomeMessage, subMessage }: LayoutProps): R
               }}
               variant="h1"
             >
-              {welcomeMessage || 'Chào mừng tới '}
+              
               <Box component="span" sx={{ color: '#15b79e' }}>
-                website quản lý của nhà hàng Thủy Tạ
+                Chào mừng tới website quản lý của nhà hàng Thủy Tạ
               </Box>
-              <Box>{subMessage || 'Chúc bạn có một ngày làm việc hiệu quả!'}</Box>
+              <Box sx={{ color: 'white' }}>{subMessage || 'Chúc bạn có một ngày làm việc hiệu quả!'}</Box>
             </Typography>
           </Stack>
         </Stack>
