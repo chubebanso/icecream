@@ -60,9 +60,9 @@ export default function CartPage(): React.JSX.Element {
                 <TableRow key={cart.id}>
                   <TableCell align="center">{cart.id}</TableCell>
                   <TableCell align="center">{cart.phonenum}</TableCell>
-                  <TableCell align="center">{cart.total} VNĐ</TableCell>
+                  <TableCell align="center">{cart.total} VND</TableCell>
                   <TableCell align="center">{cart.voucher ? cart.voucher.code : 'Không có'}</TableCell>
-                  <TableCell align="center">{cart.newTotal} VNĐ</TableCell>
+                  <TableCell align="center">{cart.newTotal} VND</TableCell>
                 </TableRow>
               ))}
             </TableBody>

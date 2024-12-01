@@ -11,8 +11,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
 
 @Entity
@@ -26,12 +26,12 @@ public class Product {
     @OneToMany(mappedBy = "product")
     private List<CartItem> items;
 
-    @NotEmpty(message = "Name cannot be empty")
-    @Pattern(regexp = "^[A-Za-zÀ-ỹ\\s]+$", message = "Invalid name format")
-    @Size(min = 2, message = "Name must have at least 2 characters")
+    @NotEmpty(message = "Tên sản phẩm không được để trống!")
+    @Pattern(regexp = "^[A-Za-zÀ-ỹ\\s]+$", message = "Tên sản phẩm bị lỗi định dạng!")
+    @Size(min = 2, message = "Tên sản phẩm phải có ít nhất 2 ký tự!")
     private String name;
 
-    @NotNull
+    @PositiveOrZero
     private float price;
 
     @NotEmpty(message = "Unit cannot be empty")

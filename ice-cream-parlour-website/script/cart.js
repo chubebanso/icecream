@@ -71,8 +71,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 <img src="/ice-cream-react/public/assets/images/thuytalogo.jpg" alt="Logo" class="voucher-logo">
                 <div class="voucher-info">
                     <h3 class="voucher-title">${voucher.voucherName}</h3>
-                    <p class="voucher-discount">${voucher.voucherType}: Giảm ${voucher.discountAmount} %</p>
-                    <p class="voucher-condition">Đơn tối thiểu: ${voucher.minActivationValue} VNĐ</p>
+                    <p class="voucher-discount">${voucher.voucherType}: Giảm ${voucher.discountAmount}%</p>
+                    <p class="voucher-condition">Đơn tối thiểu: ${voucher.minActivationValue} VND</p>
                 </div>
                 <input type="radio" name="voucher" value="${voucher.id}" class="voucher-select"> <!-- ID của voucher -->
             </div>
@@ -108,6 +108,25 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   fetchVouchers();
+
+  // Thêm tính năng tìm kiếm voucher
+  const searchInput = document.getElementById("voucher-search-input");
+
+  // Lắng nghe sự kiện nhập liệu trong ô tìm kiếm
+  searchInput.addEventListener("input", function () {
+    const searchTerm = searchInput.value.toLowerCase(); // Lấy từ khóa tìm kiếm
+    const allVoucherItems = document.querySelectorAll(".voucher-item");
+
+    allVoucherItems.forEach((item) => {
+      const voucherName = item.dataset.voucherName.toLowerCase(); // Lấy tên voucher
+      // Kiểm tra nếu tên voucher chứa từ khóa tìm kiếm
+      if (voucherName.includes(searchTerm)) {
+        item.style.display = "block"; // Hiển thị voucher
+      } else {
+        item.style.display = "none"; // Ẩn voucher không khớp
+      }
+    });
+  });
 });
 
 // Áp dụng voucher khi nhấn nút "Áp dụng"

@@ -1,62 +1,72 @@
 'use client';
 
-import * as React from 'react';
-import Button from '@mui/material/Button';
-import Card from '@mui/material/Card';
-import CardActions from '@mui/material/CardActions';
-import CardContent from '@mui/material/CardContent';
-import CardHeader from '@mui/material/CardHeader';
-import Divider from '@mui/material/Divider';
-import FormControl from '@mui/material/FormControl';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import OutlinedInput from '@mui/material/OutlinedInput';
-import Select from '@mui/material/Select';
-import Grid from '@mui/material/Unstable_Grid2';
+import React, { useState } from 'react';
+import { Card, CardHeader, Divider, CardContent, Stack, FormControl, InputLabel, OutlinedInput, CardActions, Button } from '@mui/material';
 
-export function AccountDetailsForm(): React.JSX.Element {
+const UserProfile = () => {
+  const [firstName, setFirstName] = useState('Chó');
+  const [lastName, setLastName] = useState('Long Biên');
+  const [email, setEmail] = useState('cholongbien99zzvippro@gmail.com');
+  const [phone, setPhone] = useState('');
+
+  const handleSave = () => {
+    // Xử lý khi nhấn lưu thông tin
+    const userInfo = { firstName, lastName, email, phone };
+    console.log('Thông tin người dùng:', userInfo);
+    // Bạn có thể gọi API để lưu thông tin này vào backend ở đây
+  };
+
   return (
-    <form
-      onSubmit={(event) => {
-        event.preventDefault();
-      }}
-    >
-      <Card>
-        <CardHeader title="Thông tin đăng nhập" />
-        <Divider />
-        <CardContent>
-          <Grid container spacing={3}>
-            <Grid md={6} xs={12}>
-              <FormControl fullWidth required>
-                <InputLabel>Họ</InputLabel>
-                <OutlinedInput defaultValue="Chó" label="First name" name="firstName" />
-              </FormControl>
-            </Grid>
-            <Grid md={6} xs={12}>
-              <FormControl fullWidth required>
-                <InputLabel>Tên</InputLabel>
-                <OutlinedInput defaultValue="Long Biên" label="Last name" name="lastName" />
-              </FormControl>
-            </Grid>
-            <Grid md={6} xs={12}>
-              <FormControl fullWidth required>
-                <InputLabel>Địa chỉ email</InputLabel>
-                <OutlinedInput defaultValue="cholongbien99zzvippro@gmail.com" label="Email address" name="email" />
-              </FormControl>
-            </Grid>
-            <Grid md={6} xs={12}>
-              <FormControl fullWidth>
-                <InputLabel>Số điện thoại</InputLabel>
-                <OutlinedInput label="Phone number" name="phone" type="tel" />
-              </FormControl>
-            </Grid>
-          </Grid>
-        </CardContent>
-        <Divider />
-        <CardActions sx={{ justifyContent: 'flex-end' }}>
-          <Button variant="contained">Lưu thông tin</Button>
-        </CardActions>
-      </Card>
-    </form>
+    <Card>
+      <CardHeader title="Thông tin đăng nhập" />
+      <Divider />
+      <CardContent>
+        <Stack spacing={3}>
+          <FormControl fullWidth required>
+            <InputLabel>Họ</InputLabel>
+            <OutlinedInput 
+              value={firstName} 
+              onChange={(e) => setFirstName(e.target.value)} 
+              label="First name" 
+              name="firstName" 
+            />
+          </FormControl>
+          <FormControl fullWidth required>
+            <InputLabel>Tên</InputLabel>
+            <OutlinedInput 
+              value={lastName} 
+              onChange={(e) => setLastName(e.target.value)} 
+              label="Last name" 
+              name="lastName" 
+            />
+          </FormControl>
+          <FormControl fullWidth required>
+            <InputLabel>Địa chỉ email</InputLabel>
+            <OutlinedInput 
+              value={email} 
+              onChange={(e) => setEmail(e.target.value)} 
+              label="Email address" 
+              name="email" 
+            />
+          </FormControl>
+          <FormControl fullWidth>
+            <InputLabel>Số điện thoại</InputLabel>
+            <OutlinedInput 
+              value={phone} 
+              onChange={(e) => setPhone(e.target.value)} 
+              label="Phone number" 
+              name="phone" 
+              type="tel" 
+            />
+          </FormControl>
+        </Stack>
+      </CardContent>
+      <Divider />
+      <CardActions sx={{ justifyContent: 'flex-end' }}>
+        <Button variant="contained" onClick={handleSave}>Lưu thông tin</Button>
+      </CardActions>
+    </Card>
   );
-}
+};
+
+export default UserProfile;

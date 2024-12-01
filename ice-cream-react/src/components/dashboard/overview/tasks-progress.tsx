@@ -6,14 +6,13 @@ import LinearProgress from '@mui/material/LinearProgress';
 import Stack from '@mui/material/Stack';
 import type { SxProps } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
-import { Percent as ProfitMarginIcon } from '@phosphor-icons/react/dist/ssr/Percent';
+import { Invoice as InvoiceIcon } from '@phosphor-icons/react/dist/ssr/Invoice';
 
 export interface TasksProgressProps {
   sx?: SxProps;
-  value: number;
 }
 
-export function TasksProgress({ value, sx }: TasksProgressProps): React.JSX.Element {
+export function TasksProgress({ sx }: TasksProgressProps): React.JSX.Element {
   return (
     <Card sx={sx}>
       <CardContent>
@@ -21,17 +20,14 @@ export function TasksProgress({ value, sx }: TasksProgressProps): React.JSX.Elem
           <Stack direction="row" sx={{ alignItems: 'flex-start', justifyContent: 'space-between' }} spacing={3}>
             <Stack spacing={1}>
               <Typography color="text.secondary" gutterBottom variant="overline">
-                Biên lợi nhuận
+                Tổng đơn tháng
               </Typography>
-              <Typography variant="h4">{20}%</Typography>
+              <Typography variant="h4">4000</Typography>
             </Stack>
-            <Avatar sx={{ backgroundColor: 'var(--mui-palette-warning-main)', height: '56px', width: '56px' }}>
-              <ProfitMarginIcon fontSize="var(--icon-fontSize-lg)" />
+            <Avatar sx={{ backgroundColor: 'black', height: '56px', width: '56px' }}>
+              <InvoiceIcon fontSize="var(--icon-fontSize-lg)" />
             </Avatar>
           </Stack>
-          <div>
-            <LinearProgress value={20} variant="determinate" />
-          </div>
         </Stack>
       </CardContent>
     </Card>
