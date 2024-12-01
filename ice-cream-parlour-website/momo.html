@@ -100,6 +100,14 @@
         const successMessage = document.getElementById('successMessage');
         const cartId = sessionStorage.getItem("cartId");
 
+
+        // if (!cartId) {
+        //     console.error('Cart ID is missing in sessionStorage');
+        //     window.location.href = 'products.html';
+        // }
+
+        // Function to check the order status from the API
+
         async function checkOrderStatus(cartId) {
             try {
                   const response = await fetch(`http://localhost:8080/get-cart-by-id?id=${cartId}`, {
@@ -109,12 +117,23 @@
                 if (response.ok) {
                     const data = await response.json();
                     const order = data.data;
+
+
+                    // Check if order status is delivered
+                    if (order && order.status === 'delivered') {
+                        clearInterval(countdown); // Stop the countdown
+                        successMessage.style.display = 'block'; // Show success message
+                        sessionStorage.clear();
+                        setTimeout(() => {
+                            window.location.href = 'index.html'; // Redirect to index page after a short delay
+
                     if (order && order.status === 'delivered') {
                         clearInterval(countdown); 
                         successMessage.style.display = 'block'; 
                         sessionStorage.clear();
                         setTimeout(() => {
                             window.location.href = 'index.html'; 
+
                         }, 2000);
                     } else {
                         console.log("Order not delivered yet.");

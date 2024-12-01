@@ -149,4 +149,9 @@ public class CartService {
         cart.setStatus("Đang chờ");
         this.cartRepo.save(cart);
     }
+
+    public void update(Cart cart, String status) {
+        cart.setStatus(status);
+        this.cartRepo.save(cart);
+    }
 }
