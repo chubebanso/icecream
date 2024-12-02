@@ -123,4 +123,19 @@ public class ProductService {
             this.cartRepo.save(cart);
         }
     }
+
+    public List<CartItem> findCartItemsFromProduct(Long product_id) {
+        Optional<Product> productOptional = this.productRepository.findById(product_id);
+        if (productOptional.isPresent()) {
+            Product currentProduct = productOptional.get();
+            List<CartItem> cartItems = this.cartItemRepository.findCartItemsByProduct(currentProduct);
+            return cartItems;
+        }
+        return null;
+    }
+
+    // public void deleteProductCartItem(Long product_id) {
+    // this.cartItemRepository.removeProductFromCartById(product_id);
+    // }
+
 }
