@@ -15,6 +15,7 @@ import jakarta.validation.Valid;
 import vn.chubebanso.icecream.domain.Product;
 import vn.chubebanso.icecream.service.ProductService;
 import vn.chubebanso.icecream.util.error.IdInvalidException;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
 public class ProductController {
@@ -54,5 +55,10 @@ public class ProductController {
         }
         this.productService.deleteProductById(product_id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/findProductsByCategory")
+    public List<Product> findProductsByCategory(@RequestParam("category") String category) {
+        return this.productService.findProductsByCategory(category);
     }
 }

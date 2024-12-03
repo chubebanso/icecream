@@ -38,11 +38,14 @@ body {
 }
 
 .printable-content .header {
-  text-align: center; /* Căn giữa văn bản */
+  text-align: center;
+  /* Căn giữa văn bản */
   display: flex;
   flex-direction: column;
-  align-items: center; /* Căn giữa theo chiều ngang */
-  justify-content: center; /* Căn giữa theo chiều dọc nếu cần */
+  align-items: center;
+  /* Căn giữa theo chiều ngang */
+  justify-content: center;
+  /* Căn giữa theo chiều dọc nếu cần */
 }
 
 /* Khi in, hiển thị div */
@@ -53,9 +56,60 @@ body {
 }
 
 .printable-content .footer {
-  text-align: center; /* Căn giữa văn bản */
+  text-align: center;
+  /* Căn giữa văn bản */
   display: flex;
   flex-direction: column;
-  align-items: center; /* Căn giữa theo chiều ngang */
-  justify-content: center; /* Căn giữa theo chiều dọc nếu cần */
+  align-items: center;
+  /* Căn giữa theo chiều ngang */
+  justify-content: center;
+  /* Căn giữa theo chiều dọc nếu cần */
+}
+
+.custom-report {
+  width: 100%;
+  border: 1px solid #000;
+  padding: 10px;
+  font-family: Arial, sans-serif;
+  display: none;
+}
+
+/* Khi in, hiển thị div */
+@media print {
+  .custom-report {
+    display: block;
+  }
+}
+
+
+.report-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.report-title {
+  margin-top: 20px;
+  /* khoảng cách từ report header và report info đến BÁO CÁO */
+}
+
+.report-logo {
+  width: 80px;
+  /* Kích thước ảnh */
+  height: auto;
+  margin-right: 15px;
+  border: 1px solid #000;
+  /* Đường viền ảnh */
+}
+
+.report-info h1 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.report-info p {
+  margin: 5px 0;
+  font-size: 0.9rem;
 }

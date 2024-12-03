@@ -28,6 +28,8 @@ import {
   InputAdornment,
 } from '@mui/material';
 import { Plus as PlusIcon } from '@phosphor-icons/react/dist/ssr/Plus';
+import { message } from 'antd';
+
 
 
 // Định nghĩa kiểu dữ liệu cho voucher
@@ -184,16 +186,41 @@ export default function VoucherPage(): React.JSX.Element {
 
   const paginatedVouchers = vouchers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
-  const handleDelete = (id: number) => {
-    console.log(`Edit action triggered for cart with ID: ${id}`);
-    // Thực hiện hành động khác như mở modal hoặc điều hướng
+  const handleDelete = async (id: number) => {
+    const token = localStorage.getItem('custom-auth-token');
+
+    if (!token) {
+      message.error('Token không tồn tại!');
+      return;
+    }
+
+    try {
+      const response = await fetch(`http://localhost:8080/delete/voucher/${id}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setVouchers((prevVouchers) => prevVouchers.filter((voucher) => voucher.id !== id));
+        message.success('Xóa voucher thành công!');
+      } else {
+        message.error(data.message || 'Xóa voucher thất bại!');
+      }
+    } catch (error) {
+      console.error('Error deleting voucher:', error);
+      message.success('Xóa voucher thành công!');
+    }
   };
 
   return (
     <Stack spacing={3}>
       <Stack direction="row" spacing={3}>
         <Stack spacing={1} sx={{ flex: '1 1 auto' }}>
-          <Typography variant="h4">Voucher</Typography>
+          <Typography variant="h4" align="center" fontWeight={"bold"}>VOUCHER</Typography>
         </Stack>
         <div>
           <Button startIcon={<PlusIcon fontSize="var(--icon-fontSize-md)" />} variant="contained" onClick={handleOpen}>
