@@ -344,7 +344,6 @@ export default function CartPage(): React.JSX.Element {
                 <h3>Cảm ơn quý khách và hẹn gặp lại!</h3>
               </div>
             </TableContainer>
-
           </div>
         </DialogActions>
       </Dialog>

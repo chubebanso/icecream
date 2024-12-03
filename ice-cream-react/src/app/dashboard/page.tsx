@@ -15,7 +15,7 @@ export default function Page(): React.JSX.Element {
   return (
     <Grid container spacing={3}>
       <Grid lg={3} sm={6} xs={12}>
-        <Budget sx={{ height: '100%' }}/>
+        <Budget sx={{ height: '100%' }} />
       </Grid>
       <Grid lg={3} sm={6} xs={12}>
         <TotalCustomers diff={16} sx={{ height: '100%' }} value="1.6k" />
@@ -34,13 +34,6 @@ export default function Page(): React.JSX.Element {
           sx={{ height: '100%' }}
         />
       </Grid>
-      <Grid lg={4} md={6} xs={12}>
-        <Traffic chartSeries={[63, 15, 22]} labels={['Kem', 'Nước', 'Bánh']} sx={{ height: '100%' }} />
-      </Grid>
-      <Grid lg={4} md={6} xs={12}>
-      </Grid>
-      <Grid lg={8} md={12} xs={12}>
-      </Grid>
     </Grid>
   );
-}
+} 

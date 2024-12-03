@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "date-fns": "^4.1.0",
+    "react-date-range": "^2.0.1"
+  },
+  "devDependencies": {
+    "@types/react-date-range": "^1.4.9"
+  }
+}

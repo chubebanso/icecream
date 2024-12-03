@@ -108,25 +108,6 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   fetchVouchers();
-
-  // Thêm tính năng tìm kiếm voucher
-  const searchInput = document.getElementById("voucher-search-input");
-
-  // Lắng nghe sự kiện nhập liệu trong ô tìm kiếm
-  searchInput.addEventListener("input", function () {
-    const searchTerm = searchInput.value.toLowerCase(); // Lấy từ khóa tìm kiếm
-    const allVoucherItems = document.querySelectorAll(".voucher-item");
-
-    allVoucherItems.forEach((item) => {
-      const voucherName = item.dataset.voucherName.toLowerCase(); // Lấy tên voucher
-      // Kiểm tra nếu tên voucher chứa từ khóa tìm kiếm
-      if (voucherName.includes(searchTerm)) {
-        item.style.display = "block"; // Hiển thị voucher
-      } else {
-        item.style.display = "none"; // Ẩn voucher không khớp
-      }
-    });
-  });
 });
 
 // Áp dụng voucher khi nhấn nút "Áp dụng"
@@ -135,14 +116,30 @@ applyVoucherBtn.addEventListener("click", async () => {
 
   if (selectedVoucherId && cartId) {
     try {
-      const response = await fetch(
+      const response = await fetch(`http://localhost:8080/cart/${cartId}`);
+      const cartData = await response.json();
+      const totalAmount = cartData.total; // Tổng tiền giỏ hàng
+
+      // Kiểm tra nếu tổng tiền giỏ hàng không đủ giá trị kích hoạt tối thiểu
+      const selectedVoucherResponse = await fetch(`http://localhost:8080/voucher/${selectedVoucherId}`);
+      const selectedVoucher = await selectedVoucherResponse.json();
+      const minActivationValue = selectedVoucher.minActivationValue;
+
+      // Nếu tổng giỏ hàng nhỏ hơn giá trị kích hoạt tối thiểu, hiển thị thông báo
+      if (totalAmount < minActivationValue) {
+        alert(`Tổng tiền giỏ hàng chưa đủ điều kiện áp dụng voucher. Cần tối thiểu ${minActivationValue} VND.`);
+        return;
+      }
+
+      // Nếu đủ điều kiện, tiến hành áp dụng voucher
+      const applyVoucherResponse = await fetch(
         `http://localhost:8080/apply-voucher-to-cart?voucher_id=${selectedVoucherId}&cart_id=${cartId}`,
         {
           method: "POST",
         }
       );
-      const data = await response.text();
-      if (response.ok) {
+      const data = await applyVoucherResponse.text();
+      if (applyVoucherResponse.ok) {
         console.log(`Voucher đã áp dụng thành công: ${data}`);
         alert(`Voucher đã được áp dụng: ${data}`);
       } else {

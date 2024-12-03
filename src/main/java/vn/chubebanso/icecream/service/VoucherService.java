@@ -12,15 +12,25 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 import vn.chubebanso.icecream.domain.Voucher;
+import vn.chubebanso.icecream.domain.VoucherStats;
+import vn.chubebanso.icecream.domain.VoucherValueStats;
 import vn.chubebanso.icecream.repository.VoucherRepository;
+import vn.chubebanso.icecream.repository.VoucherStatsRepository;
+import vn.chubebanso.icecream.repository.VoucherValueStatsRepository;
 
 @Service
 public class VoucherService {
-
     private final VoucherRepository voucherRepo;
+    private final VoucherStatsRepository voucherStatsRepository;
+    private final VoucherValueStatsRepository voucherValueStatsRepository;
+    private final StatsService statsService;
 
-    public VoucherService(VoucherRepository voucherRepo) {
+    public VoucherService(VoucherRepository voucherRepo, VoucherStatsRepository voucherStatsRepository,
+            StatsService statsService, VoucherValueStatsRepository voucherValueStatsRepository) {
         this.voucherRepo = voucherRepo;
+        this.voucherStatsRepository = voucherStatsRepository;
+        this.statsService = statsService;
+        this.voucherValueStatsRepository = voucherValueStatsRepository;
     }
 
     // tạo Voucher mới
@@ -68,7 +78,21 @@ public class VoucherService {
                 (id < 10 ? "0" + id : id) +
                 (discountAmount < 10 ? "0" + discountAmount : discountAmount);
         newVoucher.setVoucherName(customedName);
-        return this.voucherRepo.save(newVoucher);
+        this.voucherRepo.save(newVoucher);
+
+        VoucherStats voucherStats = this.voucherStatsRepository.findByVoucherName(customedName);
+        float activationValue = newVoucher.getMinActivationValue();
+        if (voucherStats == null) {
+            this.statsService.createVoucherStats(customedName, activationValue, discountAmount);
+        }
+
+        long minActivationValue = (long) activationValue;
+        VoucherValueStats voucherValueStats = this.voucherValueStatsRepository
+                .findByMinActivationValue(minActivationValue);
+        if (voucherValueStats == null) {
+            this.statsService.createVoucherValueStats(minActivationValue);
+        }
+        return newVoucher;
     }
 
     // lấy hết voucher (có thể để show trong trang Voucher của Admin + Client)
