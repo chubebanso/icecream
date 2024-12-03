@@ -7,7 +7,6 @@ import { useReactToPrint } from "react-to-print";
 import { useRef } from "react";
 
 const statusMap = {
-  pending: { label: 'Đang chờ', color: '#FFAA00' }, // yellow
   delivered: { label: 'Đã thanh toán', color: '#4CAF50' }, // green
   refunded: { label: 'Hủy đơn', color: '#F44336' }, // red
 } as const;
@@ -61,11 +60,15 @@ export default function CartPage(): React.JSX.Element {
   const [open, setOpen] = useState(false);
   const [selectedOrderItems, setSelectedOrderItems] = useState<OrderItem[]>([]); // Store selected order items
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);  // To store selected order for invoice details
-  const contentRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLTableElement>(null);
   const reactToPrintFn = useReactToPrint({ contentRef });
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
+  };
+
+  const handlePrintClick = () => {
+    reactToPrintFn();
   };
 
   const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -120,13 +123,12 @@ export default function CartPage(): React.JSX.Element {
     if (token) {
       try {
         const statusMapToString: { [key in StatusKey]: string } = {
-          pending: 'pending',
           delivered: 'delivered',
           refunded: 'refunded',
         };
-        
+
         const statusParam = statusMapToString[status];  // Convert status to string
-        
+
         const response = await fetch(`http://localhost:8080/admin/pay-cart?cart_id=${cartId}&status=${statusParam}`, {
           method: 'POST',  // You can change it to PUT if required by your API
           headers: {
@@ -162,7 +164,7 @@ export default function CartPage(): React.JSX.Element {
   };
 
   const handleSaveStatus = (cartId: number) => {
-    const status = selectedStatus[cartId] || 'pending'; // Default to 'pending' if not selected
+    const status = selectedStatus[cartId] || null; // Default to 'pending' if not selected
     saveCart(cartId, status);
   };
 
@@ -256,9 +258,9 @@ export default function CartPage(): React.JSX.Element {
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell align="center">Tên sản phẩm</TableCell>
-                  <TableCell align="center">Số lượng</TableCell>
-                  <TableCell align="center">Thành tiền</TableCell>
+                  <TableCell align="center" style={{ fontWeight: 'bold', }}>Tên sản phẩm</TableCell>
+                  <TableCell align="center" style={{ fontWeight: 'bold', }}>Số lượng</TableCell>
+                  <TableCell align="center" style={{ fontWeight: 'bold', }}>Thành tiền</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -275,7 +277,75 @@ export default function CartPage(): React.JSX.Element {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Huỷ</Button>
-          <Button variant="contained" onClick={reactToPrintFn}>In hóa đơn</Button>
+          <Button variant="contained" onClick={handlePrintClick}>In hóa đơn</Button>
+          <div className="printable-content" ref={contentRef}>
+            <div className="header">
+              <h1>Nhà hàng Thủy Tạ</h1>
+              <p>Địa chỉ: 1 P. Lê Thái Tổ, Hàng Trống, Hoàn Kiếm, Hà Nội</p>
+              <p>Điện thoại: 024 3828 8148</p>
+              <p>-------------------------------------------------------</p>
+              <h2>HÓA ĐƠN</h2>
+              <p>Hóa đơn ngày: {selectedOrder?.createdAt}</p>
+              <p>Số điện thoại khách hàng: {selectedOrder?.phonenum}</p>
+            </div>
+
+            <TableContainer>
+              <Table>
+                <TableHead>
+                  <TableRow style={{
+                    border: '2px solid black', // Thêm border dưới hàng đầu tiên
+                  }}>
+                    <TableCell style={{ fontWeight: 'bold' }}>Tên sản phẩm</TableCell>
+                    <TableCell align="center" style={{ fontWeight: 'bold' }}>SL</TableCell>
+                    <TableCell align="center" style={{ fontWeight: 'bold' }}>Đơn giá</TableCell>
+                    <TableCell align="center" style={{ fontWeight: 'bold' }}>Thành tiền</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {selectedOrderItems.map((item) => (
+                    <TableRow key={item.id}>
+                      <TableCell>{item.product.name}</TableCell>
+                      <TableCell align="center">{item.productQuantity}</TableCell>
+                      <TableCell align="center">{item.product.price.toLocaleString()}</TableCell>
+                      <TableCell align="center">{item.subTotal.toLocaleString()}</TableCell>
+                    </TableRow>
+                  ))}
+
+                  <TableRow>
+                    <TableCell colSpan={3} align="right" style={{ fontWeight: 'bold' }}>
+                      Tổng thanh toán:
+                    </TableCell>
+                    <TableCell align="center" style={{ fontWeight: 'bold' }}>
+                      {selectedOrderItems.reduce((total, item) => total + item.subTotal, 0).toLocaleString()} VND
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell colSpan={3} align="right" style={{ fontWeight: 'bold' }}>
+                      Chiết khẩu:
+                    </TableCell>
+                    <TableCell align="center" style={{ fontWeight: 'bold' }}>
+                      {selectedOrder?.voucher?.discountAmount
+                        ? `${selectedOrder.voucher.discountAmount}%`
+                        : 'Không sử dụng'}
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell colSpan={3} align="right" style={{ fontWeight: 'bold' }}>
+                      Thành tiền:
+                    </TableCell>
+                    <TableCell align="center" style={{ fontWeight: 'bold' }}>
+                      {selectedOrder?.newTotal.toLocaleString()} VND
+                    </TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
+              <div className="footer">
+                <p>-------------------------------------------------------</p>
+                <h3>Cảm ơn quý khách và hẹn gặp lại!</h3>
+              </div>
+            </TableContainer>
+
+          </div>
         </DialogActions>
       </Dialog>
     </Stack>

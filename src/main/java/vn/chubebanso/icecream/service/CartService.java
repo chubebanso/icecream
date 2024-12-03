@@ -154,4 +154,8 @@ public class CartService {
         cart.setStatus(status);
         this.cartRepo.save(cart);
     }
+
+    public List<Cart> findCartsByPhonenum(String phonenum){
+        return this.cartRepo.findAllByPhonenum(phonenum);
+    }
 }
