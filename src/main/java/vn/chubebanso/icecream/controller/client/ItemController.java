@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -38,10 +37,7 @@ public class ItemController {
         Product product = productService.getProductById(product_id);
         if (product == null) {
             return ResponseEntity.badRequest().body("Sản phẩm không tồn tại");
-        } else if (product.isAvailableForOrder() == false) {
-            return ResponseEntity.badRequest().body("Đã hết sản phẩm!");
-        }
-        String productName = product.getName();
+        }        String productName = product.getName();
         this.productService.handleAddProductToCart(cart, product_id, quantity);
         return ResponseEntity.ok("Đã thêm sản phẩm " + productName + " vào giỏ hàng!");
     }

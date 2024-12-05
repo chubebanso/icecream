@@ -11,19 +11,31 @@ import org.springframework.stereotype.Service;
 
 import vn.chubebanso.icecream.domain.Cart;
 import vn.chubebanso.icecream.domain.CartItem;
+import vn.chubebanso.icecream.domain.CustomerStats;
+import vn.chubebanso.icecream.domain.Product;
+import vn.chubebanso.icecream.domain.ProductStats;
 import vn.chubebanso.icecream.domain.Voucher;
 import vn.chubebanso.icecream.repository.CartItemRepository;
 import vn.chubebanso.icecream.repository.CartRepository;
+import vn.chubebanso.icecream.repository.CustomerStatsRepository;
+import vn.chubebanso.icecream.repository.ProductStatsRepository;
 
 @Service
 public class CartService {
 
     private final CartRepository cartRepo;
     private final CartItemRepository cartItemRepository;
+    private final StatsService statsService;
+    private final CustomerStatsRepository customerStatsRepository;
+    private final ProductStatsRepository productStatsRepository;
 
-    public CartService(CartRepository cartRepo, CartItemRepository cartItemRepository) {
+    public CartService(CartRepository cartRepo, CartItemRepository cartItemRepository, StatsService statsService,
+            CustomerStatsRepository customerStatsRepository, ProductStatsRepository productStatsRepository) {
         this.cartRepo = cartRepo;
         this.cartItemRepository = cartItemRepository;
+        this.statsService = statsService;
+        this.customerStatsRepository = customerStatsRepository;
+        this.productStatsRepository = productStatsRepository;
     }
 
     // System returning a cart by ID => no need for body, just id and cart
@@ -93,6 +105,11 @@ public class CartService {
 
         newCart.setCreatedAt(createdDate.format(formatter));
 
+        CustomerStats customerStats = this.customerStatsRepository.findStatsByPhonenum(phone);
+        if (customerStats == null) {
+            this.statsService.createCustomerStats(phone);
+        }
+
         return this.cartRepo.save(newCart);
     }
 
@@ -151,11 +168,51 @@ public class CartService {
     }
 
     public void update(Cart cart, String status) {
+        List<CartItem> cartItems = this.cartItemRepository.findByCart(cart);
+        float total = 0;
+
+        for (CartItem cartItem : cartItems) {
+            float productPrice = cartItem.getProduct().getPrice();
+            long productQuantity = cartItem.getProductQuantity();
+
+            float subtotal = productPrice * productQuantity;
+            cartItem.setSubTotal(subtotal);
+
+            total += subtotal;
+
+            Product product = cartItem.getProduct();
+            String name = product.getName();
+            ProductStats productStats = this.productStatsRepository.findByName(name);
+            if (productStats == null) {
+                this.statsService.createProductStats(name);
+            }
+        }
+
+        if (cart.getVoucher() == null) {
+            cart.setTotal(total);
+            cart.setNewTotal(total);
+        } else {
+            float activationValue = cart.getVoucher().getMinActivationValue();
+            if (total >= activationValue) {
+                float newTotal = total * (1 - (cart.getVoucher().getDiscountAmount()) / 100);
+                cart.setTotal(total);
+                cart.setNewTotal(newTotal);
+            } else {
+                cart.setTotal(total);
+            }
+        }
+
         cart.setStatus(status);
         this.cartRepo.save(cart);
+
+        String phonenum = cart.getPhonenum();
+        CustomerStats customerStats = this.customerStatsRepository.findStatsByPhonenum(phonenum);
+        if (customerStats == null) {
+            this.statsService.createCustomerStats(phonenum);
+        }
     }
 
-    public List<Cart> findCartsByPhonenum(String phonenum){
+    public List<Cart> findCartsByPhonenum(String phonenum) {
         return this.cartRepo.findAllByPhonenum(phonenum);
     }
 }

@@ -8,9 +8,11 @@ import org.springframework.stereotype.Service;
 import vn.chubebanso.icecream.domain.Cart;
 import vn.chubebanso.icecream.domain.CartItem;
 import vn.chubebanso.icecream.domain.Product;
+import vn.chubebanso.icecream.domain.ProductStats;
 import vn.chubebanso.icecream.repository.CartItemRepository;
 import vn.chubebanso.icecream.repository.CartRepository;
 import vn.chubebanso.icecream.repository.ProductRepository;
+import vn.chubebanso.icecream.repository.ProductStatsRepository;
 
 @Service
 public class ProductService {
@@ -19,18 +21,30 @@ public class ProductService {
     private final CartItemRepository cartItemRepository;
     private final CartService cartService;
     private final CartRepository cartRepo;
+    private final StatsService statsService;
+    private final ProductStatsRepository productStatsRepository;
 
     public ProductService(ProductRepository productRepository, CartItemRepository cartItemRepository,
-            CartService cartService, CartRepository cartRepo) {
+            CartService cartService, CartRepository cartRepo, StatsService statsService,
+            ProductStatsRepository productStatsRepository) {
         this.productRepository = productRepository;
         this.cartItemRepository = cartItemRepository;
         this.cartService = cartService;
         this.cartRepo = cartRepo;
+        this.statsService = statsService;
+        this.productStatsRepository = productStatsRepository;
     }
 
     // Admin's order to create a product
-    public Product handleCreateProduct(Product pr) {
-        return this.productRepository.save(pr);
+    public Product handleCreateProduct(Product product) {
+        this.productRepository.save(product);
+        String name = product.getName();
+
+        ProductStats productStats = this.productStatsRepository.findByName(name);
+        if (productStats == null) {
+            this.statsService.createProductStats(name);
+        }
+        return product;
     }
 
     // Admin's order to show all products
@@ -58,7 +72,6 @@ public class ProductService {
             optionalProduct.get().setPrice(pr.getPrice());
             optionalProduct.get().setUnit(pr.getUnit());
             optionalProduct.get().setImage(pr.getImage());
-            optionalProduct.get().setAvailableForOrder(pr.isAvailableForOrder());
             return this.productRepository.save(optionalProduct.get());
         } else {
             return null;
@@ -133,9 +146,4 @@ public class ProductService {
         }
         return null;
     }
-
-    // public void deleteProductCartItem(Long product_id) {
-    // this.cartItemRepository.removeProductFromCartById(product_id);
-    // }
-
 }
