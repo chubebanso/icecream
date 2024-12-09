@@ -211,7 +211,7 @@ export default function Page(): React.JSX.Element {
     <Stack spacing={3}>
       <Stack direction="row" spacing={3}>
         <Stack spacing={1} sx={{ flex: '1 1 auto' }}>
-          <Typography variant="h4">Sản phẩm</Typography>
+          <Typography variant="h4" align="center" fontWeight={"bold"}>SẢN PHẨM</Typography>
         </Stack>
         <div>
           <Button startIcon={<PlusIcon fontSize="var(--icon-fontSize-md)" />} variant="contained" onClick={handleOpen}>

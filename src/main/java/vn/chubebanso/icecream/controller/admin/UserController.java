@@ -41,10 +41,6 @@ public class UserController {
         return "Hello chubebanso";
     }
 
-    public String getMethodName(@RequestParam String param) {
-        return new String();
-    }
-
     @PostMapping("/create/user")
     public ResponseEntity<User> createUserController(@Valid @RequestBody User user) {
         String hashPassword = this.passwordEncoder.encode(user.getPassword());

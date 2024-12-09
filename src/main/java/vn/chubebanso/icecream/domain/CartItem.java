@@ -17,7 +17,7 @@ public class CartItem {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) // Tạo khóa chính duy nhất
-    private Long id;
+    private long id;
 
     @ManyToOne
     @JoinColumn(name = "product_id")
@@ -28,11 +28,11 @@ public class CartItem {
 
     private float subTotal;
 
-    public Long getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(long id) {
         this.id = id;
     }
 

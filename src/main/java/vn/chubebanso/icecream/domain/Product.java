@@ -38,8 +38,6 @@ public class Product {
     @Pattern(regexp = "ly|chai|chiếc|que|hộp", message = "Unit must be one of {ly, chai, chiếc, que, hộp}")
     private String unit;
 
-    private boolean isAvailableForOrder;
-
     private String image;
 
     @NotEmpty(message = "Category cannot be empty")
@@ -102,11 +100,4 @@ public class Product {
         this.category = category;
     }
 
-    public boolean isAvailableForOrder() {
-        return isAvailableForOrder;
-    }
-
-    public void setAvailableForOrder(boolean isAvailableForOrder) {
-        this.isAvailableForOrder = isAvailableForOrder;
-    }
 }

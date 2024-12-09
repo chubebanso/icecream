@@ -166,11 +166,11 @@ async function updateCartDisplay(cartId) {
 
       document.querySelector(
         ".sub-total"
-      ).textContent = `${cartData.total.toFixed(2)} VND`;
+      ).textContent = `${cartData.total.toLocaleString()} VND`;
       if (cartData.newTotal) {
         document.querySelector(
           ".new-total"
-        ).textContent = `${cartData.newTotal.toFixed(2)} VND`;
+        ).textContent = `${cartData.newTotal.toLocaleString()} VND`;
       } else {
         document.querySelector(".new-total").textContent = "0 VND"; // Mặc định nếu không có newTotal
       }

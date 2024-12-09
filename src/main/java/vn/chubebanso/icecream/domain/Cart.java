@@ -1,5 +1,6 @@
 package vn.chubebanso.icecream.domain;
 
+import java.util.Date;
 import java.util.List;
 
 import jakarta.persistence.Entity;
@@ -47,7 +48,7 @@ public class Cart {
 
     private String customerType;
 
-    private String createdAt;
+    private Date createdAt;
 
     public float getPoints() {
         return points;
@@ -63,14 +64,6 @@ public class Cart {
 
     public void setCustomerType(String customerType) {
         this.customerType = customerType;
-    }
-
-    public String getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(String createdAt) {
-        this.createdAt = createdAt;
     }
 
     public String getStatus() {
@@ -146,4 +139,13 @@ public class Cart {
     public void setVoucher(Voucher voucher) {
         this.voucher = voucher;
     }
+
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
 }

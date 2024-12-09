@@ -1,81 +1,57 @@
-document.addEventListener("DOMContentLoaded", function () {
-  const cartId = 15; // ID giỏ hàng cần lấy
-  const token = localStorage.getItem("auth-token"); // Lấy token từ localStorage
+// Lấy cartId từ sessionStorage
+const cartId = sessionStorage.getItem('cartId');  // cartId sẽ được lưu trữ trong sessionStorage
+// Lấy các nút xác nhận và hủy
+const payNowButton = document.getElementById('payNowButton');
+const cancelPaymentButton = document.getElementById('cancelPaymentButton');
 
-  // Kiểm tra xem token có tồn tại không
-  if (!token) {
-    console.error("Token không tìm thấy trong localStorage");
-    return; // Dừng nếu không có token
-  }
+// Lắng nghe sự kiện bấm nút xác nhận thanh toán
+payNowButton.addEventListener('click', function () {
+  // Điều hướng đến trang momo.html
+  window.location.href = 'momo.html';
+});
 
-  // Gửi yêu cầu tới API để lấy dữ liệu giỏ hàng
-  fetch(`http://localhost:8080/get-all-cart-item?cart_id=${cartId}`, {
-    method: "GET",
-    headers: {
-      Authorization: `Bearer ${token}`, // Thêm token vào header Authorization
-      "Content-Type": "application/json",
-    },
-  })
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error("Lỗi khi lấy dữ liệu cart items");
-      }
-      return response.json(); // Parse JSON từ phản hồi API
-    })
-    .then((data) => {
-      // Cập nhật dữ liệu hóa đơn
-      const invoiceDate = document.getElementById("invoice-date");
-      const phonenum = document.getElementById("phonenum");
-      const cartIdElement = document.getElementById("cart-id");
-      const total = document.getElementById("total");
-      const newTotal = document.getElementById("new-total");
-      const voucherName = document.getElementById("voucher-name");
-      const invoiceDetails = document
-        .getElementById("invoice-details")
-        .getElementsByTagName("tbody")[0];
+// Lắng nghe sự kiện bấm nút hủy
+cancelPaymentButton.addEventListener('click', function () {
+  // Điều hướng về giỏ hàng (products.html)
+  window.location.href = 'products.html';
+});
+// Kiểm tra xem cartId có tồn tại không
+if (cartId) {
+  // Fetch dữ liệu từ API
+  fetch(`http://localhost:8080/get-cart-by-id?id=${cartId}`)
+    .then(response => response.json())
+    .then(data => {
+      const cart = data.data;  // Dữ liệu giỏ hàng trả về
 
-      // Dữ liệu cơ bản của giỏ hàng
-      const cartData = data.cart; // Thông tin chính của giỏ hàng
-      invoiceDate.textContent = cartData.createdAt || "Không xác định";
-      phonenum.textContent = cartData.phonenum || "Không xác định";
-      cartIdElement.textContent = cartData.id || "Không xác định";
-      voucherName.textContent = cartData.voucher?.name || "Chưa có voucher";
+      // Cập nhật các thông tin của hóa đơn
+      document.getElementById('invoice-date').textContent = new Date(cart.createdAt).toLocaleString();
+      document.getElementById('phonenum').textContent = cart.phonenum;
+      document.getElementById('cart-id').textContent = cart.id;
 
-      // Xóa các mục cũ trong bảng
-      invoiceDetails.innerHTML = "";
+      // Tên voucher (nếu có)
+      const voucherName = cart.voucher ? cart.voucher.voucherName : "Không có voucher";
+      document.getElementById('voucher-name').textContent = voucherName;
 
-      // Thêm các mặt hàng vào bảng
-      let totalAmount = 0;
-      data.items.forEach((item) => {
-        const row = invoiceDetails.insertRow();
+      // Tổng tiền và thành tiền
+      document.getElementById('total').textContent = `${cart.total.toLocaleString()} VND`;
+      document.getElementById('new-total').textContent = `${cart.newTotal.toLocaleString()} VND`;
+
+      // Hiển thị các mặt hàng
+      const invoiceItems = document.getElementById('invoice-items');
+      cart.items.forEach(item => {
+        const row = document.createElement('tr');
         row.innerHTML = `
-                    <td>${item.productName || "Không xác định"}</td>
-                    <td>${item.quantity || 0}</td>
-                    <td>${item.price || 0} VND</td>
-                    <td>${item.total || 0} VND</td>
+                    <td>${item.product.name}</td>
+                    <td>${item.productQuantity}</td>
+                    <td>${item.product.price.toLocaleString()} VND</td>
+                    <td>${item.subTotal.toLocaleString()} VND</td>
                 `;
-        totalAmount += item.total || 0;
+        invoiceItems.appendChild(row);
       });
-
-      // Cập nhật tổng tiền và tổng sau khi áp dụng voucher
-      total.textContent = `${cartData.total || totalAmount} VND`;
-      newTotal.textContent = `${cartData.newTotal || totalAmount} VND`;
     })
-    .catch((error) => console.error("Lỗi khi lấy dữ liệu cart items:", error));
-});
-
-// Lấy nút thanh toán và nút hủy từ DOM
-const payNowButton = document.getElementById("payNowButton");
-const cancelPaymentButton = document.getElementById("cancelPaymentButton");
-
-// Sự kiện cho nút xác nhận thanh toán
-payNowButton.addEventListener("click", () => {
-  // Chuyển hướng đến trang qr.html khi xác nhận thanh toán
-  window.location.href = "./momo.html";
-});
-
-// Sự kiện cho nút hủy
-cancelPaymentButton.addEventListener("click", () => {
-  // Quay lại trang products.html khi hủy
-  window.location.href = "./products.html";
-});
+    .catch(error => {
+      console.error('Lỗi khi lấy dữ liệu:', error);
+    });
+} else {
+  console.error('Không tìm thấy cartId trong sessionStorage');
+}
