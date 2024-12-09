@@ -16,13 +16,13 @@ import vn.chubebanso.icecream.domain.VoucherStats;
 import vn.chubebanso.icecream.domain.VoucherValueStats;
 import vn.chubebanso.icecream.repository.CartItemRepository;
 import vn.chubebanso.icecream.repository.CartRepository;
+import vn.chubebanso.icecream.repository.CategoryStatsRepository;
 import vn.chubebanso.icecream.repository.CustomerStatsRepository;
 import vn.chubebanso.icecream.repository.ProductRepository;
 import vn.chubebanso.icecream.repository.ProductStatsRepository;
 import vn.chubebanso.icecream.repository.VoucherRepository;
 import vn.chubebanso.icecream.repository.VoucherStatsRepository;
 import vn.chubebanso.icecream.repository.VoucherValueStatsRepository;
-import vn.chubebanso.icecream.repository.CategoryStatsRepository;
 
 @Service
 public class StatsService {

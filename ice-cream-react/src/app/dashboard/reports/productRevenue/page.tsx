@@ -9,7 +9,9 @@ import CategoryPieChartMoney from '@/components/dashboard/overview/category-pie-
 import ProductPieChart from '@/components/dashboard/overview/product-pie-chart';
 import ProductMoneyPie from '@/components/dashboard/overview/product-money-pie';
 import PrintIcon from "@mui/icons-material/Print";
-
+import * as XLSX from 'xlsx';
+import { Dropdown, Menu } from "antd";
+import { DownOutlined, PrinterOutlined, FileExcelOutlined } from "@ant-design/icons";
 
 export default function CartPage(): React.JSX.Element {
   const contentRef = useRef<HTMLTableElement>(null);
@@ -121,8 +123,6 @@ export default function CartPage(): React.JSX.Element {
     });
   };
 
-  const filteredCartData = filterByDate();
-
   // Top 5 carts based on total spent
   const top5Carts = [...cartData].sort((a, b) => b.totalSpent - a.totalSpent).slice(0, 5);
 
@@ -131,25 +131,109 @@ export default function CartPage(): React.JSX.Element {
     reactToPrintFn();
   };
 
+  const handleMenuClick = ({ key }) => {
+    if (key === "print") {
+      handlePrintClick();
+    } else if (key === "excel") {
+      handleExportExcel();
+    }
+  };
+
+  const menu = (
+    <Menu
+      onClick={handleMenuClick}
+      style={{
+        borderRadius: '8px',
+        boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.2)',
+        padding: '5px',
+        fontSize: '15px', // Kích thước chữ lớn hơn
+      }}
+      items={[
+        {
+          key: "print",
+          label: (
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '10px',
+              padding: '10px 15px',
+            }}>
+              <PrinterOutlined style={{ fontSize: '18px', color: '#4CAF50' }} />
+              <span style={{ fontWeight: 'bold', color: '#333' }}>In báo cáo</span>
+            </div>
+          ),
+        },
+        {
+          key: "excel",
+          label: (
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '10px',
+              padding: '10px 15px',
+            }}>
+              <FileExcelOutlined style={{ fontSize: '18px', color: '#0F9D58' }} />
+              <span style={{ fontWeight: 'bold', color: '#333' }}>Xuất Excel</span>
+            </div>
+          ),
+        },
+      ]}
+    />
+  );
+
+  const handleExportExcel = () => {
+    // Chuẩn bị dữ liệu để xuất
+    const excelData = cartData.map(cart => ({
+      'SĐT': cart.phonenum,
+      'Tổng chi': cart.totalSpent,
+      'Số lượng đơn': cart.totalOrders,
+      'Số lượng sản phẩm đã mua': cart.amountOrdered,
+    }));
+
+    // Tạo sheet từ dữ liệu
+    const worksheet = XLSX.utils.json_to_sheet(excelData);
+
+    // Tạo workbook và thêm sheet vào
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'ProductStats');
+
+    // Xuất file Excel
+    XLSX.writeFile(workbook, 'DoanhThuSanPham.xlsx');
+  };
+
   return (
     <Stack spacing={3}>
       <Stack direction="row" justifyContent="flex-end" spacing={2} sx={{ marginBottom: 2 }}>
-        <Button
-          variant="contained"
-          color="primary"
-          startIcon={<PrintIcon />}
-          sx={{
-            backgroundColor: "#2196F3",
-            "&:hover": {
-              backgroundColor: "#1976D2",
-            },
-            fontWeight: "bold",
-            padding: "10px 20px",
+        <Dropdown
+          overlay={menu}
+          trigger={['click']}
+          overlayStyle={{
+            boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.2)',
+            borderRadius: '8px',
+            padding: '5px',
           }}
-          onClick={handlePrintClick}
         >
-          In báo cáo
-        </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            type="primary"
+            startIcon={<PrintIcon />}
+            sx={{
+              backgroundColor: "#4CAF50", // Màu xanh nhấn mạnh
+              color: "#fff",
+              borderRadius: "8px", // Bo góc
+              textTransform: "none", // Không viết hoa toàn bộ
+              fontWeight: "bold",
+              fontSize: "16px", // Kích thước chữ lớn hơn
+              padding: "10px 24px",
+              "&:hover": {
+                backgroundColor: "#45A049", // Màu nhấn khi hover
+              },
+            }}
+          >
+            In báo cáo <DownOutlined />
+          </Button>
+        </Dropdown>
         <div className="custom-report" ref={contentRef}>
           <div className="report-header">
             <img

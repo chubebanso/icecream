@@ -1,5 +1,6 @@
 package vn.chubebanso.icecream.controller.admin;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
@@ -39,7 +40,14 @@ public class AdminCartController {
     }
 
     @GetMapping("/carts-by-phonenum")
-    public ResponseEntity<List<Cart>> getCartsByPhonenum(@RequestParam("phonenum") String phonenum){
+    public ResponseEntity<List<Cart>> getCartsByPhonenum(@RequestParam("phonenum") String phonenum) {
         return ResponseEntity.ok(this.cartService.findCartsByPhonenum(phonenum));
     }
+
+    @GetMapping("/filter-cart")
+    public ResponseEntity<List<Cart>> getCartByDate(@RequestParam("start_date") Date startDate,
+            @RequestParam("end_date") Date endDate) {
+        return ResponseEntity.ok(this.cartService.findCartsBetweenDate(startDate, endDate));
+    }
+
 }

@@ -1,17 +1,19 @@
 'use client';
 
 import * as React from 'react';
-import { Button, Stack, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TextField, Divider, TablePagination, Box, TableFooter } from '@mui/material';
+import { Button, Stack, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Divider, TablePagination, TableFooter } from '@mui/material';
 import { useReactToPrint } from 'react-to-print';
 import { useRef } from "react";
 import PrintIcon from "@mui/icons-material/Print";
+import * as XLSX from 'xlsx';
+import { Dropdown, Menu } from "antd";
+import { DownOutlined, PrinterOutlined, FileExcelOutlined } from "@ant-design/icons";
 
 export default function CartPage(): React.JSX.Element {
   const contentRef = useRef<HTMLTableElement>(null);
   const reactToPrintFn = useReactToPrint({ contentRef });
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
-  const [filteredCartData, setFilteredCartData] = React.useState<any[]>([]);  // Store filtered cart data
   const [cartData, setCartData] = React.useState<any[]>([]);
 
   const handlePrintClick = () => {
@@ -57,27 +59,111 @@ export default function CartPage(): React.JSX.Element {
 
   const paginatedCarts = cartData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
+  const handleMenuClick = ({ key }) => {
+    if (key === "print") {
+      handlePrintClick();
+    } else if (key === "excel") {
+      handleExportExcel();
+    }
+  };
+
+  const menu = (
+    <Menu
+      onClick={handleMenuClick}
+      style={{
+        borderRadius: '8px',
+        boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.2)',
+        padding: '5px',
+        fontSize: '15px', // Kích thước chữ lớn hơn
+      }}
+      items={[
+        {
+          key: "print",
+          label: (
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '10px',
+              padding: '10px 15px',
+            }}>
+              <PrinterOutlined style={{ fontSize: '18px', color: '#4CAF50' }} />
+              <span style={{ fontWeight: 'bold', color: '#333' }}>In báo cáo</span>
+            </div>
+          ),
+        },
+        {
+          key: "excel",
+          label: (
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '10px',
+              padding: '10px 15px',
+            }}>
+              <FileExcelOutlined style={{ fontSize: '18px', color: '#0F9D58' }} />
+              <span style={{ fontWeight: 'bold', color: '#333' }}>Xuất Excel</span>
+            </div>
+          ),
+        },
+      ]}
+    />
+  );
+
+  const handleExportExcel = () => {
+    // Chuẩn bị dữ liệu để xuất
+    const excelData = cartData.map(cart => ({
+      'SĐT': cart.phonenum,
+      'Tổng chi': cart.totalSpent,
+      'Số lượng đơn': cart.totalOrders,
+      'Số lượng sản phẩm đã mua': cart.amountOrdered,
+    }));
+
+    // Tạo sheet từ dữ liệu
+    const worksheet = XLSX.utils.json_to_sheet(excelData);
+
+    // Tạo workbook và thêm sheet vào
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'CustomerStats');
+
+    // Xuất file Excel
+    XLSX.writeFile(workbook, 'DoanhThuKhachHang.xlsx');
+  };
+
   return (
     <Stack spacing={3}>
 
       {/* Nút in báo cáo ở trên cùng */}
       <Stack direction="row" justifyContent="flex-end" spacing={2} sx={{ marginBottom: 2 }}>
-        <Button
-          variant="contained"
-          color="primary"
-          startIcon={<PrintIcon />}
-          sx={{
-            backgroundColor: "#2196F3",
-            "&:hover": {
-              backgroundColor: "#1976D2",
-            },
-            fontWeight: "bold",
-            padding: "10px 20px",
+        <Dropdown
+          overlay={menu}
+          trigger={['click']}
+          overlayStyle={{
+            boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.2)',
+            borderRadius: '8px',
+            padding: '5px',
           }}
-          onClick={handlePrintClick}
         >
-          In báo cáo
-        </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            type="primary"
+            startIcon={<PrintIcon />}
+            sx={{
+              backgroundColor: "#4CAF50", // Màu xanh nhấn mạnh
+              color: "#fff",
+              borderRadius: "8px", // Bo góc
+              textTransform: "none", // Không viết hoa toàn bộ
+              fontWeight: "bold",
+              fontSize: "16px", // Kích thước chữ lớn hơn
+              padding: "10px 24px",
+              "&:hover": {
+                backgroundColor: "#45A049", // Màu nhấn khi hover
+              },
+            }}
+          >
+            In báo cáo <DownOutlined />
+          </Button>
+        </Dropdown>
         <div className="custom-report" ref={contentRef}>
           <div className="report-header">
             <img

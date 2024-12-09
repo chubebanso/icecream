@@ -64,7 +64,7 @@ function displayProducts(products) {
       </div>
       <div class="name-price">
         <div class="name">${product.name}</div>
-        <div class="price">${product.price} VND</div>
+        <div class="price">${product.price.toLocaleString()} VND</div>
       </div>
       <div class="qty">
         <span class="decrease">-</span>
@@ -203,7 +203,7 @@ function displayCart(cartData) {
           <div class="cart-item-details">
             <h3 class="cart-item-name">${item.product.name}</h3>
             <p class="cart-item-quantity">Số lượng: ${item.productQuantity}</p>
-            <p class="cart-item-subtotal">${item.subTotal.toFixed(0)} VND</p>
+            <p class="cart-item-subtotal">${item.subTotal.toLocaleString()} VND</p>
           </div>
           <div class="cart-item-remove">
             <i class="fa fa-trash remove-item" data-product-id="${item.product.id
