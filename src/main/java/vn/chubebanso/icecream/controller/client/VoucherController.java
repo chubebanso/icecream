@@ -1,10 +1,10 @@
 package vn.chubebanso.icecream.controller.client;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
 
 import jakarta.validation.Valid;
 import vn.chubebanso.icecream.domain.Cart;
@@ -37,5 +37,10 @@ public class VoucherController {
         this.cartService.handleApplyVoucherToCart(cart, voucher);
         String voucherName = voucher.getVoucherName();
         return ResponseEntity.ok("Thêm voucher " + voucherName + " thành công!");
+    }
+
+    @GetMapping("/get-voucher-by-id")
+    public ResponseEntity<Voucher> getVoucherById(@Valid @RequestParam("id") long id) {
+        return ResponseEntity.ok(this.voucherService.showVoucherById(id));
     }
 }

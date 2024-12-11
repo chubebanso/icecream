@@ -3,6 +3,7 @@ package vn.chubebanso.icecream.service;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -92,6 +93,7 @@ public class CartService {
                     cart.setNewTotal(newTotal);
                 } else {
                     cart.setTotal(total);
+                    cart.setNewTotal(total);
                 }
             }
         }
@@ -172,6 +174,7 @@ public class CartService {
                 newCart.setNewTotal(newTotal);
             } else {
                 newCart.setTotal(total);
+                newCart.setNewTotal(total);
             }
         }
         return newCart;
@@ -184,91 +187,90 @@ public class CartService {
     }
 
     public void update(Cart cart, String status) {
-        cart.setStatus(status);
+        String oldStatus = cart.getStatus();
+        if (oldStatus == null) {
+            cart.setStatus(status);
+            this.cartRepo.save(cart);
+        } else {
+            if (oldStatus.equals("undefined")) {
+                cart.setStatus(status);
+                this.cartRepo.save(cart);
+            } else {
+                cart.setStatus(oldStatus);
+                this.cartRepo.save(cart);
+            }
+        }
+    }
+
+    public void updateSaveStatus(Cart cart, String saveStatus) {
+        List<CartItem> cartItems = this.cartItemRepository.findByCart(cart);
+        float total = 0;
+
+        for (CartItem cartItem : cartItems) {
+            float productPrice = cartItem.getProduct().getPrice();
+            long productQuantity = cartItem.getProductQuantity();
+
+            float subtotal = productPrice * productQuantity;
+            cartItem.setSubTotal(subtotal);
+
+            total += subtotal;
+
+            Product product = cartItem.getProduct();
+            String name = product.getName();
+            String category = product.getCategory();
+
+            ProductStats productStats = this.productStatsRepository.findByName(name);
+            if (productStats == null) {
+                this.statsService.createProductStats(name);
+            }
+
+            CategoryStats categoryStats = this.categoryStatsRepository.findByProductCategory(category);
+            if (categoryStats == null) {
+                this.statsService.createCategoryStats(category);
+            }
+        }
+
+        Voucher voucher = cart.getVoucher();
+
+        if (voucher == null) {
+            cart.setTotal(total);
+            cart.setNewTotal(total);
+        } else {
+            float activationValue = voucher.getMinActivationValue();
+            if (total >= activationValue) {
+                float newTotal = total * (1 - (cart.getVoucher().getDiscountAmount()) / 100);
+                cart.setTotal(total);
+                cart.setNewTotal(newTotal);
+            } else {
+                cart.setTotal(total);
+            }
+
+            String name = voucher.getVoucherName();
+            long discountAmount = (long) voucher.getDiscountAmount();
+            VoucherStats voucherStats = this.voucherStatsRepository.findByVoucherName(name);
+            if (voucherStats == null) {
+                this.statsService.createVoucherStats(name, activationValue, discountAmount);
+            }
+
+            long minActivationValue = (long) activationValue;
+            VoucherValueStats voucherValueStats = this.voucherValueStatsRepository
+                    .findByMinActivationValue(minActivationValue);
+            if (voucherValueStats == null) {
+                this.statsService.createVoucherValueStats(minActivationValue);
+            }
+        }
+
+        cart.setSaveStatus(saveStatus);
         this.cartRepo.save(cart);
+
+        String phonenum = cart.getPhonenum();
+        CustomerStats customerStats = this.customerStatsRepository.findStatsByPhonenum(phonenum);
+        if (customerStats == null) {
+            this.statsService.createCustomerStats(phonenum);
+        }
     }
 
     public List<Cart> findCartsByPhonenum(String phonenum) {
         return this.cartRepo.findAllByPhonenum(phonenum);
-    }
-
-    public List<Cart> findCartsBetweenDate(Date startDate, Date endDate) {
-        List<Cart> carts = this.cartRepo.findAll();
-
-        for (Cart cart : carts) {
-            Date createdAt = cart.getCreatedAt();
-            List<Cart> cartList = this.cartRepo.findAllByCreatedAt(createdAt);
-            for (Cart filteredCart : cartList) {
-                Date filteredCartCreatedAt = filteredCart.getCreatedAt();
-                if (filteredCartCreatedAt.compareTo(startDate) >= 0 && filteredCartCreatedAt.compareTo(endDate) <= 0
-                        && filteredCart.getStatus() != null && filteredCart.getStatus().equals("delivered")) {
-                    String phonenum = filteredCart.getPhonenum();
-                    CustomerStats customerStats = this.customerStatsRepository.findStatsByPhonenum(phonenum);
-                    if (customerStats == null) {
-                        this.statsService.createCustomerStats(phonenum);
-                    }
-                    List<CartItem> cartItems = this.cartItemRepository.findByCart(filteredCart);
-                    float total = 0;
-                    for (CartItem cartItem : cartItems) {
-                        float productPrice = cartItem.getProduct().getPrice();
-                        long productQuantity = cartItem.getProductQuantity();
-
-                        float subtotal = productPrice * productQuantity;
-                        cartItem.setSubTotal(subtotal);
-
-                        total += subtotal;
-
-                        Product product = cartItem.getProduct();
-                        String name = product.getName();
-                        String category = product.getCategory();
-
-                        ProductStats productStats = this.productStatsRepository.findByName(name);
-                        if (productStats == null) {
-                            this.statsService.createProductStats(name);
-                        }
-
-                        CategoryStats categoryStats = this.categoryStatsRepository.findByProductCategory(category);
-                        if (categoryStats == null) {
-                            this.statsService.createCategoryStats(category);
-                        }
-                    }
-
-                    Voucher voucher = filteredCart.getVoucher();
-
-                    if (voucher == null) {
-                        filteredCart.setTotal(total);
-                        filteredCart.setNewTotal(total);
-                    } else {
-                        float activationValue = voucher.getMinActivationValue();
-                        if (total >= activationValue) {
-                            float newTotal = total * (1 - (filteredCart.getVoucher().getDiscountAmount()) / 100);
-                            filteredCart.setTotal(total);
-                            filteredCart.setNewTotal(newTotal);
-                        } else {
-                            filteredCart.setTotal(total);
-                        }
-
-                        String name = voucher.getVoucherName();
-                        long discountAmount = (long) voucher.getDiscountAmount();
-                        VoucherStats voucherStats = this.voucherStatsRepository.findByVoucherName(name);
-                        if (voucherStats == null) {
-                            this.statsService.createVoucherStats(name, activationValue, discountAmount);
-                        }
-
-                        long minActivationValue = (long) activationValue;
-                        VoucherValueStats voucherValueStats = this.voucherValueStatsRepository
-                                .findByMinActivationValue(minActivationValue);
-                        if (voucherValueStats == null) {
-                            this.statsService.createVoucherValueStats(minActivationValue);
-                        }
-                    }
-
-                }
-                cart.setTotal(filteredCart.getTotal());
-                cart.setNewTotal(filteredCart.getNewTotal());
-            }
-            this.cartRepo.save(cart);
-        }
-        return carts;
     }
 }

@@ -12,4 +12,6 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     Product findByName(String name);
 
     List<Product> findAllByCategory(String category);
+
+    List<Product> findAllByIsHidden(boolean hidden);
 }

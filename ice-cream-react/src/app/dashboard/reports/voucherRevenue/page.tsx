@@ -157,10 +157,12 @@ export default function CartPage(): React.JSX.Element {
   const handleExportExcel = () => {
     // Chuẩn bị dữ liệu để xuất
     const excelData = cartData.map(cart => ({
-      'SĐT': cart.phonenum,
-      'Tổng chi': cart.totalSpent,
-      'Số lượng đơn': cart.totalOrders,
-      'Số lượng sản phẩm đã mua': cart.amountOrdered,
+      'STT': cart.id,
+      'Tên voucher': cart.voucherName,
+      'Giá trị kích hoạt': cart.minActivationValue,
+      'Phần trăm giảm giá': cart.discountAmount,
+      'Số lần sử dụng': cart.timesUsed,
+      'Doanh thu mang lại': cart.voucherRevenue,
     }));
 
     // Tạo sheet từ dữ liệu
@@ -168,10 +170,10 @@ export default function CartPage(): React.JSX.Element {
 
     // Tạo workbook và thêm sheet vào
     const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'ProductStats');
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'VoucherStats');
 
     // Xuất file Excel
-    XLSX.writeFile(workbook, 'DoanhThuSanPham.xlsx');
+    XLSX.writeFile(workbook, 'DoanhThuVoucher.xlsx');
   };
 
   return (
@@ -205,7 +207,7 @@ export default function CartPage(): React.JSX.Element {
               },
             }}
           >
-            In báo cáo <DownOutlined />
+            Xuất dữ liệu <span style={{ color: '#4CAF50' }}>_</span> <DownOutlined />
           </Button>
         </Dropdown>
         <div className="custom-report" ref={contentRef}>
@@ -231,23 +233,27 @@ export default function CartPage(): React.JSX.Element {
             <h2>
               BÁO CÁO DOANH THU THEO SẢN PHẨM
             </h2>
+            <p>Từ: ... / ... / ...... <span style={{ color: 'white' }}>aduanhlambeovklbeo</span>Đến: ... / ... / ...... </p>
           </center>
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell align="center" style={{ fontWeight: 'bold', border: '1px solid black' }}>
+                <TableCell align="center" style={{ fontWeight: 'bold', border: '1px solid black', padding: '8px', width: '50px' }}>
+                  STT
+                </TableCell>
+                <TableCell align="center" style={{ fontWeight: 'bold', border: '1px solid black', padding: '8px', width: '100px' }}>
                   Tên voucher
                 </TableCell>
-                <TableCell align="center" style={{ fontWeight: 'bold', border: '1px solid black' }}>
+                <TableCell align="center" style={{ fontWeight: 'bold', border: '1px solid black', padding: '8px', width: '100px' }}>
                   Giá trị kích hoạt
                 </TableCell>
-                <TableCell align="center" style={{ fontWeight: 'bold', border: '1px solid black' }}>
+                <TableCell align="center" style={{ fontWeight: 'bold', border: '1px solid black', padding: '8px', width: '100px' }}>
                   Phần trăm giảm giá
                 </TableCell>
-                <TableCell align="center" style={{ fontWeight: 'bold', border: '1px solid black' }}>
+                <TableCell align="center" style={{ fontWeight: 'bold', border: '1px solid black', padding: '8px', width: '150px' }}>
                   Số lần sử dụng
                 </TableCell>
-                <TableCell align="center" style={{ fontWeight: 'bold', border: '1px solid black' }}>
+                <TableCell align="center" style={{ fontWeight: 'bold', border: '1px solid black', padding: '8px', width: '150px' }}>
                   Doanh thu mang lại
                 </TableCell>
               </TableRow>
@@ -255,19 +261,22 @@ export default function CartPage(): React.JSX.Element {
             <TableBody>
               {paginatedCarts.map((cart) => (
                 <TableRow key={cart.id}>
-                  <TableCell align="center" style={{ border: '1px solid black' }}>
+                  <TableCell align="center" style={{ border: '1px solid black', padding: '8px', width: '50px' }}>
+                    {cart.id}
+                  </TableCell>
+                  <TableCell align="center" style={{ border: '1px solid black', padding: '8px', width: '100px' }}>
                     {cart.voucherName}
                   </TableCell>
-                  <TableCell align="center" style={{ border: '1px solid black' }}>
+                  <TableCell align="center" style={{ border: '1px solid black', padding: '8px', width: '100px' }}>
                     {cart.minActivationValue.toLocaleString()} VND
                   </TableCell>
-                  <TableCell align="center" style={{ border: '1px solid black' }}>
+                  <TableCell align="center" style={{ border: '1px solid black', padding: '8px', width: '100px' }}>
                     {cart.discountAmount}
                   </TableCell>
-                  <TableCell align="center" style={{ border: '1px solid black' }}>
+                  <TableCell align="center" style={{ border: '1px solid black', padding: '8px', width: '150px' }}>
                     {cart.timesUsed}
                   </TableCell>
-                  <TableCell align="center" style={{ border: '1px solid black' }}>
+                  <TableCell align="center" style={{ border: '1px solid black', padding: '8px', width: '150px' }}>
                     {cart.voucherRevenue.toLocaleString()} VND
                   </TableCell>
                 </TableRow>
@@ -279,12 +288,14 @@ export default function CartPage(): React.JSX.Element {
               <TableRow>
                 <TableCell
                   align="center"
-                  colSpan={3}
+                  colSpan={4}
                   style={{
                     fontWeight: 'bold',
                     border: '1px solid black',
                     color: 'black', // Đổi màu chữ thành đen
-                    fontSize: 'inherit', // Giữ cỡ chữ như các cell phía trên
+                    fontSize: 'inherit'
+                    , padding: '8px', width: '500px'
+                    // Giữ cỡ chữ như các cell phía trên
                   }}
                 >
                   TỔNG CỘNG
@@ -295,7 +306,7 @@ export default function CartPage(): React.JSX.Element {
                     fontWeight: 'bold',
                     border: '1px solid black',
                     color: 'black', // Đổi màu chữ thành đen
-                    fontSize: 'inherit', // Giữ cỡ chữ như các cell phía trên
+                    fontSize: 'inherit', padding: '8px', width: '150px' // Giữ cỡ chữ như các cell phía trên
                   }}
                 >
                   {paginatedCarts.reduce((total, cart) => total + cart.timesUsed, 0).toLocaleString()}
@@ -306,7 +317,7 @@ export default function CartPage(): React.JSX.Element {
                     fontWeight: 'bold',
                     border: '1px solid black',
                     color: 'black', // Đổi màu chữ thành đen
-                    fontSize: 'inherit', // Giữ cỡ chữ như các cell phía trên
+                    fontSize: 'inherit', padding: '8px', width: '150px' // Giữ cỡ chữ như các cell phía trên
                   }}
                 >
                   {paginatedCarts.reduce((total, cart) => total + cart.voucherRevenue, 0).toLocaleString()} VND
@@ -314,6 +325,23 @@ export default function CartPage(): React.JSX.Element {
               </TableRow>
             </TableFooter>
           </Table>
+          {/* Dòng ghi ngày tháng ở cuối */}
+          <div style={{ textAlign: 'right', marginTop: '20px', fontSize: '18px', fontStyle: 'italic' }}>
+            Hà Nội, ngày ... tháng ... năm .......
+          </div>
+          {/* Dòng "Người thực hiện" */}
+          <div style={{ textAlign: 'center', marginTop: '8px', fontSize: '18px', fontWeight: 'bold' }}>
+            <span style={{ color: 'white' }}>------------------------------------------------------------------------------------------------------------------------------------------</span>
+            Người thực hiện
+            <span style={{ color: 'white' }}>------------------------------------------------------------------------------------------------------------------------------------------------------</span>
+            (Ký và ghi rõ họ tên)
+            <span style={{ color: 'white' }}>-------------------------------------------------------------------------------------------------------------------------------------------</span>
+            <span style={{ color: 'white' }}>-------------------------------------------------------------------------------------------------------------------------------------------</span>
+            <span style={{ color: 'white' }}>-------------------------------------------------------------------------------------------------------------------------------------------</span>
+            <span style={{ color: 'white' }}>-------------------------------------------------------------------------------------------------------------------------------------------</span>
+            <span style={{ color: 'white' }}>-------------------------------------------------------------------------------------------------------------------------------------------</span>
+            <span style={{ color: 'white' }}>-------------------------------------------------------------------------------------------------------------------------------------------</span>
+          </div>
         </div>
       </Stack>
 

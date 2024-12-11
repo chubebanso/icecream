@@ -129,4 +129,14 @@ public class VoucherService {
             return null;
         }
     }
+
+    public Voucher showVoucherById(Long id) {
+        Optional<Voucher> optionalVoucher = this.voucherRepo.findById(id);
+        if (optionalVoucher.isPresent()) {
+            Voucher voucher = optionalVoucher.get();
+            return voucher;
+        } else {
+            return null;
+        }
+    }
 }

@@ -83,7 +83,9 @@ public class StatsService {
             return customerStats;
         } else {
             for (Cart cart : carts) {
-                if (cart.getStatus() != null && cart.getStatus().equals("delivered")) {
+                if (cart.getStatus() != null && cart.getSaveStatus() != null
+                        && cart.getStatus().equals("delivered")
+                        && cart.getSaveStatus().equals("yes")) {
                     List<CartItem> cartItems = this.cartItemRepository.findByCart(cart);
                     for (CartItem cartItem : cartItems) {
                         productQuantity += cartItem.getProductQuantity();
@@ -115,7 +117,9 @@ public class StatsService {
                 this.customerStatsRepository.save(customerStats);
             } else {
                 for (Cart cart : carts) {
-                    if (cart.getStatus() != null && cart.getStatus().equals("delivered")) {
+                    if (cart.getStatus() != null && cart.getSaveStatus() != null
+                            && cart.getStatus().equals("delivered")
+                            && cart.getSaveStatus().equals("yes")) {
                         List<CartItem> cartItems = this.cartItemRepository.findByCart(cart);
                         for (CartItem cartItem : cartItems) {
                             productQuantity += cartItem.getProductQuantity();
@@ -166,7 +170,9 @@ public class StatsService {
             List<CartItem> cartItems = this.cartItemRepository.findCartItemsByProduct(product);
             for (CartItem cartItem : cartItems) {
                 Cart cart = this.cartRepo.findCartByCartItem(cartItem);
-                if (cart.getStatus() != null && cart.getStatus().equals("delivered")) {
+                if (cart.getStatus() != null && cart.getSaveStatus() != null
+                        && cart.getStatus().equals("delivered")
+                        && cart.getSaveStatus().equals("yes")) {
                     productCount += cartItem.getProductQuantity();
                     productRevenue += cartItem.getSubTotal();
                 }
@@ -194,7 +200,9 @@ public class StatsService {
                 List<CartItem> cartItems = this.cartItemRepository.findCartItemsByProduct(product);
                 for (CartItem cartItem : cartItems) {
                     Cart cart = this.cartRepo.findCartByCartItem(cartItem);
-                    if (cart.getStatus() != null && cart.getStatus().equals("delivered")) {
+                    if (cart.getStatus() != null && cart.getSaveStatus() != null
+                            && cart.getStatus().equals("delivered")
+                            && cart.getSaveStatus().equals("yes")) {
                         productCount += cartItem.getProductQuantity();
                         productRevenue += cartItem.getSubTotal();
                     }
@@ -242,7 +250,9 @@ public class StatsService {
                 List<CartItem> cartItems = this.cartItemRepository.findCartItemsByProduct(product);
                 for (CartItem cartItem : cartItems) {
                     Cart cart = this.cartRepo.findCartByCartItem(cartItem);
-                    if (cart.getStatus() != null && cart.getStatus().equals("delivered")) {
+                    if (cart.getStatus() != null && cart.getSaveStatus() != null
+                            && cart.getStatus().equals("delivered")
+                            && cart.getSaveStatus().equals("yes")) {
                         categoryCount += cartItem.getProductQuantity();
                         categoryRevenue += cartItem.getSubTotal();
                     }
@@ -276,7 +286,9 @@ public class StatsService {
                     for (CartItem cartItem : cartItems) {
                         Cart cart = this.cartRepo.findCartByCartItem(cartItem);
 
-                        if (cart.getStatus() != null && cart.getStatus().equals("delivered")) {
+                        if (cart.getStatus() != null && cart.getSaveStatus() != null
+                                && cart.getStatus().equals("delivered")
+                                && cart.getSaveStatus().equals("yes")) {
                             categoryCount += cartItem.getProductQuantity();
                             categoryRevenue += cartItem.getSubTotal();
                         }
@@ -322,7 +334,9 @@ public class StatsService {
             long timesUsed = 0;
             long voucherRevenue = 0;
             for (Cart cart : carts) {
-                if (cart.getStatus() != null && cart.getStatus().equals("delivered")) {
+                if (cart.getStatus() != null && cart.getSaveStatus() != null
+                        && cart.getStatus().equals("delivered")
+                        && cart.getSaveStatus().equals("yes")) {
                     timesUsed++;
                     voucherRevenue += cart.getNewTotal();
                 }
@@ -348,7 +362,9 @@ public class StatsService {
                 long timesUsed = 0;
                 long voucherRevenue = 0;
                 for (Cart cart : carts) {
-                    if (cart.getStatus() != null && cart.getStatus().equals("delivered")) {
+                    if (cart.getStatus() != null && cart.getSaveStatus() != null
+                            && cart.getStatus().equals("delivered")
+                            && cart.getSaveStatus().equals("yes")) {
                         timesUsed++;
                         voucherRevenue += cart.getNewTotal();
                     }
@@ -389,7 +405,9 @@ public class StatsService {
                 for (Voucher voucher : vouchers) {
                     List<Cart> carts = this.cartRepo.findAllByVoucher(voucher);
                     for (Cart cart : carts) {
-                        if (cart.getStatus() != null && cart.getStatus().equals("delivered")) {
+                        if (cart.getStatus() != null && cart.getSaveStatus() != null
+                                && cart.getStatus().equals("delivered")
+                                && cart.getSaveStatus().equals("yes")) {
                             timesUsed++;
                             revenue += cart.getNewTotal();
                         }

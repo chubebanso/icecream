@@ -20,5 +20,5 @@ public interface CartRepository extends JpaRepository<Cart, Long> {
 
     List<Cart> findAllByVoucher(Voucher voucher);
 
-    List<Cart> findAllByCreatedAt(Date createdAt);
+    List<Cart> findByCreatedAtBetweenAndStatus(Date startDate, Date endDate, String status);
 }

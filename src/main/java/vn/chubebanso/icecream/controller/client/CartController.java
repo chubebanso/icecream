@@ -51,4 +51,15 @@ public class CartController {
         this.cartService.update(cart, status);
         return ResponseEntity.ok("Xác nhận giỏ hàng thành công!");
     }
+
+    @PostMapping("/admin/save-cart")
+    public ResponseEntity<String> saveCartSaveStatus(@Valid @RequestParam("cart_id") long cart_id,
+            @RequestParam("save_status") String saveStatus) {
+        Cart cart = cartService.getCartById(cart_id);
+        if (cart == null) {
+            return ResponseEntity.badRequest().body("Giỏ hàng không tồn tại");
+        }
+        this.cartService.updateSaveStatus(cart, saveStatus);
+        return ResponseEntity.ok("Xác nhận lưu giỏ hàng thành công!");
+    }
 }
