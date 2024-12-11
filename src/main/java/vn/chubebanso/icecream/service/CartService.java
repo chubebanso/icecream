@@ -3,7 +3,7 @@ package vn.chubebanso.icecream.service;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -93,6 +93,7 @@ public class CartService {
                     cart.setNewTotal(newTotal);
                 } else {
                     cart.setTotal(total);
+                    cart.setNewTotal(total);
                 }
             }
         }
@@ -173,6 +174,7 @@ public class CartService {
                 newCart.setNewTotal(newTotal);
             } else {
                 newCart.setTotal(total);
+                newCart.setNewTotal(total);
             }
         }
         return newCart;
@@ -185,6 +187,22 @@ public class CartService {
     }
 
     public void update(Cart cart, String status) {
+        String oldStatus = cart.getStatus();
+        if (oldStatus == null) {
+            cart.setStatus(status);
+            this.cartRepo.save(cart);
+        } else {
+            if (oldStatus.equals("undefined")) {
+                cart.setStatus(status);
+                this.cartRepo.save(cart);
+            } else {
+                cart.setStatus(oldStatus);
+                this.cartRepo.save(cart);
+            }
+        }
+    }
+
+    public void updateSaveStatus(Cart cart, String saveStatus) {
         List<CartItem> cartItems = this.cartItemRepository.findByCart(cart);
         float total = 0;
 
@@ -242,7 +260,7 @@ public class CartService {
             }
         }
 
-        cart.setStatus(status);
+        cart.setSaveStatus(saveStatus);
         this.cartRepo.save(cart);
 
         String phonenum = cart.getPhonenum();

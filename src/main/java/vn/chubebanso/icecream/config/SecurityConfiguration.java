@@ -57,7 +57,7 @@ public class SecurityConfiguration {
                         authz -> authz
                                 .requestMatchers("/", "login", "/storage/**", "/product", "/create-cart",
                                         "/get-cart-by-id", "/add-to-cart", "/voucher", "/apply-voucher-to-cart",
-                                        "/delete-item-from-cart/**")
+                                        "/delete-item-from-cart/**", "/get-voucher-by-id")
                                 .permitAll()
                                 .anyRequest().authenticated())
                 .oauth2ResourceServer(

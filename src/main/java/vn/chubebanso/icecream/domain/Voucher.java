@@ -44,6 +44,16 @@ public class Voucher {
 
     private String expiredDate;
 
+    private boolean isHidden;
+
+    public boolean isHidden() {
+        return isHidden;
+    }
+
+    public void setHidden(boolean isHidden) {
+        this.isHidden = isHidden;
+    }
+
     public String getCreatedDate() {
         return createdDate;
     }

@@ -17,7 +17,15 @@ const statusMap = {
   refunded: { label: 'Hủy đơn', color: '#F44336' }, // red
 } as const;
 
+const saveStatusMap = {
+  yes: { label: 'Có', color: '#4CAF50' }, // green
+  no: { label: 'Không', color: '#F44336' }, // red
+} as const;
+
 type StatusKey = keyof typeof statusMap;
+
+type SaveStatusKey = keyof typeof saveStatusMap;
+
 
 interface Product {
   id: number;
@@ -52,6 +60,7 @@ interface Order {
   sum: number;
   voucher?: Voucher | null;
   status: StatusKey;
+  saveStatus: SaveStatusKey;
   createdAt: string;
   total: number;
   newTotal: number;
@@ -64,6 +73,7 @@ export default function CartPage(): React.JSX.Element {
   const [cartData, setCartData] = useState<Order[]>([]);
   const [filteredCartData, setFilteredCartData] = useState<Order[]>([]);  // Store filtered cart data
   const [selectedStatus, setSelectedStatus] = useState<{ [key: number]: StatusKey }>({});
+  const [selectedSaveStatus, setSelectedSaveStatus] = useState<{ [key: number]: SaveStatusKey }>({});
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [open, setOpen] = useState(false);
@@ -94,6 +104,14 @@ export default function CartPage(): React.JSX.Element {
     setSelectedStatus((prevSelected) => ({
       ...prevSelected,
       [orderId]: newStatus,
+    }));
+  };
+
+  const handleSaveStatusChange = (event: SelectChangeEvent, orderId: number) => {
+    const newSaveStatus = event.target.value as SaveStatusKey;
+    setSelectedSaveStatus((prevSelected) => ({
+      ...prevSelected,
+      [orderId]: newSaveStatus,
     }));
   };
 
@@ -164,6 +182,42 @@ export default function CartPage(): React.JSX.Element {
     }
   };
 
+  const saveCartForDatabase = async (cartId: number, saveStatus: SaveStatusKey) => {
+    const token = localStorage.getItem('custom-auth-token');
+    if (token) {
+      try {
+        const saveStatusMapToString: { [key in SaveStatusKey]: string } = {
+          yes: 'yes',
+          no: 'no',
+        };
+
+        const saveStatusParam = saveStatusMapToString[saveStatus];  // Convert status to string
+
+        const response = await fetch(`http://localhost:8080/admin/save-cart?cart_id=${cartId}&save_status=${saveStatusParam}`, {
+          method: 'POST',  // You can change it to PUT if required by your API
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (response.ok) {
+          console.log('Cart updated successfully');
+          setCartData((prevData) =>
+            prevData.map((cart) =>
+              cart.id === cartId ? { ...cart, saveStatus: saveStatus } : cart
+            )
+          );
+        } else {
+          console.error('Failed to update cart');
+        }
+      } catch (error) {
+        console.error('Error updating cart:', error);
+      }
+    } else {
+      console.error('Token is missing');
+    }
+  };
+
   const handleOpen = (orderId: number) => {
     const order = cartData.find((cart) => cart.id === orderId);
     if (order) {
@@ -177,6 +231,12 @@ export default function CartPage(): React.JSX.Element {
     const status = selectedStatus[cartId] || null; // Default to 'pending' if not selected
     saveCart(cartId, status);
     message.success('Lưu trạng thái mới thành công');
+  };
+
+  const handleSaveSaveStatus = (cartId: number) => {
+    const saveStatus = selectedSaveStatus[cartId] || null; // Default to 'pending' if not selected
+    saveCartForDatabase(cartId, saveStatus);
+    message.success('Lưu vào CSDL thành công');
   };
 
   // Function to handle date range filter
@@ -221,13 +281,13 @@ export default function CartPage(): React.JSX.Element {
     );
   };
 
-  const handleBulkStatusChange = (status: StatusKey) => {
-    setSelectedStatus((prevSelected) => {
-      const updatedStatus = { ...prevSelected };
+  const handleBulkStatusChange = (saveStatus: SaveStatusKey) => {
+    setSelectedSaveStatus((prevSelected) => {
+      const updatedSaveStatus = { ...prevSelected };
       selectedCarts.forEach((cartId) => {
-        updatedStatus[cartId] = status; // Gán trạng thái mới cho tất cả các giỏ hàng được chọn
+        updatedSaveStatus[cartId] = saveStatus; // Gán trạng thái mới cho tất cả các giỏ hàng được chọn
       });
-      return updatedStatus;
+      return updatedSaveStatus;
     });
   };
 
@@ -235,11 +295,11 @@ export default function CartPage(): React.JSX.Element {
     // Lặp qua từng giỏ hàng để gọi API cập nhật trạng thái
     await Promise.all(
       selectedCarts.map((cartId) =>
-        saveCart(cartId, selectedStatus[cartId] || 'delivered') // Gọi hàm đã có để lưu trạng thái
+        saveCart(cartId, selectedSaveStatus[cartId] || 'yes') // Gọi hàm đã có để lưu trạng thái
       )
     );
 
-    message.success('Thay đổi trạng thái thành công!');
+    message.success('Thay đổi trạng thái thống kê thành công!');
     // Xóa danh sách giỏ hàng đã chọn sau khi hoàn thành
     setSelectedCarts([]);
   };
@@ -253,8 +313,8 @@ export default function CartPage(): React.JSX.Element {
         {selectedCarts.length > 0 && (
           <Box display="flex" justifyContent="flex-end" marginBottom="20px">
             <Select
-              value={selectedStatus[selectedCarts[0]] || ''} // Giá trị mặc định
-              onChange={(e) => handleBulkStatusChange(e.target.value as StatusKey)}
+              value={selectedSaveStatus[selectedCarts[0]] || ''} // Giá trị mặc định
+              onChange={(e) => handleBulkStatusChange(e.target.value as SaveStatusKey)}
               displayEmpty
               sx={{
                 minWidth: '200px',
@@ -263,7 +323,7 @@ export default function CartPage(): React.JSX.Element {
               }}
             >
 
-              {Object.entries(statusMap).map(([key, { label, color }]) => (
+              {Object.entries(saveStatusMap).map(([key, { label, color }]) => (
                 <MenuItem
                   key={key}
                   value={key}
@@ -281,7 +341,7 @@ export default function CartPage(): React.JSX.Element {
               color="primary"
               onClick={applyBulkStatusChange}
             >
-              Thay đổi trạng thái
+              Thay đổi trạng thái lưu và thống kê
             </Button>
           </Box>
         )}
@@ -371,6 +431,9 @@ export default function CartPage(): React.JSX.Element {
               <TableCell align="center">Ngày tạo</TableCell>
               <TableCell align="center">Trạng thái</TableCell>
               <TableCell align="center">Thao tác</TableCell>
+              <TableCell align="center">Lưu và thống kê?</TableCell>
+              <TableCell align="center">Hành động</TableCell>
+
             </TableRow>
           </TableHead>
           <TableBody>
@@ -418,19 +481,127 @@ export default function CartPage(): React.JSX.Element {
                       variant="contained"
                       color="secondary"
                       onClick={() => handleSaveStatus(cart.id)}
+                      style={{
+                        background: 'linear-gradient(45deg, #ff7043, #ffcc80)', // Màu gradient cho nút Lưu
+                        borderRadius: '12px', // Bo góc nút
+                        padding: '10px 20px', // Khoảng cách trong nút
+                        fontWeight: 'bold', // Chữ in đậm
+                        fontSize: '16px', // Kích thước chữ
+                        textTransform: 'none', // Không in hoa chữ
+                        boxShadow: '0px 5px 15px rgba(0, 0, 0, 0.2)', // Đổ bóng cho nút
+                        transition: 'all 0.3s ease', // Hiệu ứng mượt mà
+                        marginRight: '12px', // Khoảng cách giữa các nút
+                      }}
+                      onMouseEnter={(e) => {
+                        e.target.style.background = 'linear-gradient(45deg, #ff5722, #ffab91)';
+                        e.target.style.transform = "scale(1.05)";
+                      } // Đổi màu khi hover
+                      }
+                      onMouseLeave={(e) => {
+                        e.target.style.background = 'linear-gradient(45deg, #ff7043, #ffcc80)'
+                        e.target.style.transform = "scale(1.00)";
+
+                      } // Màu ban đầu khi rời khỏi
+                      }
+                      onMouseDown={(e) => (e.target.style.transform = 'scale(0.95)')} // Hiệu ứng thu nhỏ khi nhấn
+                      onMouseUp={(e) => (e.target.style.transform = 'scale(1)')} // Trở lại bình thường khi thả nút
                     >
-                      Lưu
+                      Lưu trạng thái
                     </Button>
-                    <span> </span>
+
                     <Button
                       variant="contained"
                       color="primary"
                       onClick={() => handleOpen(cart.id)}
+                      style={{
+                        background: 'linear-gradient(45deg, #2196F3, #64B5F6)', // Màu gradient cho nút Hóa đơn
+                        borderRadius: '12px', // Bo góc nút
+                        padding: '10px 20px', // Khoảng cách trong nút
+                        fontWeight: 'bold', // Chữ in đậm
+                        fontSize: '16px', // Kích thước chữ
+                        textTransform: 'none', // Không in hoa chữ
+                        boxShadow: '0px 5px 15px rgba(0, 0, 0, 0.2)', // Đổ bóng cho nút
+                        transition: 'all 0.3s ease', // Hiệu ứng mượt mà
+                      }}
+                      onMouseEnter={(e) => {
+                        e.target.style.background = 'linear-gradient(45deg, #1976D2, #42A5F5)';
+                        e.target.style.transform = "scale(1.05)";
+                      } // Đổi màu khi hover
+                      }
+                      onMouseLeave={(e) => {
+                        e.target.style.background = 'linear-gradient(45deg, #2196F3, #64B5F6)'
+                        e.target.style.transform = "scale(1.00)";
+
+                      } // Màu ban đầu khi rời khỏi
+                      }
+                      onMouseDown={(e) => (e.target.style.transform = 'scale(0.95)')} // Hiệu ứng thu nhỏ khi nhấn
+                      onMouseUp={(e) => (e.target.style.transform = 'scale(1)')} // Trở lại bình thường khi thả nút
                     >
                       Hóa đơn
                     </Button>
                   </center>
                 </TableCell>
+
+                <TableCell align="center">
+                  <Select
+                    value={selectedSaveStatus[cart.id] || cart.saveStatus}
+                    onChange={(e) => handleSaveStatusChange(e, cart.id)}
+                    sx={{
+                      minWidth: '150px',
+                      color: saveStatusMap[selectedSaveStatus[cart.id] || cart.saveStatus]?.color || 'black',
+                      textTransform: 'none',
+                    }}
+                  >
+                    {Object.entries(saveStatusMap).map(([key, { label, color }]) => (
+                      <MenuItem
+                        key={key}
+                        value={key}
+                        sx={{
+                          color: color,
+                          textTransform: 'none',
+                        }}
+                      >
+                        {label}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </TableCell>
+                <TableCell>
+                  <center>
+                    <Button
+                      variant="contained"
+                      color="secondary"
+                      onClick={() => handleSaveSaveStatus(cart.id)}
+                      style={{
+                        background: 'linear-gradient(45deg, #0000FF, #87CEEB)', // Màu gradient
+                        borderRadius: '12px', // Bo góc đẹp hơn
+                        padding: '10px 20px', // Tăng khoảng cách trong nút
+                        fontWeight: 'bold', // Chữ in đậm
+                        fontSize: '16px', // Tăng kích thước chữ
+                        textTransform: 'none', // Giữ nguyên kiểu chữ
+                        boxShadow: '0px 5px 15px rgba(0, 0, 0, 0.3)', // Đổ bóng đậm hơn
+                        transition: 'all 0.3s ease', // Hiệu ứng mượt khi hover
+                      }}
+                      onMouseEnter={(e) => {
+                        e.target.style.background = 'linear-gradient(45deg, #ADD8E6, #ffab91)';
+                        e.target.style.transform = "scale(1.05)";
+                      } // Đổi màu khi hover
+                      }
+                      onMouseLeave={(e) => {
+                        e.target.style.background = 'linear-gradient(45deg, #0000FF, #87CEEB)'
+                        e.target.style.transform = "scale(1.00)";
+
+                      } // Màu ban đầu khi rời khỏi
+                      }
+                      onMouseDown={(e) => (e.target.style.transform = 'scale(0.95)')} // Thu nhỏ nhẹ khi nhấn
+                      onMouseUp={(e) => (e.target.style.transform = 'scale(1)')} // Trở lại kích thước bình thường
+                    >
+                      Lưu vào CSDL
+                    </Button>
+                  </center>
+                </TableCell>
+
+
               </TableRow>
             ))}
           </TableBody>

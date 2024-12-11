@@ -1,5 +1,6 @@
 package vn.chubebanso.icecream.repository;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -18,4 +19,6 @@ public interface CartRepository extends JpaRepository<Cart, Long> {
     Cart findCartByCartItem(CartItem cartItem);
 
     List<Cart> findAllByVoucher(Voucher voucher);
+
+    List<Cart> findByCreatedAtBetweenAndStatus(Date startDate, Date endDate, String status);
 }

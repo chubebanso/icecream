@@ -61,4 +61,9 @@ public class ProductController {
     public List<Product> findProductsByCategory(@RequestParam("category") String category) {
         return this.productService.findProductsByCategory(category);
     }
+
+    @PutMapping("/hide-product")
+    public ResponseEntity<Product> hideProduct(@RequestParam("product_id") long product_id) {
+        return ResponseEntity.ok(this.productService.hideProductById(product_id));
+    }
 }

@@ -1,3 +1,18 @@
+document.addEventListener("DOMContentLoaded", async () => {
+  const voucherId = sessionStorage.getItem("voucherId");
+  if (!voucherId) {
+    console.warn("Voucher ID not found in sessionStorage.");
+  } else {
+    console.log(`voucher ID found: ${voucherId}`);
+  }
+
+  console.log("Voucher ID:", selectedVoucherId);
+  console.log("Cart ID:", cartId);
+  console.log("Total Amount:", totalAmount);
+  console.log("Min Activation Value:", minActivationValue);
+});
+
+
 // Quản lý hiển thị giỏ hàng
 const cartIcon = document.querySelector(".cart-icon");
 const cart = document.querySelector(".cart");
@@ -116,17 +131,17 @@ applyVoucherBtn.addEventListener("click", async () => {
 
   if (selectedVoucherId && cartId) {
     try {
-      const response = await fetch(`http://localhost:8080/cart/${cartId}`);
+      const response = await fetch(`http://localhost:8080/get-cart-by-id?id=${cartId}`);
       const cartData = await response.json();
       const totalAmount = cartData.total; // Tổng tiền giỏ hàng
 
       // Kiểm tra nếu tổng tiền giỏ hàng không đủ giá trị kích hoạt tối thiểu
-      const selectedVoucherResponse = await fetch(`http://localhost:8080/voucher/${selectedVoucherId}`);
+      const selectedVoucherResponse = await fetch(`http://localhost:8080/get-voucher-by-id?id=${selectedVoucherId}`);
       const selectedVoucher = await selectedVoucherResponse.json();
       const minActivationValue = selectedVoucher.minActivationValue;
 
       // Nếu tổng giỏ hàng nhỏ hơn giá trị kích hoạt tối thiểu, hiển thị thông báo
-      if (totalAmount < minActivationValue) {
+      if (Number(totalAmount) < Number(minActivationValue)) {
         alert(`Tổng tiền giỏ hàng chưa đủ điều kiện áp dụng voucher. Cần tối thiểu ${minActivationValue} VND.`);
         return;
       }

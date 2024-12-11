@@ -41,6 +41,7 @@ public class ProductService {
 
     // Admin's order to create a product
     public Product handleCreateProduct(Product product) {
+        product.setHidden(false);
         this.productRepository.save(product);
         String name = product.getName();
         String category = product.getCategory();
@@ -60,7 +61,8 @@ public class ProductService {
 
     // Admin's order to show all products
     public List<Product> getAllProduct() {
-        return this.productRepository.findAll();
+        boolean hidden = false;
+        return this.productRepository.findAllByIsHidden(hidden);
     }
 
     // Admin's order to show product by ID
@@ -160,5 +162,15 @@ public class ProductService {
 
     public List<Product> findProductsByCategory(String category) {
         return this.productRepository.findAllByCategory(category);
+    }
+
+    public Product hideProductById(Long product_id) {
+        Optional<Product> optionalProduct = this.productRepository.findById(product_id);
+        if (optionalProduct.isPresent()) {
+            optionalProduct.get().setHidden(true);
+            return this.productRepository.save(optionalProduct.get());
+        } else {
+            return null;
+        }
     }
 }

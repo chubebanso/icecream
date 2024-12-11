@@ -80,8 +80,8 @@ export function ProductsTable({
   // Xóa sản phẩm
   const handleDelete = async (id: string) => {
     try {
-      const response = await fetch(`http://localhost:8080/delete/product/${id}`, {
-        method: 'DELETE',
+      const response = await fetch(`http://localhost:8080/hide-product?product_id=${id}`, {
+        method: 'PUT',
         headers: {
           Authorization: `Bearer ${token}`, // Thêm token vào header
         },
@@ -92,6 +92,7 @@ export function ProductsTable({
       }
 
       console.log(`Xóa thành công sản phẩm với ID: ${id}`);
+      message.success('Ẩn sản phẩm thành công!');
     } catch (error) {
       console.error('Lỗi khi xóa:', error);
     }

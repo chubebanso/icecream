@@ -44,6 +44,16 @@ public class Product {
     @Pattern(regexp = "Bánh trung thu|Nước|Kem", message = "Category must be one of {Bánh trung thu, Nước, Kem}")
     private String category;
 
+    private boolean isHidden;
+
+    public boolean isHidden() {
+        return isHidden;
+    }
+
+    public void setHidden(boolean isHidden) {
+        this.isHidden = isHidden;
+    }
+
     public long getId() {
         return id;
     }

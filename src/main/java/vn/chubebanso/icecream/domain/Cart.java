@@ -44,6 +44,8 @@ public class Cart {
 
     private String status;
 
+    private String saveStatus;
+
     private float points;
 
     private String customerType;
@@ -72,6 +74,14 @@ public class Cart {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getSaveStatus() {
+        return saveStatus;
+    }
+
+    public void setSaveStatus(String saveStatus) {
+        this.saveStatus = saveStatus;
     }
 
     public float getNewTotal() {
